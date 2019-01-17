@@ -10,6 +10,7 @@ flask = "*"
 pyyaml = "*"
 pymongo = "*"
 gunicorn = "*"
+celery = "*"
 
 [requires]
 python_version = "3.6"

@@ -4,9 +4,35 @@ services:
   server:
     build:
       context: .
-      dockerfile: docker/server/Dockerfile
+      dockerfile: docker/webserver/Dockerfile
     ports:
       - 80:8000
+    depends_on:
+      - rabbitmq
     volumes:
-      - ./server.log:/app/server.log
+      - ./webserver.log:/app/webserver.log
       - .:/app
+    env_file:
+      - celery.env
+      - celery_consts.env
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    environment:
+      - RABBITMQ_NODENAME=rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    env_file:
+      - celery.env
+      - celery_consts.env
+
+  celery-worker:
+    build:
+      context: .
+      dockerfile: docker/celery_worker/Dockerfile
+    depends_on:
+      - rabbitmq
+    env_file:
+      - celery.env
+      - celery_consts.env

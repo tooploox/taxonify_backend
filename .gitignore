@@ -1,3 +1,5 @@
 .idea
 server.log
 __pycache__
+
+celery.env

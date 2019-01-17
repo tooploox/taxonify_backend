@@ -8,4 +8,4 @@ RUN pipenv install --system --deploy
 
 ADD . /app
 
-ENTRYPOINT gunicorn --bind ':8000' --reload aquascope.app:app
+ENTRYPOINT celery -A aquascope.tasks worker --loglevel=info
