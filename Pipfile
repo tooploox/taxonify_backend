@@ -11,6 +11,8 @@ pyyaml = "*"
 pymongo = "*"
 gunicorn = "*"
 celery = "*"
+flask-restful = "*"
+flask-jwt-extended = "*"
 
 [requires]
 python_version = "3.6"
