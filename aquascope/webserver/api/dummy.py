@@ -1,13 +1,16 @@
 import datetime
 
 from flask import current_app as app
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource
 
 from aquascope.tasks.celery import celery_app
 
 
 class DummyEndpoint(Resource):
+    @jwt_required
     def get(self):
+        user = get_jwt_identity()
         post = {"author": "Mike",
                 "text": "My first blog post!",
                 "tags": ["mongodb", "python", "pymongo"],
@@ -15,10 +18,11 @@ class DummyEndpoint(Resource):
 
         db = app.config['db']
         id = db.posts.insert_one(post).inserted_id
-        return f'Hello world {id}'
+        return f'Hello {user} {id}'
 
 
 class DummyTaskEndpoint(Resource):
+    @jwt_required
     def get(self):
         app.logger.debug('somebody wants me to run a task')
 

@@ -17,6 +17,7 @@ services:
       - celery.env
       - celery_consts.env
       - mongodb_credentials.env
+      - user_authentication.env
 
   rabbitmq:
     image: rabbitmq:3-management-alpine

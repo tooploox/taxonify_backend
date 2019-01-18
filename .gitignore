@@ -5,3 +5,4 @@ __pycache__
 celery.env
 mongodb.env
 mongodb_credentials.env
+user_authentication.env
