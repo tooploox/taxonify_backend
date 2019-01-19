@@ -47,4 +47,4 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - ./docker/local_db/001_users.js:/docker-entrypoint-initdb.d/001_users.js:ro
+      - ./docker/local_db/:/docker-entrypoint-initdb.d/:ro
