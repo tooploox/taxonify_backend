@@ -1,11 +1,12 @@
 import json
 
 from bson.json_util import dumps
-from flask import current_app as app
+from flask import current_app as app, request
 from flask_jwt_extended import jwt_required
-from flask_restful import Resource, reqparse, inputs
+from flask_restful import Resource, reqparse
 
-from aquascope.webserver.data_access.items import find_items
+from aquascope.webserver.data_access.items import find_items, bulk_replace
+
 
 # Sample json document
 # {
@@ -66,3 +67,10 @@ class Items(Resource):
         # we need to serialize and deserialize it
         dump = dumps(items)
         return json.loads(dump)
+
+    @jwt_required
+    def post(self):
+        json_data = request.get_json(force=True)
+        result = bulk_replace(json_data)
+        app.logger.debug(result.bulk_api_result)
+        return "ok"
