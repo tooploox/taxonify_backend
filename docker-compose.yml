@@ -48,3 +48,17 @@ services:
       - 27017:27017
     volumes:
       - ./docker/local_db/:/docker-entrypoint-initdb.d/:ro
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    ports:
+      - 8080:8080
+    environment:
+      - SWAGGER_JSON=/app/swagger.yaml
+    volumes:
+      - ./swagger/swagger.yaml:/app/swagger.yaml
+
+  swagger-editior:
+    image: swaggerapi/swagger-editor
+    ports:
+      - 8081:8080

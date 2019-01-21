@@ -4,17 +4,17 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+flask-cors = "*"
 
 [packages]
 flask = "*"
 pyyaml = "*"
-pymongo = "*"
 gunicorn = "*"
 celery = "*"
 flask-restful = "*"
 flask-jwt-extended = "*"
 passlib = "*"
-bson = "*"
+pymongo = "*"
 
 [requires]
 python_version = "3.6"

@@ -1,0 +1,94 @@
+openapi: 3.0.0
+info:
+  description: Aquascope Virtum API
+  version: 0.1.0
+  title: aquascope-virtum
+  contact:
+    email: aleksander.cieslak@microscopeit.com
+servers:
+  - url: 'http://localhost/'
+
+paths:
+  /user/login:
+    post:
+      description: 'Login user using username and password (in plaintext). Returns access_token and refresh_token'
+      operationId: login
+      tags:
+        - User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  access_token:
+                    type: string
+                  refresh_token:
+                    type: string
+        '400':
+          description: "Wrong credentials"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: "Server error. Most likely wrong hash used for storing password is malformed"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /user/refresh:
+    post:
+      description: 'Refreshing access_token using authorisation with refresh_token'
+      operationId: refresh
+      tags:
+        - User
+      security:
+        - refreshBearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    refreshBearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+tags:
+  - name: User
+    description: Endpoints responsible for login and token management
+  - name: Items
+    description: Endpoints responsible for items (data samples) management
