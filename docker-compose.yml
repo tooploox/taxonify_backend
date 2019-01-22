@@ -1,0 +1,50 @@
+version: "3"
+services:
+
+  server:
+    build:
+      context: .
+      dockerfile: docker/webserver/Dockerfile
+    ports:
+      - 80:8000
+    depends_on:
+      - rabbitmq
+      - mongo
+    volumes:
+      - ./webserver.log:/app/webserver.log
+      - .:/app
+    env_file:
+      - celery.env
+      - celery_consts.env
+      - mongodb_credentials.env
+      - user_authentication.env
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    environment:
+      - RABBITMQ_NODENAME=rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    env_file:
+      - celery.env
+      - celery_consts.env
+
+  celery-worker:
+    build:
+      context: .
+      dockerfile: docker/celery_worker/Dockerfile
+    depends_on:
+      - rabbitmq
+    env_file:
+      - celery.env
+      - celery_consts.env
+
+  mongo:
+    image: mongo:3.4
+    env_file:
+      - mongodb.env
+    ports:
+      - 27017:27017
+    volumes:
+      - ./docker/local_db/001_users.js:/docker-entrypoint-initdb.d/001_users.js:ro
