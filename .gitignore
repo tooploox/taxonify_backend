@@ -6,3 +6,4 @@ celery.env
 mongodb.env
 mongodb_credentials.env
 user_authentication.env
+storage_credentials.env

@@ -5,34 +5,7 @@ from flask import current_app as app, request
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource, reqparse
 
-from aquascope.webserver.data_access.items import find_items, bulk_replace
-
-
-# Sample json document
-# {
-#     "filename": "img2353.jpeg",
-#     "empire": "prokaryota",
-#     "kingdom": "Bacteria",
-#     "phylum": "Cyanobacteria",
-#     "class": "Cyanophyceae",
-#     "order": "Nostocales",
-#     "family": "Nostocaceae",
-#     "genus": "Anabaena",
-#     "species": "sp",
-#     "dividing": false,
-#     "dead": false,
-#     "with_epiphytes": false,
-#     "broken": false,
-#     "colony": false,
-#     "eating": false,
-#     "multiple species": false,
-#     "cropped": false,
-#     "male": null,
-#     "female": null,
-#     "juvenile": null,
-#     "adult": null,
-#     "with_eggs": null
-# },
+from aquascope.webserver.data_access.db import find_items, bulk_replace
 
 
 class Items(Resource):
