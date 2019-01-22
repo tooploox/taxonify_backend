@@ -1,0 +1,335 @@
+openapi: 3.0.0
+info:
+  description: Aquascope Virtum API
+  version: 0.1.0
+  title: aquascope-virtum
+  contact:
+    email: aleksander.cieslak@microscopeit.com
+servers:
+  - url: 'http://localhost/'
+
+paths:
+  /user/login:
+    post:
+      description: 'Login user using username and password (in plaintext). Returns access_token and refresh_token'
+      operationId: login
+      tags:
+        - User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  access_token:
+                    type: string
+                  refresh_token:
+                    type: string
+        '400':
+          description: "Wrong credentials"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: "Server error. Most likely wrong hash used for storing password is malformed"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /user/refresh:
+    post:
+      description: 'Refreshing access_token using authorisation with refresh_token'
+      operationId: refresh
+      tags:
+        - User
+      security:
+        - refreshBearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+
+  /items:
+    get:
+      description: 'Obtains list of data samples that match provided query'
+      operationId: get_items
+      tags:
+        - Items
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: empire
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 'prokaryota'
+        - name: kingdom
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 'Bacteria'
+        - name: phylum
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 'Cyanobacteria'
+        - name: class
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 'Cyanophyceae'
+        - name: order
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 'Nostocales'
+        - name: family
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 'Nostocaceae'
+        - name: genus
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 'Anabaena'
+        - name: species
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 'sp'
+        - name: dividing
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: dead
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: with_ephiphytes
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: broken
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: colony
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: eating
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: multiple_species
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: cropped
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: male
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: female
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: juvenile
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: adult
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: with_eggs
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListOfItems'
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    refreshBearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Item:
+      properties:
+        filename:
+          type: string
+        empire:
+          type: string
+        kingdom:
+          type: string
+        phylum:
+          type: string
+        class:
+          type: string
+        order:
+          type: string
+        family:
+          type: string
+        genus:
+          type: string
+        species:
+          type: string
+        dividing:
+          type: boolean
+          nullable: true
+        dead:
+          type: boolean
+          nullable: true
+        with_ephiphytes:
+          type: boolean
+          nullable: true
+        broken:
+          type: boolean
+          nullable: true
+        colony:
+          type: boolean
+          nullable: true
+        eating:
+          type: boolean
+          nullable: true
+        multiple_species:
+          type: boolean
+          nullable: true
+        cropped:
+          type: boolean
+          nullable: true
+        male:
+          type: boolean
+          nullable: true
+        female:
+          type: boolean
+          nullable: true
+        juvenile:
+          type: boolean
+          nullable: true
+        adult:
+          type: boolean
+          nullable: true
+        with_eggs:
+          type: boolean
+          nullable: true
+        acquisition_time:
+          type: string
+          format: date-time
+        _id:
+          type: string
+    ListOfItems:
+      type: array
+      items:
+        $ref: '#/components/schemas/Item'
+
+
+tags:
+  - name: User
+    description: Endpoints responsible for login and token management
+  - name: Items
+    description: Endpoints responsible for items (data samples) management

@@ -20,6 +20,13 @@ app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['JWT_SECRET_KEY'] = os.environ['JWT_SECRET_KEY']
 app.config['AQUASCOPE_TEST_USER'] = os.environ['AQUASCOPE_TEST_USER']
 app.config['AQUASCOPE_TEST_PASS'] = os.environ['AQUASCOPE_TEST_PASS']
+app.config['ENVIRONMENT'] = os.environ['ENVIRONMENT']
+
+if app.config['ENVIRONMENT'] != 'production':
+    # We need CORS only for Swagger so it's safer to not have it in production
+    from flask_cors import CORS
+    CORS(app)
+
 
 jwt = JWTManager(app)
 
