@@ -5,10 +5,10 @@ import yaml
 
 
 def data_merge(a, b):
-    a = copy.deepcopy(a)
     if isinstance(a, abc.Mapping):
         if not isinstance(b, abc.Mapping):
             raise TypeError('cannot merge {} into a dictionary'.format(b))
+        a = copy.deepcopy(a)
         for k in b:
             try:
                 a[k] = data_merge(a[k], b[k])
