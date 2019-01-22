@@ -17,6 +17,8 @@ passlib = "*"
 pymongo = "*"
 azure = "==4.0.0"
 fire = "*"
+pillow = "*"
+python-dateutil = "*"
 
 [requires]
 python_version = "3.6"

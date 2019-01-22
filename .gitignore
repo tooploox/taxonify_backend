@@ -1,5 +1,5 @@
 .idea
-server.log
+webserver.log
 __pycache__
 
 celery.env

@@ -1,1 +1,1 @@
-from .items import find_items, bulk_replace
+from .items import find_items, bulk_replace, Item
