@@ -35,10 +35,10 @@ def find_items(*args, **kwargs):
 def bulk_replace(items):
     bulks = []
     for item in items:
-        id = item.pop('_id', None)
+        item_id = item.pop('_id', None)
         if id:
-            id = id['$oid']
-            bulk = ReplaceOne({'_id': ObjectId(id)}, item)
+            item_id = item_id['$oid']
+            bulk = ReplaceOne({'_id': ObjectId(item_id)}, item)
             bulks.append(bulk)
 
     db = app.config['db']
