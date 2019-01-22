@@ -77,6 +77,27 @@ paths:
                     type: string
 
   /items:
+    post:
+      description: 'Updates data samples'
+      operationId: post_items
+      tags:
+        - Items
+      security:
+       - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ItemsUpdate'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemsUpdateResult'
+
+
     get:
       description: 'Obtains list of data samples that match provided query'
       operationId: get_items
@@ -244,7 +265,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ListOfItems'
+                $ref: '#/components/schemas/ItemQueryResult'
 
 
 components:
@@ -260,7 +281,13 @@ components:
   schemas:
     Item:
       properties:
+        _id:
+          type: string
         filename:
+          type: string
+        extension:
+          type: string
+        group_id:
           type: string
         empire:
           type: string
@@ -320,12 +347,39 @@ components:
         acquisition_time:
           type: string
           format: date-time
-        _id:
-          type: string
+        image_width:
+          type: integer
+        image_height:
+          type: integer
     ListOfItems:
       type: array
       items:
         $ref: '#/components/schemas/Item'
+    ListOfUrls:
+      type: array
+      items:
+        type: string
+        format: url
+    ItemQueryResult:
+      properties:
+        items:
+          $ref: '#/components/schemas/ListOfItems'
+        urls:
+          $ref: '#/components/schemas/ListOfUrls'
+    ItemsUpdate:
+      type: array
+      items:
+        properties:
+          current:
+              $ref: '#/components/schemas/Item'
+          update:
+              $ref: '#/components/schemas/Item'
+    ItemsUpdateResult:
+      properties:
+        matched:
+          type: integer
+        modified:
+          type: integer
 
 
 tags:
