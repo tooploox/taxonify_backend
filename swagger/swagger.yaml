@@ -112,9 +112,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InvalidSasChoice'
-
-
+                $ref: '#/components/schemas/BadSasResponses'
+          examples:
+            InvalidSasChoice:
+              message:
+                destination: <destination> is not a valid choice
+            UnknownArgumentsResult:
+              message: "Unknown arguments: <arguments>"
 
   /items:
     post:
@@ -443,6 +447,12 @@ components:
             destination:
               type: string
               example: '<destination> is not a valid choice'
+    BadSasResponses:
+      description: SwaggerUI doesn't know how to render oneOf
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/InvalidSasChoice'
+        - $ref: '#/components/schemas/UnknownArgumentsResult'
 
 
 tags:
