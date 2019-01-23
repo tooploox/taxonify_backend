@@ -71,6 +71,16 @@ def find_items(*args, **kwargs):
             query[key] = {
                 '$regex': value
             }
+        elif key == 'acquisition_time_start':
+            if 'acquisition_time' not in query:
+                query['acquisition_time'] = {}
+
+            query['acquisition_time']['$gte'] = value
+        elif key == 'acquisition_time_end':
+            if 'acquisition_time' not in query:
+                query['acquisition_time'] = {}
+
+            query['acquisition_time']['$lt'] = value
         else:
             value = remap_value(value)
             query[key] = value
