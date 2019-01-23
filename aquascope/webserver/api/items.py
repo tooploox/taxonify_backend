@@ -47,7 +47,7 @@ class Items(Resource):
         json_data = request.get_json(force=True)
 
         update_pairs = [
-            (Item(request_dict=elem['current']), Item(request_dict=elem['update'])) for elem in json_data
+            (Item.from_request(elem['current']), Item.from_request(elem['update'])) for elem in json_data
         ]
         result = bulk_replace(update_pairs)
         return {

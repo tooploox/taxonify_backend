@@ -18,7 +18,7 @@ def populate_system(metadata_csv, images_directory):
 
     with open(metadata_csv, 'r') as csvfile:
         reader = csv.DictReader(csvfile)
-        items = [Item(csv_row=row) for row in reader]
+        items = [Item.from_csv_row(row) for row in reader]
 
         for item in items:
             image_path = os.path.join(images_directory, item.filename)

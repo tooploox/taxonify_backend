@@ -13,32 +13,38 @@ class ItemInitializationError(ValueError):
 
 
 class Item:
-    def __init__(self, request_dict=None, db_data=None, csv_row=None):
-        if request_dict is None and db_data is None and csv_row is None:
-            raise ItemInitializationError("Item object has to be initialized either with"
-                                          "request dict or with db object or with csv_row")
-        if request_dict:
-            self.data = request_dict
-            self.data['_id'] = ObjectId(self.data['_id'])
-            self.data['acquisition_time'] = dateutil.parser.parse(self.data['acquisition_time'])
-        elif db_data:
-            self.data = db_data
-        elif csv_row:
-            def remap_values(key, value):
-                if value == 'FALSE':
-                    value = False
-                elif value == 'TRUE':
-                    value = True
-                elif value == 'null':
-                    value = None
-                elif key == 'acquisition_time':
-                    value = float(value)
-                    value = datetime.fromtimestamp(value)
-                elif key == 'image_width' or key == 'image_height':
-                    value = int(value)
-                return value
+    def __init__(self, data):
+        self.data = data
 
-            self.data = {k: remap_values(k, v) for k, v in csv_row.items()}
+    @staticmethod
+    def from_request(request_dict):
+        data = copy.deepcopy(request_dict)
+        data['_id'] = ObjectId(data['_id'])
+        data['acquisition_time'] = dateutil.parser.parse(data['acquisition_time'])
+        return Item(data)
+
+    @staticmethod
+    def from_db_data(db_data):
+        return Item(copy.deepcopy(db_data))
+
+    @staticmethod
+    def from_csv_row(csv_row):
+        def remap_values(key, value):
+            if value == 'FALSE':
+                value = False
+            elif value == 'TRUE':
+                value = True
+            elif value == 'null':
+                value = None
+            elif key == 'acquisition_time':
+                value = float(value)
+                value = datetime.fromtimestamp(value)
+            elif key == 'image_width' or key == 'image_height':
+                value = int(value)
+            return value
+
+        data = {k: remap_values(k, v) for k, v in csv_row.items()}
+        return Item(data)
 
     def serializable(self):
         data = copy.deepcopy(self.data)
@@ -86,7 +92,7 @@ def find_items(*args, **kwargs):
             query[key] = value
 
     db = app.config['db']
-    return (Item(db_data=item) for item in db.items.find(query))
+    return (Item.from_db_data(item) for item in db.items.find(query))
 
 
 def bulk_replace(items):
