@@ -47,6 +47,8 @@ server_api.add_resource(api.DummyTaskEndpoint, '/task')
 server_api.add_resource(api.UserLogin, '/user/login')
 server_api.add_resource(api.UserTokenRefresh, '/user/refresh')
 server_api.add_resource(api.Items, '/items')
+server_api.add_resource(api.Sas, '/sas')
+
 
 if __name__ == "__main__":
     app.run()

@@ -21,6 +21,13 @@ def generate_download_sas(client, container_name, blob_name, expiry_minutes=60):
                                                         expiry=datetime.utcnow() + timedelta(minutes=expiry_minutes))
 
 
+def generate_container_download_sas(client, container_name, expiry_minutes=60):
+    return client.generate_container_shared_access_signature(container_name,
+                                                             permission=BlobPermissions.READ,
+                                                             expiry=datetime.utcnow() + timedelta(
+                                                                 minutes=expiry_minutes))
+
+
 def generate_download_url(client, container_name, blob_name, sas_token):
     return client.make_blob_url(container_name, blob_name, sas_token=sas_token)
 

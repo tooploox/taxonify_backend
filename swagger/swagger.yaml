@@ -40,7 +40,14 @@ paths:
                   refresh_token:
                     type: string
         '400':
-          description: "Wrong credentials"
+          description: 'Unknown arguments'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownArgumentsResult'
+
+        '401':
+          description: 'Wrong credentials'
           content:
             application/json:
               schema:
@@ -49,7 +56,7 @@ paths:
                   message:
                     type: string
         '500':
-          description: "Server error. Most likely wrong hash used for storing password is malformed"
+          description: 'Server error. Most likely wrong hash used for storing password is malformed'
           content:
             application/json:
               schema:
@@ -75,6 +82,39 @@ paths:
                 properties:
                   access_token:
                     type: string
+
+  /sas:
+    get:
+      description: 'Obtains SAS, which is data access token. Obtained token should be appended to every `url` field from API response bodies'
+      operationId: get_sas
+      tags:
+        - Sas
+      security:
+       - bearerAuth: []
+      parameters:
+        - name: destination
+          description: Specifies SAS's destination. `processed` should be used to obtain data from `/items GET` respone. `upload` should be used to obtain access to upload. `download` should be used to obtain data from `/download/<id> GET` response.
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [processed, upload, download]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SasResult'
+
+        '400':
+          description: 'Invalid choice'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidSasChoice'
+
+
 
   /items:
     post:
@@ -265,7 +305,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ItemQueryResult'
+                $ref: '#/components/schemas/ItemsQueryResult'
+        '400':
+          description: Unknown arguments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownArgumentsResult'
 
 
 components:
@@ -360,12 +406,17 @@ components:
       items:
         type: string
         format: url
-    ItemQueryResult:
+    ItemsQueryResult:
       properties:
         items:
           $ref: '#/components/schemas/ListOfItems'
         urls:
           $ref: '#/components/schemas/ListOfUrls'
+    UnknownArgumentsResult:
+      properties:
+        message:
+          type: string
+          example: 'Unknown arguments: <arguments>'
     ItemsUpdate:
       type: array
       items:
@@ -380,6 +431,18 @@ components:
           type: integer
         modified:
           type: integer
+    SasResult:
+      properties:
+        token:
+          type: string
+          format: url
+    InvalidSasChoice:
+      properties:
+        message:
+          properties:
+            destination:
+              type: string
+              example: '<destination> is not a valid choice'
 
 
 tags:
@@ -387,3 +450,5 @@ tags:
     description: Endpoints responsible for login and token management
   - name: Items
     description: Endpoints responsible for items (data samples) management
+  - name: Sas
+    description: Endpoints responsible for SAS tokens (data access tokens) management

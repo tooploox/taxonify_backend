@@ -32,7 +32,7 @@ class Items(Resource):
         parser.add_argument('juvenile', type=str, required=False, store_missing=False, action='append')
         parser.add_argument('adult', type=str, required=False, store_missing=False, action='append')
         parser.add_argument('with_eggs', type=str, required=False, store_missing=False, action='append')
-        args = parser.parse_args()
+        args = parser.parse_args(strict=True)
 
         items = list(find_items(**args))
         urls = get_urls_for_items(items)
