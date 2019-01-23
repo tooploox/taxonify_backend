@@ -1,0 +1,17 @@
+eukaryota,Animalia,Rotifera,Eurotatoria,Flosculariacea,Conochilidae,Conochilus,sp
+eukaryota,Animalia,Rotifera,Monogononta,Ploima,Gastropodidae,Gastropus,sp
+eukaryota,Chromalveolata,Ciliophora,Oligotrichea,Choreotrichida,Codonellidae,Tintinnopsis,lacustris
+eukaryota,Chromalveolata,Ciliophora,Prostomatea,Prostomatida,Colepidae,Coleps,sp
+eukaryota,Chromista,Bacillariophyta,Fragilariophyceae,Licmophorales,Ulnariaceae,Synedra,cyclopum
+eukaryota,Chromista,Cryptophyta,Cryptophyceae,Cryptomonadales,Cryptomonadaceae,Cryptomonas,sp
+eukaryota,Chromista,Ochrophyta,Chrysophyceae,Chromulinales,Dinobryaceae,Dinobryon,sp
+eukaryota,Plantae,Charophyta,Conjugatophyceae,Desmidiales,Desmidiaceae,Cosmarium,null
+eukaryota,Plantae,Charophyta,Conjugatophyceae,Desmidiales,Desmidiaceae,Staurastrum,null
+eukaryota,Plantae,Charophyta,Klebsormidiophyceae,Klebsormidiales,Elakatotrichaceae,Elakatothrix,sp
+eukaryota,Plantae,Chlorophyta,Chlorophyceae,Sphaeropleales,Hydrodictyaceae,Pediastrum,sp
+eukaryota,Plantae,Chlorophyta,Chlorophyceae,Sphaeropleales,Hydrodictyaceae,Tetraedron,minimum
+eukaryota,Plantae,Chlorophyta,Chlorophyceae,Sphaeropleales,Scenedesmaceae,Coelastrum,reticulatum
+eukaryota,Protozoa,Dinophyta,Dinophyceae,Gonyaulacales,Ceratiaceae,Ceratium,hirundinella
+eukaryota,Protozoa,Dinophyta,Dinophyceae,Peridiniales,Peridiniaceae,Peridinium,willei
+prokaryota,Bacteria,Cyanobacteria,Cyanophyceae,Nostocales,Nostocaceae,Anabaena,sp
+prokaryota,Bacteria,Cyanobacteria,null,null,null,null,null
