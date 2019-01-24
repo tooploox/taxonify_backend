@@ -1,8 +1,9 @@
-from flask import current_app as app, request
+from flask import current_app as app
+from flask import request
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource, reqparse
 
-from aquascope.webserver.data_access.db import find_items, bulk_replace, Item
+from aquascope.webserver.data_access.db import Item, bulk_replace, find_items
 from aquascope.webserver.data_access.storage.blob import get_urls_for_items
 
 

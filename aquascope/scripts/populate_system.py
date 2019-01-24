@@ -1,12 +1,14 @@
 import csv
 import os
 
-from pymongo import MongoClient
 import fire
+from pymongo import MongoClient
 
-from aquascope.webserver.data_access.conversions import group_id_to_container_name, item_to_blob_name
+from aquascope.webserver.data_access.conversions import (group_id_to_container_name,
+                                                         item_to_blob_name)
 from aquascope.webserver.data_access.db import Item
-from aquascope.webserver.data_access.storage.blob import create_container, blob_storage_client, upload_blob
+from aquascope.webserver.data_access.storage.blob import (blob_storage_client,
+                                                          create_container, upload_blob)
 
 
 def populate_system(metadata_csv, images_directory):

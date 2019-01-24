@@ -1,11 +1,11 @@
-from datetime import datetime
 import copy
+from datetime import datetime
 
 from bson import ObjectId
+import dateutil.parser
 from flask import current_app as app
 from flask_restful import inputs
 from pymongo import ReplaceOne
-import dateutil.parser
 
 
 class ItemInitializationError(ValueError):
