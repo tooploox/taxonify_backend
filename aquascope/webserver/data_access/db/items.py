@@ -27,25 +27,6 @@ class Item:
     def from_db_data(db_data):
         return Item(copy.deepcopy(db_data))
 
-    @staticmethod
-    def from_csv_row(csv_row):
-        def remap_values(key, value):
-            if value == 'FALSE':
-                value = False
-            elif value == 'TRUE':
-                value = True
-            elif value == 'null':
-                value = None
-            elif key == 'acquisition_time':
-                value = float(value)
-                value = datetime.fromtimestamp(value)
-            elif key == 'image_width' or key == 'image_height':
-                value = int(value)
-            return value
-
-        data = {k: remap_values(k, v) for k, v in csv_row.items()}
-        return Item(data)
-
     def serializable(self):
         data = copy.deepcopy(self.data)
         data['acquisition_time'] = data['acquisition_time'].isoformat()

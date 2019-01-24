@@ -19,6 +19,8 @@ pillow = "*"
 pymongo = "*"
 python-dateutil = "*"
 pyyaml = "*"
+pandas = "*"
+numpy = "*"
 
 [requires]
 python_version = "3.6"

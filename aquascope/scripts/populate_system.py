@@ -1,7 +1,9 @@
-import csv
+from datetime import datetime
 import os
 
 import fire
+import numpy as np
+import pandas as pd
 from pymongo import MongoClient
 
 from aquascope.webserver.data_access.conversions import (group_id_to_container_name,
@@ -18,24 +20,28 @@ def populate_system(metadata_csv, images_directory):
 
     storage_client = blob_storage_client(connection_string=os.environ['STORAGE_CONNECTION_STRING'])
 
-    with open(metadata_csv, 'r') as csvfile:
-        reader = csv.DictReader(csvfile)
-        items = [Item.from_csv_row(row) for row in reader]
+    converter = {'image_width': pd.to_numeric,
+                 'image_height': pd.to_numeric}
+    df = pd.read_csv(metadata_csv, converters=converter)
+    df['acquisition_time'] = df['acquisition_time'].apply(lambda x: datetime.fromtimestamp(float(x)))
+    df = df.replace({'TRUE': True, 'FALSE': False, 'null': None, np.nan: None})
+    items = df.to_dict('records')
+    items = [Item(item) for item in items]
 
-        for item in items:
-            image_path = os.path.join(images_directory, item.filename)
-            if not os.path.exists(image_path):
-                continue
+    for item in items:
+        image_path = os.path.join(images_directory, item.filename)
+        if not os.path.exists(image_path):
+            continue
 
-            result = db.items.insert_one(item.get_dict())
-            item._id = result.inserted_id
-            blob_name = item_to_blob_name(item)
+        result = db.items.insert_one(item.get_dict())
+        item._id = result.inserted_id
+        blob_name = item_to_blob_name(item)
 
-            container_name = group_id_to_container_name(item.group_id)
-            create_container(storage_client, container_name)
+        container_name = group_id_to_container_name(item.group_id)
+        create_container(storage_client, container_name)
 
-            blob_meta = dict(filename=item.filename)
-            upload_blob(storage_client, container_name, blob_name, image_path, blob_meta)
+        blob_meta = dict(filename=item.filename)
+        upload_blob(storage_client, container_name, blob_name, image_path, blob_meta)
 
 
 if __name__ == '__main__':
