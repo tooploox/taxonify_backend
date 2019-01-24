@@ -67,6 +67,10 @@ def find_items(*args, **kwargs):
             query[key] = {
                 '$in': value
             }
+        elif key == 'filename':
+            query[key] = {
+                '$regex': value
+            }
         else:
             value = remap_value(value)
             query[key] = value

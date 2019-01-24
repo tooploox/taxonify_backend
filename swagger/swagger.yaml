@@ -198,6 +198,20 @@ paths:
           schema:
             type: string
             example: 'sp'
+        - name: filename
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 'images_00000_SPC-EAWAG-5P0X-15433639.*'
+        - name: eating
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
         - name: dividing
           in: query
           required: false
@@ -214,7 +228,7 @@ paths:
             items:
               type: boolean
               nullable: true
-        - name: with_ephiphytes
+        - name: with_epiphytes
           in: query
           required: false
           schema:
@@ -361,7 +375,7 @@ components:
         dead:
           type: boolean
           nullable: true
-        with_ephiphytes:
+        with_epiphytes:
           type: boolean
           nullable: true
         broken:

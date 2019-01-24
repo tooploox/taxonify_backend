@@ -20,10 +20,12 @@ class Items(Resource):
         parser.add_argument('family', type=str, required=False, store_missing=False)
         parser.add_argument('genus', type=str, required=False, store_missing=False)
         parser.add_argument('species', type=str, required=False, store_missing=False)
+        parser.add_argument('filename', type=str, required=False, store_missing=False)
 
+        parser.add_argument('eating', type=str, required=False, store_missing=False, action='append')
         parser.add_argument('dividing', type=str, required=False, store_missing=False, action='append')
         parser.add_argument('dead', type=str, required=False, store_missing=False, action='append')
-        parser.add_argument('with_ephiphytes', type=str, required=False, store_missing=False, action='append')
+        parser.add_argument('with_epiphytes', type=str, required=False, store_missing=False, action='append')
         parser.add_argument('broken', type=str, required=False, store_missing=False, action='append')
         parser.add_argument('colony', type=str, required=False, store_missing=False, action='append')
         parser.add_argument('multiple_species', type=str, required=False, store_missing=False, action='append')
