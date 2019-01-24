@@ -28,10 +28,6 @@ def generate_container_download_sas(client, container_name, expiry_minutes=60):
                                                                  minutes=expiry_minutes))
 
 
-def generate_download_url(client, container_name, blob_name, sas_token):
-    return client.make_blob_url(container_name, blob_name, sas_token=sas_token)
-
-
 def upload_blob(client, container_name, blob_name, filepath, metadata):
     return client.create_blob_from_path(container_name, blob_name, filepath,
                                         metadata=metadata)
