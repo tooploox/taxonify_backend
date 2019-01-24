@@ -1,3 +1,4 @@
+import dateutil.parser
 from flask import current_app as app
 from flask import request
 from flask_jwt_extended import jwt_required
@@ -22,6 +23,8 @@ class Items(Resource):
         parser.add_argument('species', type=str, required=False, store_missing=False)
         parser.add_argument('filename', type=str, required=False, store_missing=False)
 
+        parser.add_argument('acquisition_time_start', type=str, required=False, store_missing=False)
+        parser.add_argument('acquisition_time_end', type=str, required=False, store_missing=False)
         parser.add_argument('eating', type=str, required=False, store_missing=False, action='append')
         parser.add_argument('dividing', type=str, required=False, store_missing=False, action='append')
         parser.add_argument('dead', type=str, required=False, store_missing=False, action='append')
@@ -35,7 +38,13 @@ class Items(Resource):
         parser.add_argument('juvenile', type=str, required=False, store_missing=False, action='append')
         parser.add_argument('adult', type=str, required=False, store_missing=False, action='append')
         parser.add_argument('with_eggs', type=str, required=False, store_missing=False, action='append')
+
         args = parser.parse_args(strict=True)
+
+        if 'acquisition_time_start' in args:
+            args['acquisition_time_start'] = dateutil.parser.parse(args['acquisition_time_start'])
+        if 'acquisition_time_end' in args:
+            args['acquisition_time_end'] = dateutil.parser.parse(args['acquisition_time_end'])
 
         items = list(find_items(**args))
         urls = get_urls_for_items(items)

@@ -316,6 +316,18 @@ paths:
             items:
               type: boolean
               nullable: true
+        - name: acquisition_time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            example: '2019-01-26 00:00:00.000Z'
+        - name: acquisition_time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            example: '2019-01-27 00:00:00.000Z'
 
       responses:
         '200':
