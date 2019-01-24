@@ -1,5 +1,4 @@
 import copy
-from datetime import datetime
 
 from bson import ObjectId
 import dateutil.parser

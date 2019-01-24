@@ -10,7 +10,7 @@ def group_id_to_container_name(group_id):
 
 
 def container_name_to_group_id(container_name):
-    container_to_group_id = dict((v, k) for k, v in GROUP_ID_TO_CONTAINER.items())
+    container_to_group_id = {(v, k) for k, v in GROUP_ID_TO_CONTAINER.items()}
     return container_to_group_id[container_name]
 
 
