@@ -15,13 +15,16 @@ In order to run the stack you need to setup a few environment files and fill req
 ### mongodb_credentials.env
 * MONGO_CONNECTION_STRING - should be consistent with the content of `mongodb.env` file. It should be `mongodb://<MONGO_INITDB_ROOT_USERNAME>:<MONGO_INITDB_ROOT_PASSWORD>@<DB_ADDRESS>/<MONGO_INITDB_DATABASE>`. `<DB_ADDRESS>` for local stack is just `mongo`.
 
+### storage_credentials.env
+* STORAGE_CONNECTION_STRING - value of Azure Storage Account connection string (`DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://storage-emulator:10000/devstoreaccount1;` if using local Docker stack)
+
 ### user_authentication.env
 * JWT_SECRET_KEY - key for signing JWT tokens
 * AQUASCOPE_TEST_USER - username of the only user in the system
 * AQUASCOPE_TEST_PASS - password of the only user in the system encoded with `pbkdf2_sha256` algorithm from `passlib` library.
 
 
-## Run the stack locally
+## Run the stack locally with Docker
 In orded to run the stack locally you need to define all required environment files and execute the following commands:
 ```bash
 docker-compose build

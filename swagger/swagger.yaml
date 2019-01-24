@@ -40,7 +40,14 @@ paths:
                   refresh_token:
                     type: string
         '400':
-          description: "Wrong credentials"
+          description: 'Unknown arguments'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownArgumentsResult'
+
+        '401':
+          description: 'Wrong credentials'
           content:
             application/json:
               schema:
@@ -49,7 +56,7 @@ paths:
                   message:
                     type: string
         '500':
-          description: "Server error. Most likely wrong hash used for storing password is malformed"
+          description: 'Server error. Most likely wrong hash used for storing password is malformed'
           content:
             application/json:
               schema:
@@ -76,7 +83,65 @@ paths:
                   access_token:
                     type: string
 
+  /sas:
+    get:
+      description: 'Obtains SAS, which is data access token. Obtained token should be appended to every `url` field from API response bodies'
+      operationId: get_sas
+      tags:
+        - Sas
+      security:
+       - bearerAuth: []
+      parameters:
+        - name: destination
+          description: Specifies SAS's destination. `processed` should be used to obtain data from `/items GET` respone. `upload` should be used to obtain access to upload. `download` should be used to obtain data from `/download/<id> GET` response.
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [processed, upload, download]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SasResult'
+
+        '400':
+          description: 'Invalid choice'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadSasResponses'
+          examples:
+            InvalidSasChoice:
+              message:
+                destination: <destination> is not a valid choice
+            UnknownArgumentsResult:
+              message: "Unknown arguments: <arguments>"
+
   /items:
+    post:
+      description: 'Updates data samples'
+      operationId: post_items
+      tags:
+        - Items
+      security:
+       - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ItemsUpdate'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemsUpdateResult'
+
+
     get:
       description: 'Obtains list of data samples that match provided query'
       operationId: get_items
@@ -133,6 +198,20 @@ paths:
           schema:
             type: string
             example: 'sp'
+        - name: filename
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 'images_00000_SPC-EAWAG-5P0X-15433639.*'
+        - name: eating
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
         - name: dividing
           in: query
           required: false
@@ -149,7 +228,7 @@ paths:
             items:
               type: boolean
               nullable: true
-        - name: with_ephiphytes
+        - name: with_epiphytes
           in: query
           required: false
           schema:
@@ -244,7 +323,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ListOfItems'
+                $ref: '#/components/schemas/ItemsQueryResult'
+        '400':
+          description: Unknown arguments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownArgumentsResult'
 
 
 components:
@@ -260,7 +345,13 @@ components:
   schemas:
     Item:
       properties:
+        _id:
+          type: string
         filename:
+          type: string
+        extension:
+          type: string
+        group_id:
           type: string
         empire:
           type: string
@@ -284,7 +375,7 @@ components:
         dead:
           type: boolean
           nullable: true
-        with_ephiphytes:
+        with_epiphytes:
           type: boolean
           nullable: true
         broken:
@@ -320,12 +411,62 @@ components:
         acquisition_time:
           type: string
           format: date-time
-        _id:
-          type: string
+        image_width:
+          type: integer
+        image_height:
+          type: integer
     ListOfItems:
       type: array
       items:
         $ref: '#/components/schemas/Item'
+    ListOfUrls:
+      type: array
+      items:
+        type: string
+        format: url
+    ItemsQueryResult:
+      properties:
+        items:
+          $ref: '#/components/schemas/ListOfItems'
+        urls:
+          $ref: '#/components/schemas/ListOfUrls'
+    UnknownArgumentsResult:
+      properties:
+        message:
+          type: string
+          example: 'Unknown arguments: <arguments>'
+    ItemsUpdate:
+      type: array
+      items:
+        properties:
+          current:
+              $ref: '#/components/schemas/Item'
+          update:
+              $ref: '#/components/schemas/Item'
+    ItemsUpdateResult:
+      properties:
+        matched:
+          type: integer
+        modified:
+          type: integer
+    SasResult:
+      properties:
+        token:
+          type: string
+          format: url
+    InvalidSasChoice:
+      properties:
+        message:
+          properties:
+            destination:
+              type: string
+              example: '<destination> is not a valid choice'
+    BadSasResponses:
+      description: SwaggerUI doesn't know how to render oneOf
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/InvalidSasChoice'
+        - $ref: '#/components/schemas/UnknownArgumentsResult'
 
 
 tags:
@@ -333,3 +474,5 @@ tags:
     description: Endpoints responsible for login and token management
   - name: Items
     description: Endpoints responsible for items (data samples) management
+  - name: Sas
+    description: Endpoints responsible for SAS tokens (data access tokens) management

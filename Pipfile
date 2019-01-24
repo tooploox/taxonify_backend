@@ -7,14 +7,20 @@ verify_ssl = true
 flask-cors = "*"
 
 [packages]
-flask = "*"
-pyyaml = "*"
-gunicorn = "*"
+azure = "==4.0.0"
 celery = "*"
-flask-restful = "*"
+fire = "*"
+flask = "*"
 flask-jwt-extended = "*"
+flask-restful = "*"
+gunicorn = "*"
 passlib = "*"
+pillow = "*"
 pymongo = "*"
+python-dateutil = "*"
+pyyaml = "*"
+pandas = "*"
+numpy = "*"
 
 [requires]
 python_version = "3.6"

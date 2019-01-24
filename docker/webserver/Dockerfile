@@ -10,4 +10,4 @@ ADD . /app
 
 ENV ENVIRONMENT "dev"
 
-ENTRYPOINT gunicorn --bind ':8000' --reload aquascope.webserver.app:app
+ENTRYPOINT gunicorn --bind ':80' -w 4 --reload aquascope.webserver.app:app

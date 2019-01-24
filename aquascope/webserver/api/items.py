@@ -1,38 +1,10 @@
-import json
-
-from bson.json_util import dumps
-from flask import current_app as app, request
+from flask import current_app as app
+from flask import request
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource, reqparse
 
-from aquascope.webserver.data_access.items import find_items, bulk_replace
-
-
-# Sample json document
-# {
-#     "filename": "img2353.jpeg",
-#     "empire": "prokaryota",
-#     "kingdom": "Bacteria",
-#     "phylum": "Cyanobacteria",
-#     "class": "Cyanophyceae",
-#     "order": "Nostocales",
-#     "family": "Nostocaceae",
-#     "genus": "Anabaena",
-#     "species": "sp",
-#     "dividing": false,
-#     "dead": false,
-#     "with_epiphytes": false,
-#     "broken": false,
-#     "colony": false,
-#     "eating": false,
-#     "multiple species": false,
-#     "cropped": false,
-#     "male": null,
-#     "female": null,
-#     "juvenile": null,
-#     "adult": null,
-#     "with_eggs": null
-# },
+from aquascope.webserver.data_access.db import Item, bulk_replace, find_items
+from aquascope.webserver.data_access.storage.blob import get_urls_for_items
 
 
 class Items(Resource):
@@ -48,10 +20,12 @@ class Items(Resource):
         parser.add_argument('family', type=str, required=False, store_missing=False)
         parser.add_argument('genus', type=str, required=False, store_missing=False)
         parser.add_argument('species', type=str, required=False, store_missing=False)
+        parser.add_argument('filename', type=str, required=False, store_missing=False)
 
+        parser.add_argument('eating', type=str, required=False, store_missing=False, action='append')
         parser.add_argument('dividing', type=str, required=False, store_missing=False, action='append')
         parser.add_argument('dead', type=str, required=False, store_missing=False, action='append')
-        parser.add_argument('with_ephiphytes', type=str, required=False, store_missing=False, action='append')
+        parser.add_argument('with_epiphytes', type=str, required=False, store_missing=False, action='append')
         parser.add_argument('broken', type=str, required=False, store_missing=False, action='append')
         parser.add_argument('colony', type=str, required=False, store_missing=False, action='append')
         parser.add_argument('multiple_species', type=str, required=False, store_missing=False, action='append')
@@ -61,16 +35,25 @@ class Items(Resource):
         parser.add_argument('juvenile', type=str, required=False, store_missing=False, action='append')
         parser.add_argument('adult', type=str, required=False, store_missing=False, action='append')
         parser.add_argument('with_eggs', type=str, required=False, store_missing=False, action='append')
-        args = parser.parse_args()
-        items = find_items(**args)
+        args = parser.parse_args(strict=True)
 
-        # we need to serialize and deserialize it
-        dump = dumps(items)
-        return json.loads(dump)
+        items = list(find_items(**args))
+        urls = get_urls_for_items(items)
+
+        return {
+            'items': [item.serializable() for item in items],
+            'urls': urls
+        }
 
     @jwt_required
     def post(self):
         json_data = request.get_json(force=True)
-        result = bulk_replace(json_data)
-        app.logger.debug(result.bulk_api_result)
-        return "ok"
+
+        update_pairs = [
+            (Item.from_request(elem['current']), Item.from_request(elem['update'])) for elem in json_data
+        ]
+        result = bulk_replace(update_pairs)
+        return {
+            "matched": result.matched_count,
+            "modified": result.modified_count
+        }
