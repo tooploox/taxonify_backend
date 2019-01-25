@@ -1,6 +1,7 @@
 import unittest
 from unittest import mock
 
+import dateutil
 from azure.storage.blob.blockblobservice import BlockBlobService
 from bson import ObjectId
 from flask import current_app as app
@@ -73,6 +74,47 @@ class TestFindItems(unittest.TestCase):
                 ObjectId('000000000000000000000001'),
                 ObjectId('000000000000000000000003'),
                 ObjectId('000000000000000000000004')
+            ]
+            self.assertCountEqual(res, expected)
+
+    def test_datetime_field(self):
+        with self.app.app_context():
+            find_query = {
+                'acquisition_time_start': dateutil.parser.parse('2019-01-11T18:06:34.151Z')
+            }
+            res = list(find_items(**find_query))
+            res = [res['_id'] for res in res]
+            expected = [
+                ObjectId('000000000000000000000000'),
+                ObjectId('000000000000000000000001')
+            ]
+            self.assertCountEqual(res, expected)
+
+    def test_datetime_fields_range(self):
+        with self.app.app_context():
+            find_query = {
+                'acquisition_time_start': dateutil.parser.parse('2019-01-02T18:06:34.151Z'),
+                'acquisition_time_end': dateutil.parser.parse('2019-01-11T18:06:34.151Z')
+            }
+            res = list(find_items(**find_query))
+            res = [res['_id'] for res in res]
+            expected = [
+                ObjectId('000000000000000000000003'),
+                ObjectId('000000000000000000000002')
+            ]
+            self.assertCountEqual(res, expected)
+
+    def test_fields_combination(self):
+        with self.app.app_context():
+            find_query = {
+                'species': 'sp',
+                'dead': ['True', 'False'],
+                'acquisition_time_end': dateutil.parser.parse('2019-01-15T18:06:34.151Z')
+            }
+            res = list(find_items(**find_query))
+            res = [res['_id'] for res in res]
+            expected = [
+                ObjectId('000000000000000000000002')
             ]
             self.assertCountEqual(res, expected)
 
