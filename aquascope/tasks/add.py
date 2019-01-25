@@ -1,6 +1,6 @@
 import time
 
-from aquascope.tasks.celery import celery_app
+from aquascope.tasks.celery_app import celery_app
 
 
 @celery_app.task
