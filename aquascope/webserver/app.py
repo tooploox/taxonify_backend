@@ -1,54 +1,76 @@
-import os
 import logging
+import os
 
 from flask import Flask, request
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from pymongo import MongoClient
 
+from aquascope.tasks.celery import make_celery_app
 import aquascope.webserver.api as api
 from aquascope.webserver.data_access.storage.blob import blob_storage_client
 
-mongo_connection_string = os.environ['MONGO_CONNECTION_STRING']
-mongo_client = MongoClient(mongo_connection_string)
-db = mongo_client.get_database()
 
-logging.basicConfig(filename='webserver.log', level=logging.DEBUG,
-                    format="[%(asctime)s] %(levelname)s in %(module)s: %(message)s")
-app = Flask(__name__)
-app.config['db'] = db
-app.config['storage_client'] = blob_storage_client(connection_string=os.environ['STORAGE_CONNECTION_STRING'])
+def make_app(db, storage_connection_string, jwt_secret_key,
+             aquascope_test_user, aquascope_test_pass, environment,
+             celery_user, celery_password, celery_address):
+    logging.basicConfig(filename='webserver.log', level=logging.DEBUG,
+                        format="[%(asctime)s] %(levelname)s in %(module)s: %(message)s")
 
-app.config['PROPAGATE_EXCEPTIONS'] = True
-app.config['JWT_SECRET_KEY'] = os.environ['JWT_SECRET_KEY']
-app.config['AQUASCOPE_TEST_USER'] = os.environ['AQUASCOPE_TEST_USER']
-app.config['AQUASCOPE_TEST_PASS'] = os.environ['AQUASCOPE_TEST_PASS']
-app.config['ENVIRONMENT'] = os.environ['ENVIRONMENT']
+    app = Flask(__name__)
+    app.config['db'] = db
+    app.config['storage_client'] = blob_storage_client(connection_string=storage_connection_string)
+    app.config['celery'] = make_celery_app(celery_user, celery_password, celery_address)
+    app.config['PROPAGATE_EXCEPTIONS'] = True
+    app.config['JWT_SECRET_KEY'] = jwt_secret_key
+    app.config['AQUASCOPE_TEST_USER'] = aquascope_test_user
+    app.config['AQUASCOPE_TEST_PASS'] = aquascope_test_pass
+    app.config['ENVIRONMENT'] = environment
 
-if app.config['ENVIRONMENT'] != 'production':
-    # We need CORS only for Swagger so it's safer to not have it in production
-    from flask_cors import CORS
+    if app.config['ENVIRONMENT'] != 'production':
+        # We need CORS only for Swagger so it's safer to not have it in production
+        from flask_cors import CORS
 
-    CORS(app)
+        CORS(app)
 
-jwt = JWTManager(app)
+    jwt = JWTManager(app)
+
+    @app.after_request
+    def after_request(response):
+        app.logger.error('%s %s %s %s %s', request.remote_addr, request.method,
+                         request.scheme, request.full_path, response.status)
+        return response
+
+    server_api = Api(app)
+    server_api.add_resource(api.DummyEndpoint, '/')
+    server_api.add_resource(api.DummyTaskEndpoint, '/task')
+    server_api.add_resource(api.UserLogin, '/user/login')
+    server_api.add_resource(api.UserTokenRefresh, '/user/refresh')
+    server_api.add_resource(api.Items, '/items')
+    server_api.add_resource(api.Sas, '/sas')
+
+    return app
 
 
-@app.after_request
-def after_request(response):
-    app.logger.error('%s %s %s %s %s', request.remote_addr, request.method,
-                     request.scheme, request.full_path, response.status)
-    return response
+def get_app():
+    mongo_connection_string = os.environ['MONGO_CONNECTION_STRING']
+    storage_connection_string = os.environ['STORAGE_CONNECTION_STRING']
+    jwt_secret_key = os.environ['JWT_SECRET_KEY']
+    aquascope_test_user = os.environ['AQUASCOPE_TEST_USER']
+    aquascope_test_pass = os.environ['AQUASCOPE_TEST_PASS']
+    environment = os.environ['ENVIRONMENT']
+    celery_user = os.environ['CELERY_USER']
+    celery_password = os.environ['CELERY_PASS']
+    celery_address = os.environ['CELERY_ADDRESS']
 
-
-server_api = Api(app)
-server_api.add_resource(api.DummyEndpoint, '/')
-server_api.add_resource(api.DummyTaskEndpoint, '/task')
-server_api.add_resource(api.UserLogin, '/user/login')
-server_api.add_resource(api.UserTokenRefresh, '/user/refresh')
-server_api.add_resource(api.Items, '/items')
-server_api.add_resource(api.Sas, '/sas')
+    mongo_client = MongoClient(mongo_connection_string)
+    db = mongo_client.get_database()
+    app = make_app(db, storage_connection_string, jwt_secret_key,
+                    aquascope_test_user, aquascope_test_pass, environment,
+                    celery_user, celery_password, celery_address)
+    return app
 
 
 if __name__ == "__main__":
+    app = get_app()
     app.run()
