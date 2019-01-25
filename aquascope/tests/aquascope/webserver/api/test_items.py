@@ -2,9 +2,9 @@ import unittest
 from unittest import mock
 
 from azure.storage.blob import BlockBlobService
-from flask import current_app as app, url_for
-import mongomock
+from flask import current_app as app
 from flask_jwt_extended import create_access_token
+import mongomock
 
 from aquascope.tests.aquascope.webserver.data_access.db.dummy_items import DUMMY_ITEMS
 from aquascope.webserver.app import make_app
