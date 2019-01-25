@@ -1,13 +1,13 @@
-import os
 import logging
+import os
 
 from flask import Flask, request
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from pymongo import MongoClient
 
-import aquascope.webserver.api as api
 from aquascope.tasks.celery import make_celery_app
+import aquascope.webserver.api as api
 from aquascope.webserver.data_access.storage.blob import blob_storage_client
 
 
@@ -20,9 +20,7 @@ def make_app(db, storage_connection_string, jwt_secret_key,
     app = Flask(__name__)
     app.config['db'] = db
     app.config['storage_client'] = blob_storage_client(connection_string=storage_connection_string)
-    app.config['celery'] = make_celery_app(celery_user, celery_password,
-                                           celery_address)
-
+    app.config['celery'] = make_celery_app(celery_user, celery_password, celery_address)
     app.config['PROPAGATE_EXCEPTIONS'] = True
     app.config['JWT_SECRET_KEY'] = jwt_secret_key
     app.config['AQUASCOPE_TEST_USER'] = aquascope_test_user

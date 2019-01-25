@@ -12,9 +12,10 @@ from aquascope.webserver.data_access.storage.blob import create_container, uploa
 
 def populate_system(metadata_csv, images_directory, db, storage_client=None):
     converter = {'image_width': pd.to_numeric,
-                 'image_height': pd.to_numeric}
+                 'image_height': pd.to_numeric,
+                 'acquisition_time': lambda x: datetime.fromtimestamp(float(x))
+                 }
     df = pd.read_csv(metadata_csv, converters=converter)
-    df['acquisition_time'] = df['acquisition_time'].apply(lambda x: datetime.fromtimestamp(float(x)))
     df = df.replace({'TRUE': True, 'FALSE': False, 'null': None, np.nan: None})
     items = df.to_dict('records')
     items = [Item(item) for item in items]
