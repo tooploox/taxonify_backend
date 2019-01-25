@@ -21,6 +21,7 @@ python-dateutil = "*"
 pyyaml = "*"
 pandas = "*"
 numpy = "*"
+mongomock = "*"
 
 [requires]
 python_version = "3.6"

@@ -10,6 +10,11 @@ from aquascope.webserver.data_access.db import Item
 from aquascope.webserver.data_access.storage.blob import create_container, upload_blob
 
 
+def populate_db_with_items(items, db):
+    items_dicts = [item.get_dict() for item in items]
+    db.items.insert_many(items_dicts)
+
+
 def populate_system(metadata_csv, images_directory, db, storage_client=None):
     converter = {'image_width': pd.to_numeric,
                  'image_height': pd.to_numeric}
