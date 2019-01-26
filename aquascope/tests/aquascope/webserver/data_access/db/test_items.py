@@ -1,40 +1,15 @@
+import copy
 import unittest
-from unittest import mock
 
 import dateutil
-from azure.storage.blob.blockblobservice import BlockBlobService
 from bson import ObjectId
-from flask import current_app as app
-import mongomock
 
-from aquascope.webserver.app import make_app
-from aquascope.webserver.data_access.util import populate_db_with_items
 from aquascope.tests.aquascope.webserver.data_access.db.dummy_items import DUMMY_ITEMS
-from aquascope.webserver.data_access.db.items import find_items
+from aquascope.tests.flask_app_test_case import FlaskAppTestCase
+from aquascope.webserver.data_access.db.items import find_items, bulk_replace
 
-MONGO_CONNECTION_STRING = 'mongodb://example.server.com/aquascopedb'
 
-
-class TestFindItems(unittest.TestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        client = mongomock.MongoClient(MONGO_CONNECTION_STRING)
-        cls.db = client.get_database()
-        with mock.patch.object(BlockBlobService, '__init__', lambda x, connection_string: None):
-            cls.app = make_app(cls.db, '', '', '', '',
-                               environment='TESTING', celery_user='',
-                               celery_password='', celery_address='')
-
-    def setUp(self):
-        with self.app.app_context():
-            self.test_app = app.test_client()
-            populate_db_with_items(DUMMY_ITEMS, self.db)
-
-    def tearDown(self):
-        with self.app.app_context():
-            db = self.app.config['db']
-            db.items.drop()
+class TestFindItems(FlaskAppTestCase):
 
     def test_bool_nullable_field_with_bool(self):
         with self.app.app_context():
@@ -117,6 +92,107 @@ class TestFindItems(unittest.TestCase):
                 ObjectId('000000000000000000000002')
             ]
             self.assertCountEqual(res, expected)
+
+
+class TestBulkReplace(FlaskAppTestCase):
+
+    def test_bulk_replace_outdated_object(self):
+        with self.app.app_context():
+            item = copy.deepcopy(DUMMY_ITEMS[0])
+            item.dead = True
+            replace_item = copy.deepcopy(item)
+
+            update_pairs = [
+                (item, replace_item)
+            ]
+            result = bulk_replace(update_pairs)
+
+            self.assertEqual(result.matched_count, 0)
+            self.assertEqual(result.modified_count, 0)
+
+    def test_bulk_replace_no_changes(self):
+        with self.app.app_context():
+            item = DUMMY_ITEMS[0]
+            replace_item = copy.deepcopy(item)
+
+            update_pairs = [
+                (item, replace_item)
+            ]
+            result = bulk_replace(update_pairs)
+
+            self.assertEqual(result.matched_count, 1)
+            self.assertEqual(result.modified_count, 0)
+
+    def test_bulk_replace_single_object(self):
+        with self.app.app_context():
+            item = DUMMY_ITEMS[0]
+            replace_item = copy.deepcopy(item)
+            replace_item.dead = True
+
+            update_pairs = [
+                (item, replace_item)
+            ]
+            result = bulk_replace(update_pairs)
+
+            self.assertEqual(result.matched_count, 1)
+            self.assertEqual(result.modified_count, 1)
+
+    def test_bulk_replace_multiple_objects(self):
+        with self.app.app_context():
+            item0 = DUMMY_ITEMS[0]
+            replace_item0 = copy.deepcopy(item0)
+            replace_item0.dead = True
+
+            item1 = DUMMY_ITEMS[1]
+            replace_item1 = copy.deepcopy(item1)
+            replace_item1.male = True
+
+            update_pairs = [
+                (item0, replace_item0),
+                (item1, replace_item1)
+            ]
+            result = bulk_replace(update_pairs)
+
+            self.assertEqual(result.matched_count, 2)
+            self.assertEqual(result.modified_count, 2)
+
+    def test_bulk_replace_multiple_objects_with_partial_modify(self):
+        with self.app.app_context():
+            item0 = DUMMY_ITEMS[0]
+            replace_item0 = copy.deepcopy(item0)
+            replace_item0.dead = True
+
+            item1 = DUMMY_ITEMS[1]
+            replace_item1 = copy.deepcopy(item1)
+
+            update_pairs = [
+                (item0, replace_item0),
+                (item1, replace_item1)
+            ]
+            result = bulk_replace(update_pairs)
+
+            self.assertEqual(result.matched_count, 2)
+            self.assertEqual(result.modified_count, 1)
+
+    def test_bulk_replace_multiple_objects_with_partial_match(self):
+        with self.app.app_context():
+            item0 = DUMMY_ITEMS[0]
+            item0.broken = True
+            replace_item0 = copy.deepcopy(item0)
+            replace_item0.dead = True
+
+            item1 = DUMMY_ITEMS[1]
+            replace_item1 = copy.deepcopy(item1)
+            replace_item1.male = True
+
+            update_pairs = [
+                (item0, replace_item0),
+                (item1, replace_item1)
+            ]
+            result = bulk_replace(update_pairs)
+
+            self.assertEqual(result.matched_count, 1)
+            self.assertEqual(result.modified_count, 1)
 
 
 if __name__ == '__main__':
