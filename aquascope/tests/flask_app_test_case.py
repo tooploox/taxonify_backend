@@ -1,4 +1,5 @@
 import os
+from passlib.hash import pbkdf2_sha256 as sha256
 import unittest
 from unittest import mock
 
@@ -25,8 +26,13 @@ class FlaskAppTestCase(unittest.TestCase):
         else:
             client = mongomock.MongoClient(MONGO_CONNECTION_STRING)
         cls.db = client.get_database()
+
+        cls.auth_user = 'testuser'
+        cls.auth_pass_raw = 'testpassword'
+        auth_pass = sha256.hash(cls.auth_pass_raw)
+
         with mock.patch.object(BlockBlobService, '__init__', lambda x, connection_string: None):
-            cls.app = make_app(cls.db, '', 'jwtdummysecret', '', '',
+            cls.app = make_app(cls.db, '', 'jwtdummysecret', cls.auth_user, auth_pass,
                                environment='TESTING', celery_user='',
                                celery_password='', celery_address='')
 
