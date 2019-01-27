@@ -1,42 +1,41 @@
-from schema import Schema, Or
+from marshmallow import Schema, fields
 
 
-post_item_schema = Schema({
-    '_id': str,
-    'filename': str,
-    'extension': str,
-    'group_id': str,
+class PostItemSchema(Schema):
 
-    'empire': str,
-    'kingdom': str,
-    'phylum': str,
-    'class': str,
-    'order': str,
-    'family': str,
-    'genus': str,
-    'species': str,
+    id = fields.String(data_key='_id', attribute='_id', required=True)
+    filename = fields.String(required=True)
+    extension = fields.String(required=True)
+    group_id = fields.String(required=True)
 
-    'eating': Or(bool, None),
-    'dividing': Or(bool, None),
-    'dead': Or(bool, None),
-    'with_epiphytes': Or(bool, None),
-    'broken': Or(bool, None),
-    'colony': Or(bool, None),
-    'multiple_species': Or(bool, None),
-    'cropped': Or(bool, None),
-    'male': Or(bool, None),
-    'female': Or(bool, None),
-    'juvenile': Or(bool, None),
-    'adult': Or(bool, None),
-    'with_eggs': Or(bool, None),
+    empire = fields.String(required=True)
+    kingdom = fields.String(required=True)
+    phylum = fields.String(required=True)
+    klass = fields.String(data_key='class', attribute='class', required=True)
+    order = fields.String(required=True)
+    family = fields.String(required=True)
+    genus = fields.String(required=True)
+    species = fields.String(required=True)
 
-    'acquisition_time': str,
-    'image_width': int,
-    'image_height': int
-})
-post_items_update_schema = Schema([
-    {
-        'current': post_item_schema,
-        'update': post_item_schema
-    }
-])
+    eating = fields.Boolean(allow_none=True, required=True)
+    dividing = fields.Boolean(allow_none=True, required=True)
+    dead = fields.Boolean(allow_none=True, required=True)
+    with_epiphytes = fields.Boolean(allow_none=True, required=True)
+    broken = fields.Boolean(allow_none=True, required=True)
+    colony = fields.Boolean(allow_none=True, required=True)
+    multiple_species = fields.Boolean(allow_none=True, required=True)
+    cropped = fields.Boolean(allow_none=True, required=True)
+    male = fields.Boolean(allow_none=True, required=True)
+    female = fields.Boolean(allow_none=True, required=True)
+    juvenile = fields.Boolean(allow_none=True, required=True)
+    adult = fields.Boolean(allow_none=True, required=True)
+    with_eggs = fields.Boolean(allow_none=True, required=True)
+
+    acquisition_time = fields.String(allow_none=True, required=True)
+    image_width = fields.Integer(required=True)
+    image_height = fields.Integer(required=True)
+
+
+class PostItemsUpdateSchema(Schema):
+    current = fields.Nested(PostItemSchema, required=True)
+    update = fields.Nested(PostItemSchema, required=True)
