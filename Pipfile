@@ -22,6 +22,7 @@ pyyaml = "*"
 pandas = "*"
 numpy = "*"
 mongomock = "*"
+schema = "*"
 
 [requires]
 python_version = "3.6"
