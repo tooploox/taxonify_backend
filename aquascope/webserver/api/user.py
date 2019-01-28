@@ -1,17 +1,21 @@
 from passlib.hash import pbkdf2_sha256 as sha256
 
-from flask import current_app as app
-from flask_restful import Resource, reqparse
+from flask import current_app as app, request
+from flask_restful import Resource
 from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 jwt_refresh_token_required, get_jwt_identity)
+from marshmallow import ValidationError
+
+from aquascope.webserver.schema.user import GetUserLoginSchema
 
 
 class UserLogin(Resource):
     def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('username', type=str, required=True, location='json')
-        parser.add_argument('password', type=str, required=True, location='json')
-        args = parser.parse_args(strict=True)
+        schema = GetUserLoginSchema()
+        try:
+            args = schema.load(request.get_json())
+        except ValidationError as e:
+            return e.messages, 400
 
         try:
             verified_user = sha256.verify(args['password'],
