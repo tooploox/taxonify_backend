@@ -14,7 +14,7 @@ class TestFindItems(FlaskAppTestCase):
     def test_bool_nullable_field_with_bool(self):
         with self.app.app_context():
             find_query = {
-                'eating': ['True']
+                'eating': [True]
             }
             res = list(find_items(**find_query))
             res = [res['_id'] for res in res]
@@ -27,7 +27,7 @@ class TestFindItems(FlaskAppTestCase):
     def test_bool_nullable_field_with_none(self):
         with self.app.app_context():
             find_query = {
-                'eating': ['']
+                'eating': [None]
             }
             res = list(find_items(**find_query))
             res = [res['_id'] for res in res]
@@ -40,7 +40,7 @@ class TestFindItems(FlaskAppTestCase):
     def test_bool_nullable_field_with_bool_and_none(self):
         with self.app.app_context():
             find_query = {
-                'eating': ['True', '']
+                'eating': [True, None]
             }
             res = list(find_items(**find_query))
             res = [res['_id'] for res in res]
@@ -83,7 +83,7 @@ class TestFindItems(FlaskAppTestCase):
         with self.app.app_context():
             find_query = {
                 'species': 'sp',
-                'dead': ['True', 'False'],
+                'dead': [True, False],
                 'acquisition_time_end': dateutil.parser.parse('2019-01-15T18:06:34.151Z')
             }
             res = list(find_items(**find_query))
