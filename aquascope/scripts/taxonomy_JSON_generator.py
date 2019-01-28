@@ -11,7 +11,7 @@ def add(node, values):
     if value not in node:
         node[value] = {}
     rest = values[1:]
-    if len(rest) > 0:
+    if rest:
         add(node[value], rest)
 
 
