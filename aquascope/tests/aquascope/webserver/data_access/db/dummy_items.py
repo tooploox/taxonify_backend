@@ -1,7 +1,9 @@
-import dateutil.parser
+from datetime import datetime
+
 from bson import ObjectId
 
 from aquascope.webserver.data_access.db import Item
+
 
 DUMMY_ITEMS = [
     Item({
@@ -30,7 +32,7 @@ DUMMY_ITEMS = [
         'juvenile': None,
         'adult': None,
         'with_eggs': None,
-        'acquisition_time': dateutil.parser.parse('2019-01-20 10:00:00.000Z'),
+        'acquisition_time': datetime.fromtimestamp(1547974800.000),  # Human time: Sunday, 20 January 2019 10:00:00
         'image_width': 100,
         'image_height': 100
     }),
@@ -60,7 +62,7 @@ DUMMY_ITEMS = [
         'juvenile': None,
         'adult': None,
         'with_eggs': None,
-        'acquisition_time': dateutil.parser.parse('2019-01-20 06:00:00.000Z'),
+        'acquisition_time': datetime.fromtimestamp(1547960400.000),  # Human time: Sunday, 20 January 2019 06:00:00
         'image_width': 100,
         'image_height': 100
     }),
@@ -90,7 +92,7 @@ DUMMY_ITEMS = [
         'juvenile': None,
         'adult': None,
         'with_eggs': None,
-        'acquisition_time': dateutil.parser.parse('2019-01-10 10:00:00.000Z'),
+        'acquisition_time': datetime.fromtimestamp(1547110800.000),  # Human time: Thursday, 10 January 2019 10:00:00
         'image_width': 100,
         'image_height': 100
     }),
@@ -120,7 +122,7 @@ DUMMY_ITEMS = [
         'juvenile': None,
         'adult': None,
         'with_eggs': None,
-        'acquisition_time': dateutil.parser.parse('2019-01-05 10:00:00.000Z'),
+        'acquisition_time': datetime.fromtimestamp(1546678800.000),  # Human time: Saturday, 5 January 2019 10:00:00
         'image_width': 100,
         'image_height': 100
     }),
@@ -150,7 +152,7 @@ DUMMY_ITEMS = [
         'juvenile': None,
         'adult': None,
         'with_eggs': None,
-        'acquisition_time': dateutil.parser.parse('2019-01-01 10:00:00.000Z'),
+        'acquisition_time': datetime.fromtimestamp(1546333200.000),  # Human time: Saturday, 1 January 2019 10:00:00
         'image_width': 100,
         'image_height': 100
     })

@@ -11,9 +11,20 @@ class ItemInitializationError(ValueError):
     pass
 
 
-class Item:
-    def __init__(self, data):
-        self.data = data
+class Item(object):
+    def __init__(self, obj):
+        for k, v in obj.items():
+            if isinstance(v, dict):
+                setattr(self, k, Item(v))
+            else:
+                setattr(self, k, v)
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+    def __repr__(self):
+        return '{%s}' % str(', '.join('%s : %s' % (k, repr(v)) for
+                                      (k, v) in self.__dict__.items()))
 
     @staticmethod
     def from_request(request_dict):
@@ -27,24 +38,13 @@ class Item:
         return Item(copy.deepcopy(db_data))
 
     def serializable(self):
-        data = copy.deepcopy(self.data)
+        data = self.get_dict()
         data['acquisition_time'] = data['acquisition_time'].isoformat()
         data['_id'] = str(data['_id'])
         return data
 
     def get_dict(self):
-        return self.data
-
-    def __getitem__(self, key):
-        return self.data[key]
-
-    def __getattr__(self, k):
-        try:
-            v = self.data[k]
-        except KeyError:
-            raise AttributeError(k)
-
-        return v
+        return copy.deepcopy(self.__dict__)
 
 
 def remap_value(value):
@@ -53,7 +53,7 @@ def remap_value(value):
     else:
         try:
             value = inputs.boolean(value)
-        except ValueError:
+        except (ValueError, AttributeError):
             pass
 
     return value
