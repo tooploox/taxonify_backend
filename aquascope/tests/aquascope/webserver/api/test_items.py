@@ -22,7 +22,7 @@ class TestItems(FlaskAppTestCase):
             expected_items = [DUMMY_ITEMS[0], DUMMY_ITEMS[1]]
             expected_items = [item.serializable() for item in expected_items]
 
-            self.assertEqual(response['items'], expected_items)
+            self.assertCountEqual(response['items'], expected_items)
 
     @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
     def test_api_can_get_items_by_eating_list(self, mock_make_blob_url):
@@ -38,7 +38,7 @@ class TestItems(FlaskAppTestCase):
             expected_items = [DUMMY_ITEMS[0], DUMMY_ITEMS[1], DUMMY_ITEMS[3], DUMMY_ITEMS[4]]
             expected_items = [item.serializable() for item in expected_items]
 
-            self.assertEqual(response['items'], expected_items)
+            self.assertCountEqual(response['items'], expected_items)
 
     @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
     def test_api_can_get_items_with_time_range(self, mock_make_blob_url):
