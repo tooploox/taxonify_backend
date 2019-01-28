@@ -16,7 +16,7 @@ def add(node, values):
         add(node[value], rest)
 
 
-def generate(in_file_name, out_file_name=""):
+def generate(in_file_name, out_file_name=None):
     taxonomy = {}
 
     with open(in_file_name, "r") as file_object:
@@ -25,13 +25,13 @@ def generate(in_file_name, out_file_name=""):
             add(taxonomy, values)
 
     # if no output file specified produce result to stdout
-    if out_file_name == "":
-        y = json.dumps(taxonomy, sort_keys=True, indent=4, separators=(',', ': '))
-        print(y)
-    else:
+
+    y = json.dumps(taxonomy, sort_keys=True, indent=4, separators=(',', ': '))
+    if out_file_name:
         with open(out_file_name, 'w') as outfile:
-            outfile.write(json.dumps(taxonomy, sort_keys=True, indent=4, separators=(',', ': ')))
-            outfile.close()
+            outfile.write(y)
+    else:
+        print(y)
 
 
 if __name__ == '__main__':
