@@ -1,3 +1,4 @@
+import csv
 import fire
 import json
 
@@ -19,9 +20,8 @@ def generate(in_file_name, out_file_name=""):
     taxonomy = {}
 
     with open(in_file_name, "r") as file_object:
-
-        for line in file_object:
-            values = line.rstrip().split(",")
+        rows = csv.reader(file_object, delimiter=',')
+        for values in rows:
             add(taxonomy, values)
 
     # if no output file specified produce result to stdout
