@@ -22,6 +22,9 @@ def populate_system(metadata_csv, images_directory, db, storage_client=None):
                  }
     df = pd.read_csv(metadata_csv, converters=converter)
     df = df.replace({'TRUE': True, 'FALSE': False, 'null': None, np.nan: None})
+    for taxonomy in ['empire', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']:
+        df[taxonomy] = df[taxonomy].str.lower()
+
     items = df.to_dict('index').values()
     items = [Item(item) for item in items]
 

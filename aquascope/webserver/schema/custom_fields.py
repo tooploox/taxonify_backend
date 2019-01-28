@@ -14,3 +14,9 @@ class CustomBoolean(fields.Boolean):
             return None
         return super(CustomBoolean, self)._deserialize(value, attr, data)
 
+
+class LowercaseString(fields.String):
+    def _deserialize(self, value, attr, data, **kwargs):
+        if isinstance(value, str):
+            value = value.lower()
+        return super()._deserialize(value, attr, data)

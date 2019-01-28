@@ -1,23 +1,24 @@
 from marshmallow import Schema, fields
 
-from aquascope.webserver.schema.custom_fields import List, CustomBoolean
+from aquascope.webserver.schema.custom_fields import (List, CustomBoolean,
+                                                      LowercaseString)
 
 
 class PostItemSchema(Schema):
 
     id = fields.String(data_key='_id', attribute='_id', required=True)
     filename = fields.String(required=True)
-    extension = fields.String(required=True)
-    group_id = fields.String(required=True)
+    extension = LowercaseString(required=True)
+    group_id = LowercaseString(required=True)
 
-    empire = fields.String(required=True)
-    kingdom = fields.String(required=True)
-    phylum = fields.String(required=True)
-    class_field = fields.String(data_key='class', attribute='class', required=True)
-    order = fields.String(required=True)
-    family = fields.String(required=True)
-    genus = fields.String(required=True)
-    species = fields.String(required=True)
+    empire = LowercaseString(required=True)
+    kingdom = LowercaseString(required=True)
+    phylum = LowercaseString(required=True)
+    class_field = LowercaseString(data_key='class', attribute='class', required=True)
+    order = LowercaseString(required=True)
+    family = LowercaseString(required=True)
+    genus = LowercaseString(required=True)
+    species = LowercaseString(required=True)
 
     eating = fields.Boolean(allow_none=True, required=True)
     dividing = fields.Boolean(allow_none=True, required=True)
@@ -44,15 +45,15 @@ class PostItemsUpdateSchema(Schema):
 
 
 class GetItemsSchema(Schema):
-    empire = fields.String(required=False)
-    kingdom = fields.String(required=False)
-    phylum = fields.String(required=False)
-    class_field = fields.String(data_key='class', attribute='class', required=False)
-    order = fields.String(required=False)
-    family = fields.String(required=False)
-    genus = fields.String(required=False)
-    species = fields.String(required=False)
-    filename = fields.String(required=False)
+    empire = LowercaseString(required=False)
+    kingdom = LowercaseString(required=False)
+    phylum = LowercaseString(required=False)
+    class_field = LowercaseString(data_key='class', attribute='class', required=False)
+    order = LowercaseString(required=False)
+    family = LowercaseString(required=False)
+    genus = LowercaseString(required=False)
+    species = LowercaseString(required=False)
+    filename = LowercaseString(required=False)
 
     acquisition_time_start = fields.DateTime(required=False)
     acquisition_time_end = fields.DateTime(required=False)
