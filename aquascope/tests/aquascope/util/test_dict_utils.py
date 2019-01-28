@@ -37,6 +37,26 @@ class TestAddListToDictionary(unittest.TestCase):
         add(dictionary, elements)
         self.assertDictEqual(dictionary, expected_dict)
 
+    def test_add_list_with_nan(self):
+        dictionary = {
+            "a": {
+                "b": {
+                    "c": {}
+                }
+            }
+        }
+        elements = ["1", float('NaN'), "2"]
+        expected_dict = {
+            "a": {
+                "b": {
+                    "c": {}
+                }
+            },
+            "1": {}
+        }
+        add(dictionary, elements)
+        self.assertDictEqual(dictionary, expected_dict)
+
     def test_add_empty_list_to_empty(self):
         dictionary = {}
         elements = []

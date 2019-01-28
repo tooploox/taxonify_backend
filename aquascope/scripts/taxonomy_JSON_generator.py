@@ -1,16 +1,17 @@
 import csv
 import fire
 import json
+import pandas as pd
 from aquascope.util.taxonomy_dictionary_utils import add
 
 
 def generate(in_file_name, out_file_name=None):
     taxonomy = {}
 
-    with open(in_file_name, "r") as file_object:
-        rows = csv.reader(file_object, delimiter=',')
-        for values in rows:
-            add(taxonomy, values)
+    df = pd.read_csv(in_file_name)
+
+    for _, data in df[['empire', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']].iterrows():
+        add(taxonomy, data.tolist())
 
     taxonomy_json = json.dumps(taxonomy, sort_keys=True, indent=4, separators=(',', ': '))
     if out_file_name:

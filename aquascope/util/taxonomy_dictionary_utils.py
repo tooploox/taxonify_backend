@@ -5,8 +5,9 @@ def add(node, values):
     """
     if values:
         value = values[0]
-        if value not in node:
-            node[value] = {}
-        rest = values[1:]
-        if rest:
-            add(node[value], rest)
+        if isinstance(value, str):
+            if value not in node:
+                node[value] = {}
+            rest = values[1:]
+            if rest:
+                add(node[value], rest)
