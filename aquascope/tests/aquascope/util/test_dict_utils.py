@@ -37,6 +37,44 @@ class TestAddListToDictionary(unittest.TestCase):
         add(dictionary, elements)
         self.assertDictEqual(dictionary, expected_dict)
 
+    def test_add_subelem_already_present(self):
+        dictionary = {
+            "a": {
+                "b": {
+                    "c": {}
+                }
+            }
+        }
+        elements = ["a", "b"]
+        expected_dict = {
+            "a": {
+                "b": {
+                    "c": {}
+                }
+            }
+        }
+        add(dictionary, elements)
+        self.assertDictEqual(dictionary, expected_dict)
+
+    def test_add_elem_already_present(self):
+        dictionary = {
+            "a": {
+                "b": {
+                    "c": {}
+                }
+            }
+        }
+        elements = ["a", "b", "c"]
+        expected_dict = {
+            "a": {
+                "b": {
+                    "c": {}
+                }
+            }
+        }
+        add(dictionary, elements)
+        self.assertDictEqual(dictionary, expected_dict)
+
     def test_add_list_with_nan(self):
         dictionary = {
             "a": {
