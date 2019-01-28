@@ -24,13 +24,12 @@ def generate(in_file_name, out_file_name=None):
         for values in rows:
             add(taxonomy, values)
 
-    # if no output file specified produce result to stdout
-
     y = json.dumps(taxonomy, sort_keys=True, indent=4, separators=(',', ': '))
     if out_file_name:
         with open(out_file_name, 'w') as outfile:
             outfile.write(y)
     else:
+        # if no output file specified produce result to stdout
         print(y)
 
 
