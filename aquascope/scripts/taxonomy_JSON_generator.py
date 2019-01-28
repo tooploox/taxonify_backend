@@ -1,4 +1,5 @@
-import json, sys
+import fire
+import json
 
 
 def add(node, values):
@@ -14,23 +15,24 @@ def add(node, values):
         add(node[value], rest)
 
 
-taxonomy = {}
-in_file_name = sys.argv[1]
-out_file_name = ""
-if len(sys.argv) > 2:
-    out_file_name = sys.argv[2]
+def generate(in_file_name, out_file_name=""):
+    taxonomy = {}
 
-file_object = open(in_file_name, "r")
+    with open(in_file_name, "r") as file_object:
 
-for line in file_object:
-    values = line.rstrip().split(",")
-    add(taxonomy, values)
+        for line in file_object:
+            values = line.rstrip().split(",")
+            add(taxonomy, values)
 
-#if no output file specified produce result to stdout
-if out_file_name == "":
-    y = json.dumps(taxonomy, sort_keys=True, indent=4, separators=(',', ': '))
-    print(y)
-else:
-    with open(out_file_name, 'w') as outfile:
-        outfile.write(json.dumps(taxonomy, sort_keys=True, indent=4, separators=(',', ': ')))
-        outfile.close()
+    # if no output file specified produce result to stdout
+    if out_file_name == "":
+        y = json.dumps(taxonomy, sort_keys=True, indent=4, separators=(',', ': '))
+        print(y)
+    else:
+        with open(out_file_name, 'w') as outfile:
+            outfile.write(json.dumps(taxonomy, sort_keys=True, indent=4, separators=(',', ': ')))
+            outfile.close()
+
+
+if __name__ == '__main__':
+    fire.Fire(generate)
