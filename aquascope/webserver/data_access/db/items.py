@@ -47,23 +47,10 @@ class Item(object):
         return copy.deepcopy(self.__dict__)
 
 
-def remap_value(value):
-    if value == '':
-        value = None
-    else:
-        try:
-            value = inputs.boolean(value)
-        except (ValueError, AttributeError):
-            pass
-
-    return value
-
-
 def find_items(*args, **kwargs):
     query = dict()
     for key, value in kwargs.items():
         if type(value) == list:
-            value = [remap_value(val) for val in value]
             query[key] = {
                 '$in': value
             }
@@ -82,7 +69,6 @@ def find_items(*args, **kwargs):
 
             query['acquisition_time']['$lt'] = value
         else:
-            value = remap_value(value)
             query[key] = value
 
     db = app.config['db']
