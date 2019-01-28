@@ -62,7 +62,7 @@ class TestItems(FlaskAppTestCase):
         mock_make_blob_url.return_value = 'mockedurl'
         with self.app.app_context():
             request_data = {
-                'eeating': [True, '']
+                'invalid_key': [True, '']
             }
             res = self.client().get('/items', query_string=request_data, headers=self.headers)
             self.assertEqual(res.status_code, 400)

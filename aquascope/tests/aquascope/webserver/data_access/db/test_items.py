@@ -137,6 +137,28 @@ class TestBulkReplace(FlaskAppTestCase):
             self.assertEqual(result.matched_count, 1)
             self.assertEqual(result.modified_count, 1)
 
+    def test_bulk_replace_single_object_twice(self):
+        with self.app.app_context():
+            item = DUMMY_ITEMS[0]
+            replace_item0 = copy.deepcopy(item)
+            replace_item0.dead = True
+
+            replace_item1 = copy.deepcopy(item)
+            replace_item1.colony = True
+
+            update_pairs = [
+                (item, replace_item0),
+                (item, replace_item1)
+
+            ]
+            result = bulk_replace(update_pairs)
+
+            db_item = self.db.items.find_one({'_id': item._id})
+            self.assertDictEqual(replace_item0.get_dict(), db_item)
+
+            self.assertEqual(result.matched_count, 1)
+            self.assertEqual(result.modified_count, 1)
+
     def test_bulk_replace_multiple_objects(self):
         with self.app.app_context():
             item0 = DUMMY_ITEMS[0]

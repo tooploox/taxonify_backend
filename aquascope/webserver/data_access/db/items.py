@@ -19,8 +19,8 @@ class Item(object):
             else:
                 setattr(self, k, v)
 
-    def __getitem__(self, val):
-        return self.__dict__[val]
+    def __getitem__(self, key):
+        return self.__dict__[key]
 
     def __repr__(self):
         return '{%s}' % str(', '.join('%s : %s' % (k, repr(v)) for
