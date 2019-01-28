@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c2fead475d610383f6d336d8c80da740e7f2471e1b2ee273e908ba26cea31360"
+            "sha256": "a6da86da7a39467d0ce5e7de082adfd8acbd7696a42f5b691f88072663b609ab"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -823,6 +823,14 @@
                 "sha256:fb7c206e01ad85ce57feeaaa0bf784b97fa3cad0d4a5737bc5295785f5c613a1"
             ],
             "version": "==1.1.0"
+        },
+        "marshmallow": {
+            "hashes": [
+                "sha256:313836a251e67d2ef06631f3bddfffdd7d1c5b16b4efc76244afa6218c5e17b0",
+                "sha256:c850c60dbb840860f58f161b81ae25cf84807eeae3f9a1d9a2f8c704d6bd2b80"
+            ],
+            "index": "pypi",
+            "version": "==3.0.0rc3"
         },
         "mongomock": {
             "hashes": [

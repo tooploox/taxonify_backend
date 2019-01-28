@@ -1,11 +1,13 @@
 import dateutil.parser
-from flask import current_app as app
 from flask import request
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource, reqparse
+from marshmallow import ValidationError
+
 
 from aquascope.webserver.data_access.db import Item, bulk_replace, find_items
 from aquascope.webserver.data_access.storage.blob import get_urls_for_items
+from aquascope.webserver.schema.items import PostItemsUpdateSchema
 
 
 class Items(Resource):
@@ -57,6 +59,13 @@ class Items(Resource):
     @jwt_required
     def post(self):
         json_data = request.get_json(force=True)
+
+        schema = PostItemsUpdateSchema(many=True)
+
+        try:
+            json_data = schema.load(json_data)
+        except ValidationError as e:
+            return e.messages, 400
 
         update_pairs = [
             (Item.from_request(elem['current']), Item.from_request(elem['update'])) for elem in json_data
