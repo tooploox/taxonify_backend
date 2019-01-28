@@ -1,19 +1,7 @@
 import csv
 import fire
 import json
-
-
-def add(node, values):
-    """Add values as consecutive levels to the node dictionary
-    node -- a dictionary
-    values -- a list of string values
-    """
-    value = values[0]
-    if value not in node:
-        node[value] = {}
-    rest = values[1:]
-    if rest:
-        add(node[value], rest)
+from aquascope.util.taxonomy_dictionary_utils import add
 
 
 def generate(in_file_name, out_file_name=None):
