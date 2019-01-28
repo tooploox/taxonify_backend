@@ -1,24 +1,23 @@
 from marshmallow import Schema, fields
 
-from aquascope.webserver.schema.custom_fields import (List, CustomBoolean,
-                                                      LowercaseString)
+from aquascope.webserver.schema.custom_fields import (List, NullableBoolean,
+                                                      LowercaseNullableString)
 
 
 class PostItemSchema(Schema):
-
     id = fields.String(data_key='_id', attribute='_id', required=True)
-    filename = fields.String(required=True)
-    extension = LowercaseString(required=True)
-    group_id = LowercaseString(required=True)
+    filename = fields.String(required=True, allow_none=True)
+    extension = LowercaseNullableString(required=True, allow_none=True)
+    group_id = LowercaseNullableString(required=True, allow_none=True)
 
-    empire = LowercaseString(required=True)
-    kingdom = LowercaseString(required=True)
-    phylum = LowercaseString(required=True)
-    class_field = LowercaseString(data_key='class', attribute='class', required=True)
-    order = LowercaseString(required=True)
-    family = LowercaseString(required=True)
-    genus = LowercaseString(required=True)
-    species = LowercaseString(required=True)
+    empire = LowercaseNullableString(required=True, allow_none=True)
+    kingdom = LowercaseNullableString(required=True, allow_none=True)
+    phylum = LowercaseNullableString(required=True, allow_none=True)
+    class_field = LowercaseNullableString(data_key='class', attribute='class', required=True, allow_none=True)
+    order = LowercaseNullableString(required=True, allow_none=True)
+    family = LowercaseNullableString(required=True, allow_none=True)
+    genus = LowercaseNullableString(required=True, allow_none=True)
+    species = LowercaseNullableString(required=True, allow_none=True)
 
     eating = fields.Boolean(allow_none=True, required=True)
     dividing = fields.Boolean(allow_none=True, required=True)
@@ -34,7 +33,7 @@ class PostItemSchema(Schema):
     adult = fields.Boolean(allow_none=True, required=True)
     with_eggs = fields.Boolean(allow_none=True, required=True)
 
-    acquisition_time = fields.String(allow_none=True, required=True)
+    acquisition_time = fields.String(required=True)
     image_width = fields.Integer(required=True)
     image_height = fields.Integer(required=True)
 
@@ -45,29 +44,29 @@ class PostItemsUpdateSchema(Schema):
 
 
 class GetItemsSchema(Schema):
-    empire = LowercaseString(required=False)
-    kingdom = LowercaseString(required=False)
-    phylum = LowercaseString(required=False)
-    class_field = LowercaseString(data_key='class', attribute='class', required=False)
-    order = LowercaseString(required=False)
-    family = LowercaseString(required=False)
-    genus = LowercaseString(required=False)
-    species = LowercaseString(required=False)
-    filename = LowercaseString(required=False)
+    empire = LowercaseNullableString(required=False, allow_none=True)
+    kingdom = LowercaseNullableString(required=False, allow_none=True)
+    phylum = LowercaseNullableString(required=False, allow_none=True)
+    class_field = LowercaseNullableString(data_key='class', attribute='class', required=False, allow_none=True)
+    order = LowercaseNullableString(required=False, allow_none=True)
+    family = LowercaseNullableString(required=False, allow_none=True)
+    genus = LowercaseNullableString(required=False, allow_none=True)
+    species = LowercaseNullableString(required=False, allow_none=True)
+    filename = LowercaseNullableString(required=False, allow_none=True)
 
     acquisition_time_start = fields.DateTime(required=False)
     acquisition_time_end = fields.DateTime(required=False)
 
-    eating = List(CustomBoolean(allow_none=True), allow_none=True, required=False)
-    dividng = List(CustomBoolean(allow_none=True), allow_none=True, required=False)
-    dead = List(CustomBoolean(allow_none=True), allow_none=True, required=False)
-    with_epiphytes = List(CustomBoolean(allow_none=True), allow_none=True, required=False)
-    broken = List(CustomBoolean(allow_none=True), allow_none=True, required=False)
-    colony = List(CustomBoolean(allow_none=True), allow_none=True, required=False)
-    multiple_species = List(CustomBoolean(allow_none=True), allow_none=True, required=False)
-    cropped = List(CustomBoolean(allow_none=True), allow_none=True, required=False)
-    male = List(CustomBoolean(allow_none=True), allow_none=True, required=False)
-    female = List(CustomBoolean(allow_none=True), allow_none=True, required=False)
-    juvenile = List(CustomBoolean(allow_none=True), allow_none=True, required=False)
-    adult = List(CustomBoolean(allow_none=True), allow_none=True, required=False)
-    with_eggs = List(CustomBoolean(allow_none=True), allow_none=True, required=False)
+    eating = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
+    dividng = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
+    dead = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
+    with_epiphytes = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
+    broken = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
+    colony = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
+    multiple_species = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
+    cropped = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
+    male = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
+    female = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
+    juvenile = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
+    adult = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
+    with_eggs = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
