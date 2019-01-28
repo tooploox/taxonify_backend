@@ -24,13 +24,13 @@ def generate(in_file_name, out_file_name=None):
         for values in rows:
             add(taxonomy, values)
 
-    y = json.dumps(taxonomy, sort_keys=True, indent=4, separators=(',', ': '))
+    taxonomy_json = json.dumps(taxonomy, sort_keys=True, indent=4, separators=(',', ': '))
     if out_file_name:
         with open(out_file_name, 'w') as outfile:
-            outfile.write(y)
+            outfile.write(taxonomy_json)
     else:
         # if no output file specified produce result to stdout
-        print(y)
+        print(taxonomy_json)
 
 
 if __name__ == '__main__':
