@@ -30,6 +30,22 @@ class TestGetItems(FlaskAppTestCase):
             self.assertCountEqual(response['items'], expected_items)
 
     @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_can_get_items_by_eating_list(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            request_data = {
+                'eating': [True, '']
+            }
+            res = self.client().get('/items', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            expected_items = [DUMMY_ITEMS[0], DUMMY_ITEMS[1], DUMMY_ITEMS[3], DUMMY_ITEMS[4]]
+            expected_items = [item.serializable() for item in expected_items]
+
+            self.assertCountEqual(response['items'], expected_items)
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
     def test_api_can_get_items_by_empty_species(self, mock_make_blob_url):
         mock_make_blob_url.return_value = 'mockedurl'
         with self.app.app_context():
@@ -46,17 +62,25 @@ class TestGetItems(FlaskAppTestCase):
             self.assertCountEqual(response['items'], expected_items)
 
     @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
-    def test_api_can_get_items_by_eating_list(self, mock_make_blob_url):
+    def test_api_can_get_items_with_bad_argument(self, mock_make_blob_url):
         mock_make_blob_url.return_value = 'mockedurl'
         with self.app.app_context():
             request_data = {
-                'eating': [True, '']
+                'invalid_key': [True, '']
             }
+            res = self.client().get('/items', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 400)
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_can_get_items_with_empty_request(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            request_data = {}
             res = self.client().get('/items', query_string=request_data, headers=self.headers)
             self.assertEqual(res.status_code, 200)
 
             response = res.json
-            expected_items = [DUMMY_ITEMS[0], DUMMY_ITEMS[1], DUMMY_ITEMS[3], DUMMY_ITEMS[4]]
+            expected_items = DUMMY_ITEMS
             expected_items = [item.serializable() for item in expected_items]
 
             self.assertCountEqual(response['items'], expected_items)
@@ -77,17 +101,6 @@ class TestGetItems(FlaskAppTestCase):
             expected_items = [item.serializable() for item in expected_items]
 
             self.assertCountEqual(response['items'], expected_items)
-
-    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
-    def test_api_can_get_items_with_bad_argument(self, mock_make_blob_url):
-        mock_make_blob_url.return_value = 'mockedurl'
-        with self.app.app_context():
-            request_data = {
-                'invalid_key': [True, '']
-            }
-            res = self.client().get('/items', query_string=request_data, headers=self.headers)
-            self.assertEqual(res.status_code, 400)
-
 
 class TestPostItems(FlaskAppTestCase):
 
