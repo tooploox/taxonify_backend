@@ -30,22 +30,6 @@ class TestGetItems(FlaskAppTestCase):
             self.assertCountEqual(response['items'], expected_items)
 
     @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
-    def test_api_can_get_items_by_empty_species(self, mock_make_blob_url):
-        mock_make_blob_url.return_value = 'mockedurl'
-        with self.app.app_context():
-            request_data = {
-                'species': ''
-            }
-            res = self.client().get('/items', query_string=request_data, headers=self.headers)
-            self.assertEqual(res.status_code, 200)
-
-            response = res.json
-            expected_items = [DUMMY_ITEMS[1], DUMMY_ITEMS[3]]
-            expected_items = [item.serializable() for item in expected_items]
-
-            self.assertCountEqual(response['items'], expected_items)
-
-    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
     def test_api_can_get_items_by_eating_list(self, mock_make_blob_url):
         mock_make_blob_url.return_value = 'mockedurl'
         with self.app.app_context():
@@ -62,18 +46,17 @@ class TestGetItems(FlaskAppTestCase):
             self.assertCountEqual(response['items'], expected_items)
 
     @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
-    def test_api_can_get_items_with_time_range(self, mock_make_blob_url):
+    def test_api_can_get_items_by_empty_species(self, mock_make_blob_url):
         mock_make_blob_url.return_value = 'mockedurl'
         with self.app.app_context():
             request_data = {
-                'acquisition_time_start': '2019-01-07T18:06:34.151Z',
-                'acquisition_time_end': '2019-01-12T18:06:34.151Z'
+                'species': ''
             }
             res = self.client().get('/items', query_string=request_data, headers=self.headers)
             self.assertEqual(res.status_code, 200)
 
             response = res.json
-            expected_items = [DUMMY_ITEMS[2]]
+            expected_items = [DUMMY_ITEMS[1], DUMMY_ITEMS[3]]
             expected_items = [item.serializable() for item in expected_items]
 
             self.assertCountEqual(response['items'], expected_items)
@@ -98,6 +81,23 @@ class TestGetItems(FlaskAppTestCase):
 
             response = res.json
             expected_items = DUMMY_ITEMS
+            expected_items = [item.serializable() for item in expected_items]
+
+            self.assertCountEqual(response['items'], expected_items)
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_can_get_items_with_time_range(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            request_data = {
+                'acquisition_time_start': '2019-01-07T18:06:34.151Z',
+                'acquisition_time_end': '2019-01-12T18:06:34.151Z'
+            }
+            res = self.client().get('/items', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            expected_items = [DUMMY_ITEMS[2]]
             expected_items = [item.serializable() for item in expected_items]
 
             self.assertCountEqual(response['items'], expected_items)
