@@ -88,6 +88,19 @@ class TestGetItems(FlaskAppTestCase):
             res = self.client().get('/items', query_string=request_data, headers=self.headers)
             self.assertEqual(res.status_code, 400)
 
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_can_get_items_with_empty_request(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            request_data = {}
+            res = self.client().get('/items', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            expected_items = DUMMY_ITEMS
+            expected_items = [item.serializable() for item in expected_items]
+
+            self.assertCountEqual(response['items'], expected_items)
 
 class TestPostItems(FlaskAppTestCase):
 
