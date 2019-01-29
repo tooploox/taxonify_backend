@@ -20,10 +20,11 @@ def populate_system(metadata_csv, images_directory, db, storage_client=None):
                  'image_height': pd.to_numeric,
                  'acquisition_time': lambda x: datetime.fromtimestamp(float(x))
                  }
+    taxonomy = ['empire', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
+    taxonomy_converter = {x: lambda x: str(x).lower() for x in taxonomy}
+    converter = {**converter, **taxonomy_converter}
     df = pd.read_csv(metadata_csv, converters=converter)
     df = df.replace({'TRUE': True, 'FALSE': False, 'null': None, np.nan: None})
-    for taxonomy in ['empire', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']:
-        df[taxonomy] = df[taxonomy].str.lower()
 
     items = df.to_dict('index').values()
     items = [Item(item) for item in items]
