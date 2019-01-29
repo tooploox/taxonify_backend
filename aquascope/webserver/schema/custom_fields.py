@@ -8,9 +8,22 @@ class List(fields.List):
         return super()._deserialize(value, attr, data)
 
 
-class CustomBoolean(fields.Boolean):
+class NullableString(fields.String):
     def _deserialize(self, value, attr, data, **kwargs):
         if value == '':
             return None
-        return super(CustomBoolean, self)._deserialize(value, attr, data)
+        return super(NullableString, self)._deserialize(value, attr, data)
 
+
+class NullableBoolean(fields.Boolean):
+    def _deserialize(self, value, attr, data, **kwargs):
+        if value == '':
+            return None
+        return super(NullableBoolean, self)._deserialize(value, attr, data)
+
+
+class LowercaseNullableString(NullableString):
+    def _deserialize(self, value, attr, data, **kwargs):
+        if isinstance(value, str):
+            value = value.lower()
+        return super()._deserialize(value, attr, data)
