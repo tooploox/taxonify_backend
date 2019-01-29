@@ -7,16 +7,17 @@ In order to run the stack you need to setup a few environment files and fill req
 * RABBITMQ_DEFAULT_PASS - password used for celery/rabbitmq authentication. Should be the same as `CELERY_PASS`
 * CELERY_PASS - password used for celery/rabbitmq authentication. Should be the same as `RABBITMQ_DEFAULT_PASS`
 
-### mongodb.env
-* MONGO_INITDB_ROOT_USERNAME - db username
-* MONGO_INITDB_ROOT_PASSWORD - db password
+### mongodb_root_credentials.env
+* MONGO_INITDB_ROOT_USERNAME - db root username
+* MONGO_INITDB_ROOT_PASSWORD - db root password
 * MONGO_INITDB_DATABASE - db name
 
-### mongodb_credentials.env
-* MONGO_CONNECTION_STRING - should be consistent with the content of `mongodb.env` file. It should be `mongodb://<MONGO_INITDB_ROOT_USERNAME>:<MONGO_INITDB_ROOT_PASSWORD>@<DB_ADDRESS>/<MONGO_INITDB_DATABASE>`. `<DB_ADDRESS>` for local stack is just `mongo`.
+### mongodb_user_credentials.env
+Unfortunately right now you also need to edit `docker/local_db/001_users.js` with `user` `pwd` and `db` variables that are compilant with values below
+* MONGO_CONNECTION_STRING - should be consistent with the content of `mongodb.env` file. It should be `mongodb://<MONGO_INITDB_ROOT_USERNAME>:<MONGO_INITDB_ROOT_PASSWORD>@<DB_ADDRESS>/<MONGO_INITDB_DATABASE>`. `<DB_ADDRESS>` for local stack is just `localhost`.
 
 ### storage_credentials.env
-* STORAGE_CONNECTION_STRING - value of Azure Storage Account connection string (`DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://storage-emulator:10000/devstoreaccount1;` if using local Docker stack)
+* STORAGE_CONNECTION_STRING - value of Azure Storage Account connection string (`DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://0.0.0.0:10000/devstoreaccount1;` if using local Docker stack)
 
 ### user_authentication.env
 * JWT_SECRET_KEY - key for signing JWT tokens

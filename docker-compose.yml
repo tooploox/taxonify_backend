@@ -17,7 +17,7 @@ services:
     env_file:
       - celery.env
       - celery_consts.env
-      - mongodb_credentials.env
+      - mongodb_user_credentials.env
       - user_authentication.env
       - storage_credentials.env
 
@@ -46,7 +46,8 @@ services:
   mongo:
     image: mongo:3.4
     env_file:
-      - mongodb.env
+      - mongodb_root_credentials.env
+      - mongodb_user_credentials.env
     ports:
       - 27017:27017
     volumes:
@@ -68,7 +69,7 @@ services:
     volumes:
       - .:/app
     env_file:
-      - mongodb_credentials.env
+      - mongodb_user_credentials.env
       - storage_credentials.env
     environment:
       - PYTHONPATH=/app
