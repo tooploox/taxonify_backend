@@ -5,13 +5,13 @@ from marshmallow import ValidationError
 
 from aquascope.webserver.data_access.conversions import group_id_to_container_name
 import aquascope.webserver.data_access.storage.blob as blob
-from aquascope.webserver.schema.sas import GetSasSchema
+from aquascope.webserver.schema.sas import SasSchema
 
 
 class Sas(Resource):
     @jwt_required
     def get(self):
-        schema = GetSasSchema()
+        schema = SasSchema()
         try:
             args = schema.load(request.args)
         except ValidationError as e:
