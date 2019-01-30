@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "a6da86da7a39467d0ce5e7de082adfd8acbd7696a42f5b691f88072663b609ab"
+            "sha256": "a08c225ceae61c82ff771bd5e3f30f9968cc6c00901d4402d287f5b817f42dbb"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -68,10 +68,10 @@
         },
         "azure-common": {
             "hashes": [
-                "sha256:5dd7ed46da968814020ecd961e7496f0a4f5e59f6d452df02100218145f6d1ba",
-                "sha256:e7cd5a8ee2ec0639454c1bd0f1ea5f609d83977376abfd304527ec7343fef1be"
+                "sha256:5cb223c1b52deb8ff9304387201bab83950787be9ca2e8733220726740cc40d0",
+                "sha256:5fd62ae10b1add97d3c69af970328ec3bd869184396bcf6bfa9c7bc94d688424"
             ],
-            "version": "==1.1.17"
+            "version": "==1.1.18"
         },
         "azure-cosmosdb-nspkg": {
             "hashes": [
@@ -748,6 +748,14 @@
             "index": "pypi",
             "version": "==0.3.7"
         },
+        "flatten-dict": {
+            "hashes": [
+                "sha256:2ee6b3fa263e6404cf2dc3827d9ad11c863268b4f02f80bb6edfc2241cd95ab9",
+                "sha256:e3696310519c6d16209288c1c04d8249447b8ea4de83d3f08d6b9bbdc3981f71"
+            ],
+            "index": "pypi",
+            "version": "==0.0.3.post1"
+        },
         "gunicorn": {
             "hashes": [
                 "sha256:aa8e0b40b4157b36a5df5e599f45c9c76d6af43845ba3b3b0efe2c70473c2471",
@@ -922,6 +930,13 @@
             ],
             "index": "pypi",
             "version": "==1.7.1"
+        },
+        "pathlib2": {
+            "hashes": [
+                "sha256:25199318e8cc3c25dcb45cbe084cc061051336d5a9ea2a12448d3d8cb748f742",
+                "sha256:5887121d7f7df3603bca2f710e7219f3eca0eb69e0b7cc6e0a022e155ac931a7"
+            ],
+            "version": "==2.3.3"
         },
         "pillow": {
             "hashes": [

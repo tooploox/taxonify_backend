@@ -4,9 +4,9 @@ from flask import current_app as app, request
 from flask_restful import Resource
 from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 jwt_refresh_token_required, get_jwt_identity)
-from marshmallow import ValidationError
 
 from aquascope.webserver.schema.user import UserSchema
+from aquascope.webserver.schema.custom_schema import FormattedValidationError
 
 
 class UserLogin(Resource):
@@ -14,8 +14,8 @@ class UserLogin(Resource):
         schema = UserSchema()
         try:
             args = schema.load(request.get_json())
-        except ValidationError as e:
-            return e.messages, 400
+        except FormattedValidationError as e:
+            return e.formatted_messages, 400
 
         try:
             verified_user = sha256.verify(args['password'],

@@ -102,6 +102,16 @@ class TestGetItems(FlaskAppTestCase):
 
             self.assertCountEqual(response['items'], expected_items)
 
+    def test_api_get_emits_errors_for_all_wrong_parameters(self):
+        with self.app.app_context():
+            res = self.client().get('/items', query_string="eating=bar&multiple_species=foobar&eating=foo", headers=self.headers)
+            wrong_parameters = ['eating.0', 'eating.1', 'multiple_species.0']
+            response_data = json.loads(res.data)
+            self.assertEqual(len(response_data), 3)
+            for error in response_data:
+                self.assertIn(error['parameter'], wrong_parameters)
+
+
 class TestPostItems(FlaskAppTestCase):
 
     def test_api_can_post_update_pairs(self):
@@ -187,6 +197,36 @@ class TestPostItems(FlaskAppTestCase):
 
         res = self.client().post('/items', data=request_data, headers=self.headers)
         self.assertEqual(res.status_code, 400)
+
+    def test_api_post_emits_errors_for_all_wrong_parameters(self):
+        with self.app.app_context():
+
+            item0 = copy.deepcopy(DUMMY_ITEMS[0])
+            item0 = item0.get_dict()
+            item0 = Item.from_db_data(list(self.db.items.find(item0))[0])
+
+            replace_item0 = copy.deepcopy(item0)
+            replace_item0.dead = 56
+
+            replace_item1 = copy.deepcopy(item0)
+            replace_item1.foo = "bar"
+
+            request_data = json.dumps([
+                {
+                    'current': item0.serializable(),
+                    'update': replace_item0.serializable()
+                },
+                {
+                    'current': item0.serializable(),
+                    'update': replace_item1.serializable()
+                },
+            ])
+
+            res = self.client().post('/items', data=request_data, headers=self.headers)
+            expected_errors = [{'parameter': '0.update.dead', 'errors': ['Not a valid boolean.']}, {'parameter': '1.update.foo', 'errors': ['Unknown field.']}]
+            response_data = json.loads(res.data)
+            for error in response_data:
+                self.assertIn(error, expected_errors)
 
 
 if __name__ == '__main__':
