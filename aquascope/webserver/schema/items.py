@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, ValidationError
 
 from aquascope.webserver.schema.custom_fields import (List, NullableBoolean,
                                                       LowercaseNullableString)
@@ -41,6 +41,12 @@ class PostItemSchema(Schema):
 class PostItemsUpdateSchema(Schema):
     current = fields.Nested(PostItemSchema, required=True)
     update = fields.Nested(PostItemSchema, required=True)
+
+    def load(self, json_data, many=None, partial=None, unknown=None):
+        if not json_data:
+            raise ValidationError(dict(length='Length must be non-zero'))
+
+        return super().load(json_data, many, partial, unknown)
 
 
 class GetItemsSchema(Schema):
