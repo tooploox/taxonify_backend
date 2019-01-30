@@ -58,7 +58,7 @@ class GetItemsSchema(Schema):
     acquisition_time_end = fields.DateTime(required=False)
 
     eating = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    dividng = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
+    dividing = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
     dead = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
     with_epiphytes = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
     broken = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
