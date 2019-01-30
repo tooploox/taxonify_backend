@@ -39,6 +39,8 @@ class FlaskAppTestCase(unittest.TestCase):
     def setUp(self):
         with self.app.app_context():
             self.client = app.test_client
+
+            self.db.items.drop()
             populate_db_with_items(DUMMY_ITEMS, self.db)
 
             access_token = create_access_token('testuser')

@@ -29,6 +29,7 @@ def populate_system(metadata_csv, images_directory, db, storage_client=None):
     items = df.to_dict('index').values()
     items = [Item(item) for item in items]
 
+    db.items.drop()
     for item in items:
         image_path = os.path.join(images_directory, item.filename)
         if not os.path.exists(image_path):
