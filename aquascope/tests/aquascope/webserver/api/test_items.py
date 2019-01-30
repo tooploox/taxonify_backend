@@ -176,8 +176,14 @@ class TestPostItems(FlaskAppTestCase):
         res = self.client().post('/items', data=request_data, headers=self.headers)
         self.assertEqual(res.status_code, 400)
 
-    def test_api_can_post_with_empty_list(self):
+    def test_api_cant_post_with_empty_list(self):
         request_data = json.dumps([])
+
+        res = self.client().post('/items', data=request_data, headers=self.headers)
+        self.assertEqual(res.status_code, 400)
+
+    def test_api_cant_post_with_empty_dict(self):
+        request_data = json.dumps({})
 
         res = self.client().post('/items', data=request_data, headers=self.headers)
         self.assertEqual(res.status_code, 400)
