@@ -1,12 +1,12 @@
 from flask import request
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
-from marshmallow import ValidationError
 
 
 from aquascope.webserver.data_access.db import Item, bulk_replace, find_items
 from aquascope.webserver.data_access.storage.blob import get_urls_for_items
 from aquascope.webserver.schema.items import PostItemsUpdateSchema, GetItemsSchema
+from aquascope.webserver.schema.custom_schema import FormattedValidationError
 
 
 class Items(Resource):
@@ -15,8 +15,8 @@ class Items(Resource):
         schema = GetItemsSchema()
         try:
             args = schema.load(request.args)
-        except ValidationError as e:
-            return e.messages, 400
+        except FormattedValidationError as e:
+            return e.formatted_messages, 400
 
         items = list(find_items(**args))
         urls = get_urls_for_items(items)
@@ -34,8 +34,8 @@ class Items(Resource):
 
         try:
             json_data = schema.load(json_data)
-        except ValidationError as e:
-            return e.messages, 400
+        except FormattedValidationError as e:
+            return e.formatted_messages, 400
 
         update_pairs = [
             (Item.from_request(elem['current']), Item.from_request(elem['update'])) for elem in json_data

@@ -1,10 +1,11 @@
-from marshmallow import Schema, fields, ValidationError
+from marshmallow import fields
 
 from aquascope.webserver.schema.custom_fields import (List, NullableBoolean,
                                                       LowercaseNullableString)
+from aquascope.webserver.schema.custom_schema import (CustomSchema, FormattedValidationError)
 
+class PostItemSchema(CustomSchema):
 
-class PostItemSchema(Schema):
     id = fields.String(data_key='_id', attribute='_id', required=True)
     filename = fields.String(required=True, allow_none=True)
     extension = LowercaseNullableString(required=True, allow_none=True)
@@ -38,18 +39,18 @@ class PostItemSchema(Schema):
     image_height = fields.Integer(required=True)
 
 
-class PostItemsUpdateSchema(Schema):
+class PostItemsUpdateSchema(CustomSchema):
     current = fields.Nested(PostItemSchema, required=True)
     update = fields.Nested(PostItemSchema, required=True)
 
     def load(self, json_data, many=None, partial=None, unknown=None):
         if not json_data:
-            raise ValidationError(dict(length='Length must be non-zero'))
+            raise FormattedValidationError(dict(length='Length must be non-zero'))
 
         return super().load(json_data, many, partial, unknown)
 
 
-class GetItemsSchema(Schema):
+class GetItemsSchema(CustomSchema):
     empire = LowercaseNullableString(required=False, allow_none=True)
     kingdom = LowercaseNullableString(required=False, allow_none=True)
     phylum = LowercaseNullableString(required=False, allow_none=True)
