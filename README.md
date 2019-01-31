@@ -26,9 +26,12 @@ In order to run the stack you need to setup a few environment files and fill req
 
 
 ## Run the stack locally with Docker
-In orded to run the stack locally you need to define all required environment files and execute the following commands:
+In order to run the stack locally you need to define all required environment files and execute the following commands:
 ```bash
 touch webserver.log
 docker-compose build
 docker-compose up -d
 ```
+
+## Running unit tests
+Assuming you have already prepared python environment, in order to run unit tests type `python test_runner.py` from the repository main directory.
