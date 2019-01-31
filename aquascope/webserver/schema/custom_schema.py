@@ -11,7 +11,8 @@ class FormattedValidationError(ValidationError):
         for parameter, errors in flat_dict.items():
             parameter = tuple(str(s) for s in parameter)
             result_list.append({"parameter": '.'.join(parameter), "errors": errors})
-        self.formatted_messages = result_list
+        self.formatted_messages = {"messages": result_list}
+        print(self.formatted_messages)
 
 
 class CustomSchema(Schema):

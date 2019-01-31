@@ -105,7 +105,7 @@ class TestGetItems(FlaskAppTestCase):
             res = self.client().get('/items', query_string="eating=bar&multiple_species=foobar&eating=foo", headers=self.headers)
             wrong_parameters = ['eating.0', 'eating.1', 'multiple_species.0']
 
-            res_wrong_parameters = [item['parameter'] for item in json.loads(res.data)]
+            res_wrong_parameters = [item['parameter'] for item in json.loads(res.data)["messages"]]
             self.assertCountEqual(wrong_parameters, res_wrong_parameters)
 
 
@@ -221,7 +221,7 @@ class TestPostItems(FlaskAppTestCase):
 
             res = self.client().post('/items', data=request_data, headers=self.headers)
             expected_errors = [{'parameter': '0.update.dead', 'errors': ['Not a valid boolean.']}, {'parameter': '1.update.foo', 'errors': ['Unknown field.']}]
-            response_data = json.loads(res.data)
+            response_data = json.loads(res.data)["messages"]
             self.assertCountEqual(expected_errors, response_data)
 
 
