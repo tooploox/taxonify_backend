@@ -1,8 +1,8 @@
-from marshmallow import fields, ValidationError
+from marshmallow import fields
 
 from aquascope.webserver.schema.custom_fields import (List, NullableBoolean,
                                                       LowercaseNullableString)
-from aquascope.webserver.schema.custom_schema import CustomSchema
+from aquascope.webserver.schema.custom_schema import (CustomSchema, FormattedValidationError)
 
 class PostItemSchema(CustomSchema):
 
@@ -45,7 +45,7 @@ class PostItemsUpdateSchema(CustomSchema):
 
     def load(self, json_data, many=None, partial=None, unknown=None):
         if not json_data:
-            raise ValidationError(dict(length='Length must be non-zero'))
+            raise FormattedValidationError(dict(length='Length must be non-zero'))
 
         return super().load(json_data, many, partial, unknown)
 
