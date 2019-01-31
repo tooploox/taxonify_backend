@@ -18,3 +18,4 @@ class CustomSchema(Schema):
     def handle_error(self, error, data):
         raise FormattedValidationError(message=error.messages, field_name=error.field_name,
                                        data=error.data, valid_data=error.valid_data, **error.kwargs)
+
