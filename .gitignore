@@ -1,3 +1,4 @@
+*.pyc
 .idea
 webserver.log
 __pycache__
