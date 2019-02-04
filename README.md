@@ -1,5 +1,11 @@
 # aquascope_backend
 
+## Getting started
+After you clone the repo please make sure you have also pulled LFS data. If not then run the following command:
+```bash
+git lfs pull
+```
+
 ## Environment files
 In order to run the stack you need to setup a few environment files and fill required values.
 
@@ -27,10 +33,17 @@ In order to run the stack you need to setup a few environment files and fill req
 
 ## Run the stack locally with Docker
 In order to run the stack locally you need to define all required environment files and execute the following commands:
+
+### Starting the stack
 ```bash
 touch webserver.log
 docker-compose build
 docker-compose up -d
+```
+
+### Removing the stack
+```bash
+docker-compose stop ; docker-compose rm -v -f
 ```
 
 ## Running unit tests
