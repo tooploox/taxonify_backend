@@ -36,6 +36,7 @@ In order to run the stack locally you need to define all required environment fi
 
 ### Starting the stack
 ```bash
+mkdir db_data
 touch webserver.log
 docker-compose build
 docker-compose up -d
@@ -48,3 +49,9 @@ docker-compose stop ; docker-compose rm -v -f
 
 ## Running unit tests
 Assuming you have already prepared python environment, in order to run unit tests type `python test_runner.py` from the repository main directory.
+
+## Seeding database with exemplary data
+If you want to seed the DB with exemplary data please make sure you have your local stack up and running and please execute the following command:
+```bash
+bash ./seed_db.bash
+```

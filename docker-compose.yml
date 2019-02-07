@@ -52,6 +52,7 @@ services:
       - 27017:27017
     volumes:
       - ./docker/local_db/:/docker-entrypoint-initdb.d/:ro
+      - ./db_data:/data/db
 
   storage-emulator:
     image: arafato/azurite
@@ -59,22 +60,6 @@ services:
       - executable=blob
     ports:
       - 10000:10000
-
-  data-population-one-shot:
-    build:
-      context: .
-      dockerfile: docker/webserver/Dockerfile
-    depends_on:
-      - mongo
-    volumes:
-      - .:/app
-    env_file:
-      - mongodb_user_credentials.env
-      - storage_credentials.env
-    environment:
-      - PYTHONPATH=/app
-    network_mode: host
-    entrypoint: python3 aquascope/scripts/populate_system.py data/metadata.csv data/images
 
   swagger-ui:
     image: swaggerapi/swagger-ui

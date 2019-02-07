@@ -3,6 +3,8 @@
 webserver.log
 __pycache__
 
+db_data/
+
 celery.env
 mongodb_root_credentials.env
 mongodb_user_credentials.env
