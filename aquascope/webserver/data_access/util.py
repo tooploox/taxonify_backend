@@ -44,8 +44,6 @@ def populate_system(metadata_csv, images_directory, db, storage_client=None):
         item._id = result.inserted_id
         blob_name = item_to_blob_name(item)
 
-
-
         blob_meta = dict(filename=item.filename)
         if storage_client:
             upload_blob(storage_client, container_name, blob_name, image_path, blob_meta)

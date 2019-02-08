@@ -15,7 +15,7 @@ def create_container(client, container_name):
     return client.create_container(container_name)
 
 
-def exists(client, container_name, blob_name=None,):
+def exists(client, container_name, blob_name=None):
     return client.exists(container_name, blob_name)
 
 
