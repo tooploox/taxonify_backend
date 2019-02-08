@@ -7,7 +7,7 @@ import pandas as pd
 from aquascope.webserver.data_access.conversions import (item_to_blob_name,
                                                          group_id_to_container_name)
 from aquascope.webserver.data_access.db import Item
-from aquascope.webserver.data_access.storage.blob import create_container, upload_blob
+from aquascope.webserver.data_access.storage.blob import create_container, upload_blob, exists
 
 
 def populate_db_with_items(items, db):
@@ -29,6 +29,11 @@ def populate_system(metadata_csv, images_directory, db, storage_client=None):
     items = df.to_dict('index').values()
     items = [Item(item) for item in items]
 
+    container_name = group_id_to_container_name(items[0].group_id)
+
+    if storage_client and not exists(storage_client, container_name):
+        create_container(storage_client, container_name)
+
     db.items.drop()
     for item in items:
         image_path = os.path.join(images_directory, item.filename)
@@ -39,10 +44,7 @@ def populate_system(metadata_csv, images_directory, db, storage_client=None):
         item._id = result.inserted_id
         blob_name = item_to_blob_name(item)
 
-        container_name = group_id_to_container_name(item.group_id)
 
-        if storage_client:
-            create_container(storage_client, container_name)
 
         blob_meta = dict(filename=item.filename)
         if storage_client:

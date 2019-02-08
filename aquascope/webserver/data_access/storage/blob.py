@@ -15,6 +15,10 @@ def create_container(client, container_name):
     return client.create_container(container_name)
 
 
+def exists(client, container_name, blob_name=None,):
+    return client.exists(container_name, blob_name)
+
+
 def generate_download_sas(client, container_name, blob_name, expiry_minutes=60):
     return client.generate_blob_shared_access_signature(container_name, blob_name,
                                                         permission=BlobPermissions.READ,
