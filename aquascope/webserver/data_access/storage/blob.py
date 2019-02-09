@@ -17,6 +17,11 @@ def create_container(client, container_name):
 def container_exists(client, container_name):
     return bool([c for c in client.list_containers() if c.name == container_name])
 
+def create_blob_from_stream(client, container_name, filename, stream, metadata=None):
+    return client.create_blob_from_stream(container_name, filename, stream,
+                                          metadata=metadata)
+
+
 def exists(client, container_name, blob_name=None):
     if blob_name is not None:
         return client.exists(container_name, blob_name)
