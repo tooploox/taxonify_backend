@@ -1,3 +1,4 @@
+from flask import current_app as app
 from flask import request
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
@@ -18,7 +19,8 @@ class Items(Resource):
         except FormattedValidationError as e:
             return e.formatted_messages, 400
 
-        items = list(find_items(**args))
+        db = app.config['db']
+        items = list(find_items(db, **args))
         urls = get_urls_for_items(items)
 
         return {
@@ -40,7 +42,9 @@ class Items(Resource):
         update_pairs = [
             (Item.from_request(elem['current']), Item.from_request(elem['update'])) for elem in json_data
         ]
-        result = bulk_replace(update_pairs)
+
+        db = app.config['db']
+        result = bulk_replace(db, update_pairs)
         return {
             "matched": result.matched_count,
             "modified": result.modified_count
