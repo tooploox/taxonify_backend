@@ -26,6 +26,12 @@ class Upload(Resource):
         celery_app.send_task('aquascope.tasks.upload_postprocess.parse_upload',
                              args=[blob_filename])
 
-        return {
-            'message': 'Ok'
-        }
+        return '', 204
+
+
+class UploadList(Resource):
+    @jwt_required
+    def get(self):
+        db = app.config['db']
+        docs = upload.find(db)
+        return [doc.serializable() for doc in docs]

@@ -8,10 +8,11 @@ from flask import current_app as app
 from flask_jwt_extended import create_access_token
 import mongomock
 
+from aquascope.tests.aquascope.webserver.data_access.db.dummy_uploads import DUMMY_UPLOADS
+from aquascope.tests.aquascope.webserver.data_access.db.dummy_items import DUMMY_ITEMS
 from aquascope.webserver.app import make_app
 from aquascope.webserver.data_access.storage import blob
-from aquascope.webserver.data_access.util import populate_db_with_items
-from aquascope.tests.aquascope.webserver.data_access.db.dummy_items import DUMMY_ITEMS
+from aquascope.webserver.data_access.util import populate_db_with_items, populate_db_with_uploads
 
 MONGO_CONNECTION_STRING = 'mongodb://example.server.com/aquascopedb'
 
@@ -51,6 +52,7 @@ class FlaskAppTestCase(unittest.TestCase):
 
     def purge_db(self):
         self.db.items.drop()
+        self.db.uploads.drop()
 
     def setUp(self):
         with self.app.app_context():
@@ -58,6 +60,7 @@ class FlaskAppTestCase(unittest.TestCase):
             self.purge_db()
             self.purge_storage()
             populate_db_with_items(DUMMY_ITEMS, self.db)
+            populate_db_with_uploads(DUMMY_UPLOADS, self.db)
 
             access_token = create_access_token('testuser')
             self.headers = {

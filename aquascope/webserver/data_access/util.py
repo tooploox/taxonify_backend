@@ -15,6 +15,11 @@ def populate_db_with_items(items, db):
     db.items.insert_many(items_dicts)
 
 
+def populate_db_with_uploads(uploads, db):
+    uploads_dicts = [upload.get_dict() for upload in uploads]
+    db.uploads.insert_many(uploads_dicts)
+
+
 def populate_system(metadata_csv, images_directory, db, storage_client=None):
     converter = {'image_width': pd.to_numeric,
                  'image_height': pd.to_numeric,

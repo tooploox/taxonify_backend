@@ -2,28 +2,14 @@ import copy
 
 from bson import ObjectId
 import dateutil.parser
-from flask import current_app as app
 from pymongo import ReplaceOne
 
-
-class ItemInitializationError(ValueError):
-    pass
+from aquascope.webserver.data_access.db.db_document import DbDocument
 
 
-class Item(object):
+class Item(DbDocument):
     def __init__(self, obj):
-        for k, v in obj.items():
-            if isinstance(v, dict):
-                setattr(self, k, Item(v))
-            else:
-                setattr(self, k, v)
-
-    def __getitem__(self, key):
-        return self.__dict__[key]
-
-    def __repr__(self):
-        return '{%s}' % str(', '.join('%s : %s' % (k, repr(v)) for
-                                      (k, v) in self.__dict__.items()))
+        super(Item, self).__init__(obj)
 
     @staticmethod
     def from_request(request_dict):
@@ -41,9 +27,6 @@ class Item(object):
         data['acquisition_time'] = data['acquisition_time'].isoformat()
         data['_id'] = str(data['_id'])
         return data
-
-    def get_dict(self):
-        return copy.deepcopy(self.__dict__)
 
 
 def find_items(db, *args, **kwargs):
