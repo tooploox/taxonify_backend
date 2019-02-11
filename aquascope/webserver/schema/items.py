@@ -1,7 +1,7 @@
 from marshmallow import fields
 
 from aquascope.webserver.schema.custom_fields import (List, NullableBoolean,
-                                                      LowercaseNullableString)
+                                                      LowercaseNullableString, NullableString)
 from aquascope.webserver.schema.custom_schema import (CustomSchema, FormattedValidationError)
 
 class PostItemSchema(CustomSchema):
@@ -59,7 +59,7 @@ class GetItemsSchema(CustomSchema):
     family = LowercaseNullableString(required=False, allow_none=True)
     genus = LowercaseNullableString(required=False, allow_none=True)
     species = LowercaseNullableString(required=False, allow_none=True)
-    filename = LowercaseNullableString(required=False, allow_none=True)
+    filename = NullableString(required=False, allow_none=True)
 
     acquisition_time_start = fields.DateTime(required=False)
     acquisition_time_end = fields.DateTime(required=False)
