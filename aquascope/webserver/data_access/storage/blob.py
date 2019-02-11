@@ -14,6 +14,13 @@ def blob_storage_client(connection_string):
 def create_container(client, container_name):
     return client.create_container(container_name)
 
+def container_exists(client, container_name):
+    return bool([c for c in client.list_containers() if c.name == container_name])
+
+def exists(client, container_name, blob_name=None):
+    if blob_name is not None:
+        return client.exists(container_name, blob_name)
+    return container_exists(client, container_name)
 
 def generate_download_sas(client, container_name, blob_name, expiry_minutes=60):
     return client.generate_blob_shared_access_signature(container_name, blob_name,
