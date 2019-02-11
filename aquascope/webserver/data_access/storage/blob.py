@@ -14,8 +14,18 @@ def blob_storage_client(connection_string):
 def create_container(client, container_name):
     return client.create_container(container_name)
 
+
+def list_containers(client):
+    return client.list_containers()
+
+
+def delete_container(client, container_name):
+    return client.delete_container(container_name)
+
+
 def container_exists(client, container_name):
-    return bool([c for c in client.list_containers() if c.name == container_name])
+    return bool([c for c in list_containers(client) if c.name == container_name])
+
 
 def create_blob_from_stream(client, container_name, filename, stream, metadata=None):
     return client.create_blob_from_stream(container_name, filename, stream,
@@ -26,6 +36,7 @@ def exists(client, container_name, blob_name=None):
     if blob_name is not None:
         return client.exists(container_name, blob_name)
     return container_exists(client, container_name)
+
 
 def generate_download_sas(client, container_name, blob_name, expiry_minutes=60):
     return client.generate_blob_shared_access_signature(container_name, blob_name,
@@ -43,6 +54,10 @@ def generate_container_download_sas(client, container_name, expiry_minutes=60):
 def upload_blob(client, container_name, blob_name, filepath, metadata):
     return client.create_blob_from_path(container_name, blob_name, filepath,
                                         metadata=metadata)
+
+
+def download_blob(client, container_name, blob_name, filepath):
+    return client.get_blob_to_path(container_name, blob_name, filepath)
 
 
 def make_blob_url(client, container_name, blob_name, sas_token=None):
