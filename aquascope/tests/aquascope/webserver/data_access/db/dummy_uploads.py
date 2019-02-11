@@ -11,16 +11,21 @@ DUMMY_UPLOADS = [
     Upload({
         '_id': ObjectId('000000000000000000001001'),
         'filename': 'dummy1',
-        'state': 'processing'
+        'state': 'uploaded'
     }),
     Upload({
         '_id': ObjectId('000000000000000000001002'),
         'filename': 'dummy2',
-        'state': 'finished'
+        'state': 'processing'
     }),
     Upload({
         '_id': ObjectId('000000000000000000001003'),
         'filename': 'dummy3',
+        'state': 'finished'
+    }),
+    Upload({
+        '_id': ObjectId('000000000000000000001004'),
+        'filename': 'dummy4',
         'state': 'failed'
     })
 ]

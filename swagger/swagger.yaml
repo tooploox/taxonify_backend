@@ -527,7 +527,7 @@ components:
             type: string
           state:
             type: string
-            enum: [initialized, processing, finished, failed]
+            enum: [initialized, uploaded, processing, finished, failed]
           generation_date:
             type: string
             format: date-time

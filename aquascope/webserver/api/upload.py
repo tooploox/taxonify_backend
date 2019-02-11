@@ -21,6 +21,7 @@ class Upload(Resource):
         blob_meta = dict(filename=filename)
         blob.create_blob_from_stream(storage_client, container_name, blob_filename, request.stream,
                                      blob_meta)
+        upload.update_state(db, blob_filename, 'uploaded')
 
         celery_app = app.config['celery']
         celery_app.send_task('aquascope.tasks.upload_postprocess.parse_upload',
