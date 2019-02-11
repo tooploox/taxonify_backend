@@ -46,7 +46,7 @@ class Item(object):
         return copy.deepcopy(self.__dict__)
 
 
-def find_items(*args, **kwargs):
+def find_items(db, *args, **kwargs):
     query = dict()
     for key, value in kwargs.items():
         if type(value) == list:
@@ -70,15 +70,13 @@ def find_items(*args, **kwargs):
         else:
             query[key] = value
 
-    db = app.config['db']
     return (Item.from_db_data(item) for item in db.items.find(query))
 
 
-def bulk_replace(items):
+def bulk_replace(db, items):
     bulks = []
     for current, update in items:
         bulk = ReplaceOne(current.get_dict(), update.get_dict())
         bulks.append(bulk)
 
-    db = app.config['db']
     return db.items.bulk_write(bulks)

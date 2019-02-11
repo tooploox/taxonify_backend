@@ -16,7 +16,9 @@ class TestFindItems(FlaskAppTestCase):
             find_query = {
                 'eating': [True]
             }
-            res = list(find_items(**find_query))
+
+            db = self.app.config['db']
+            res = list(find_items(db, **find_query))
             res = [res['_id'] for res in res]
             expected = [
                 ObjectId('000000000000000000000000'),
@@ -29,7 +31,9 @@ class TestFindItems(FlaskAppTestCase):
             find_query = {
                 'eating': [None]
             }
-            res = list(find_items(**find_query))
+
+            db = self.app.config['db']
+            res = list(find_items(db, **find_query))
             res = [res['_id'] for res in res]
             expected = [
                 ObjectId('000000000000000000000003'),
@@ -42,7 +46,9 @@ class TestFindItems(FlaskAppTestCase):
             find_query = {
                 'eating': [True, None]
             }
-            res = list(find_items(**find_query))
+
+            db = self.app.config['db']
+            res = list(find_items(db, **find_query))
             res = [res['_id'] for res in res]
             expected = [
                 ObjectId('000000000000000000000000'),
@@ -57,7 +63,9 @@ class TestFindItems(FlaskAppTestCase):
             find_query = {
                 'acquisition_time_start': dateutil.parser.parse('2019-01-11T18:06:34.151Z')
             }
-            res = list(find_items(**find_query))
+
+            db = self.app.config['db']
+            res = list(find_items(db, **find_query))
             res = [res['_id'] for res in res]
             expected = [
                 ObjectId('000000000000000000000000'),
@@ -71,7 +79,9 @@ class TestFindItems(FlaskAppTestCase):
                 'acquisition_time_start': dateutil.parser.parse('2019-01-02T18:06:34.151Z'),
                 'acquisition_time_end': dateutil.parser.parse('2019-01-11T18:06:34.151Z')
             }
-            res = list(find_items(**find_query))
+
+            db = self.app.config['db']
+            res = list(find_items(db, **find_query))
             res = [res['_id'] for res in res]
             expected = [
                 ObjectId('000000000000000000000003'),
@@ -86,7 +96,9 @@ class TestFindItems(FlaskAppTestCase):
                 'dead': [True, False],
                 'acquisition_time_end': dateutil.parser.parse('2019-01-15T18:06:34.151Z')
             }
-            res = list(find_items(**find_query))
+
+            db = self.app.config['db']
+            res = list(find_items(db, **find_query))
             res = [res['_id'] for res in res]
             expected = [
                 ObjectId('000000000000000000000002')
@@ -105,7 +117,9 @@ class TestBulkReplace(FlaskAppTestCase):
             update_pairs = [
                 (item, replace_item)
             ]
-            result = bulk_replace(update_pairs)
+
+            db = self.app.config['db']
+            result = bulk_replace(db, update_pairs)
 
             self.assertEqual(result.matched_count, 0)
             self.assertEqual(result.modified_count, 0)
@@ -118,7 +132,9 @@ class TestBulkReplace(FlaskAppTestCase):
             update_pairs = [
                 (item, replace_item)
             ]
-            result = bulk_replace(update_pairs)
+
+            db = self.app.config['db']
+            result = bulk_replace(db, update_pairs)
 
             self.assertEqual(result.matched_count, 1)
             self.assertEqual(result.modified_count, 0)
@@ -132,7 +148,9 @@ class TestBulkReplace(FlaskAppTestCase):
             update_pairs = [
                 (item, replace_item)
             ]
-            result = bulk_replace(update_pairs)
+
+            db = self.app.config['db']
+            result = bulk_replace(db, update_pairs)
 
             self.assertEqual(result.matched_count, 1)
             self.assertEqual(result.modified_count, 1)
@@ -151,7 +169,9 @@ class TestBulkReplace(FlaskAppTestCase):
                 (item, replace_item1)
 
             ]
-            result = bulk_replace(update_pairs)
+
+            db = self.app.config['db']
+            result = bulk_replace(db, update_pairs)
 
             db_item = self.db.items.find_one({'_id': item._id})
             self.assertDictEqual(replace_item0.get_dict(), db_item)
@@ -173,7 +193,9 @@ class TestBulkReplace(FlaskAppTestCase):
                 (item0, replace_item0),
                 (item1, replace_item1)
             ]
-            result = bulk_replace(update_pairs)
+
+            db = self.app.config['db']
+            result = bulk_replace(db, update_pairs)
 
             self.assertEqual(result.matched_count, 2)
             self.assertEqual(result.modified_count, 2)
@@ -191,7 +213,9 @@ class TestBulkReplace(FlaskAppTestCase):
                 (item0, replace_item0),
                 (item1, replace_item1)
             ]
-            result = bulk_replace(update_pairs)
+
+            db = self.app.config['db']
+            result = bulk_replace(db, update_pairs)
 
             self.assertEqual(result.matched_count, 2)
             self.assertEqual(result.modified_count, 1)
@@ -211,7 +235,9 @@ class TestBulkReplace(FlaskAppTestCase):
                 (item0, replace_item0),
                 (item1, replace_item1)
             ]
-            result = bulk_replace(update_pairs)
+
+            db = self.app.config['db']
+            result = bulk_replace(db, update_pairs)
 
             self.assertEqual(result.matched_count, 1)
             self.assertEqual(result.modified_count, 1)
