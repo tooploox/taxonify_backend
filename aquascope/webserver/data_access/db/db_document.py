@@ -3,7 +3,8 @@ import copy
 
 class DbDocument(object):
     def __init__(self, obj):
-        for k, v in obj.items():
+        o = obj.get_dict() if isinstance(obj, DbDocument) else obj
+        for k, v in o.items():
             if isinstance(v, dict):
                 setattr(self, k, DbDocument(v))
             else:

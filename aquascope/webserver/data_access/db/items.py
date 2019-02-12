@@ -20,7 +20,7 @@ class Item(DbDocument):
 
     @staticmethod
     def from_db_data(db_data):
-        return Item(copy.deepcopy(db_data))
+        return Item(DbDocument.from_db_data(db_data))
 
     def serializable(self):
         data = self.get_dict()

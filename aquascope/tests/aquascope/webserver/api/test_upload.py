@@ -13,7 +13,7 @@ TEST_FILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 class TestPutUpload(FlaskAppTestCase):
 
     @mock.patch.object(celery.Celery, 'send_task', return_value=None)
-    def test_api_can_put_file(self, send_task_mock):
+    def test_api_can_put_file(self, mock_celery_send_task):
         with self.app.app_context():
             with open(TEST_FILE_PATH, 'rb') as data:
                 res = self.client().put('/upload/dummy_file',

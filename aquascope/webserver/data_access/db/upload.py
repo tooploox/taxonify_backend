@@ -17,7 +17,7 @@ class Upload(DbDocument):
 
     @staticmethod
     def from_db_data(db_data):
-        return Upload(copy.deepcopy(db_data))
+        return Upload(DbDocument.from_db_data(db_data))
 
 
 def create(db, filename):

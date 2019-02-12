@@ -2,8 +2,8 @@ from flask import current_app as app, request
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 
-import aquascope.webserver.data_access.db.upload as upload
-import aquascope.webserver.data_access.storage.blob as blob
+from aquascope.webserver.data_access.db import upload
+from aquascope.webserver.data_access.storage import blob
 
 
 class Upload(Resource):
@@ -27,7 +27,7 @@ class Upload(Resource):
         celery_app.send_task('aquascope.tasks.upload_postprocess.parse_upload',
                              args=[blob_filename])
 
-        return '', 204
+        return None, 204
 
 
 class UploadList(Resource):
