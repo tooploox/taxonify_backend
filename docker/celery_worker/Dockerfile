@@ -8,4 +8,4 @@ RUN pipenv install --system --deploy
 
 ADD . /app
 
-ENTRYPOINT celery -A aquascope.tasks.celery_app worker --loglevel=info
+ENTRYPOINT celery -A aquascope.tasks.celery_app worker --loglevel=info --concurrency=1

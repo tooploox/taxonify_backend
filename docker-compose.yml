@@ -41,6 +41,8 @@ services:
     env_file:
       - celery.env
       - celery_consts.env
+      - mongodb_user_credentials.env
+      - storage_credentials.env
     network_mode: host
 
   mongo:

@@ -16,6 +16,7 @@ def make_app(db, storage_connection_string, jwt_secret_key,
              celery_user, celery_password, celery_address):
     logging.basicConfig(filename='webserver.log', level=logging.DEBUG,
                         format="[%(asctime)s] %(levelname)s in %(module)s: %(message)s")
+    logging.getLogger("azure.storage").setLevel(logging.CRITICAL)
 
     app = Flask(__name__)
     app.config['db'] = db

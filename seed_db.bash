@@ -9,4 +9,4 @@ docker run \
     -e PYTHONPATH=/app \
     --entrypoint="python3" \
     data-population-one-shot \
-    aquascope/scripts/populate_system.py data/metadata.csv data/images
+    aquascope/scripts/populate_system.py data/5p0xMAG_small

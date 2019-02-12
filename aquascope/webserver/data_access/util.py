@@ -1,13 +1,28 @@
 from datetime import datetime
 import os
 
+import dateutil
 import numpy as np
 import pandas as pd
+from PIL import Image
 
 from aquascope.webserver.data_access.conversions import (item_to_blob_name,
                                                          group_id_to_container_name)
 from aquascope.webserver.data_access.db import Item
 from aquascope.webserver.data_access.storage.blob import create_container, upload_blob, exists
+
+
+TAXONOMY_FIELDS = [
+    'empire', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'
+]
+ADDITIONAL_ATTRIBUTES_FIELDS = [
+    'with_eggs', 'dividing', 'dead', 'with_epibiont', 'with_parasite', 'broken',
+    'colony', 'cluster', 'eating', 'multiple_species', 'partially_cropped', 'male',
+    'female', 'juvenile', 'adult', 'ephippium', 'resting_egg', 'heterocyst', 'akinete',
+    'with_spines', 'beatles', 'stones', 'zeppelin', 'floyd', 'acdc', 'hendrix',
+    'alan_parsons', 'allman', 'dire_straits', 'eagles', 'guns', 'purple', 'van_halen',
+    'skynyrd', 'zz_top', 'iron', 'police', 'moore', 'inxs', 'chilli_peppers'
+]
 
 
 def populate_db_with_items(items, db):
@@ -20,35 +35,45 @@ def populate_db_with_uploads(uploads, db):
     db.uploads.insert_many(uploads_dicts)
 
 
-def populate_system(metadata_csv, images_directory, db, storage_client=None):
-    converter = {'image_width': pd.to_numeric,
-                 'image_height': pd.to_numeric,
-                 'acquisition_time': lambda x: datetime.fromtimestamp(float(x))
-                 }
-    taxonomy = ['empire', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
-    taxonomy_converter = {x: lambda x: str(x).lower() for x in taxonomy}
-    converter = {**converter, **taxonomy_converter}
-    df = pd.read_csv(metadata_csv, converters=converter)
-    df = df.replace({'TRUE': True, 'FALSE': False, 'null': None, np.nan: None})
+def populate_system_with_items(data_dir, db, storage_client=None):
+    features_path = os.path.join(data_dir, 'features.tsv')
+    images = os.listdir(data_dir)
+    images.remove('features.tsv')
 
-    items = df.to_dict('index').values()
-    items = [Item(item) for item in items]
+    converters = {
+        'timestamp': lambda x: dateutil.parser.parse(x),
+        'url': lambda x: os.path.basename(x)
+    }
+    df = pd.read_csv(features_path, converters=converters, sep='\t')
 
-    container_name = group_id_to_container_name(items[0].group_id)
+    for field in TAXONOMY_FIELDS + ADDITIONAL_ATTRIBUTES_FIELDS:
+        if field not in df.columns:
+            df[field] = None
 
-    if storage_client and not exists(storage_client, container_name):
-        create_container(storage_client, container_name)
-
-    db.items.drop()
-    for item in items:
-        image_path = os.path.join(images_directory, item.filename)
+    items = []
+    for item in list(df.to_dict('index').values()):
+        item['acquisition_time'] = item.pop('timestamp')
+        item['filename'] = os.path.basename(item.pop('url'))
+        image_path = os.path.join(data_dir, item['filename'])
         if not os.path.exists(image_path):
             continue
 
+        image = Image.open(image_path)
+        item['image_width'], item['image_height'] = image.size
+        item['extension'] = os.path.splitext(item['filename'])[1]
+        item['group_id'] = 'processed'
+        items.append(Item(item))
+
+    container_name = group_id_to_container_name(items[0].group_id)
+    if storage_client and not exists(storage_client, container_name):
+        create_container(storage_client, container_name)
+
+    for item in items:
         result = db.items.insert_one(item.get_dict())
         item._id = result.inserted_id
         blob_name = item_to_blob_name(item)
 
+        image_path = os.path.join(data_dir, item.filename)
         blob_meta = dict(filename=item.filename)
         if storage_client:
             upload_blob(storage_client, container_name, blob_name, image_path, blob_meta)
