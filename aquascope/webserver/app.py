@@ -48,6 +48,8 @@ def make_app(db, storage_connection_string, jwt_secret_key,
     server_api.add_resource(api.UserTokenRefresh, '/user/refresh')
     server_api.add_resource(api.Items, '/items')
     server_api.add_resource(api.Sas, '/sas')
+    server_api.add_resource(api.Upload, '/upload/<string:filename>')
+    server_api.add_resource(api.UploadList, '/upload/list')
 
     return app
 

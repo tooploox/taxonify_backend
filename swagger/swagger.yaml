@@ -336,6 +336,43 @@ paths:
                 $ref: '#/components/schemas/UnknownArgumentsResult'
 
 
+  /upload/{filename}:
+    put:
+      description: 'Data upload handle'
+      operationId: put_upload
+      tags:
+        - Upload
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: filename
+          in: path
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '204':
+          description: OK
+
+  /upload/list:
+    get:
+      description: 'Obtains list of uploads'
+      operationId: get_upload_list
+      tags:
+        - Upload
+      security:
+       - bearerAuth: []
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadListResult'
+
+
 components:
   securitySchemes:
     bearerAuth:
@@ -480,6 +517,20 @@ components:
       oneOf:
         - $ref: '#/components/schemas/InvalidSasChoice'
         - $ref: '#/components/schemas/UnknownArgumentsResult'
+    UploadListResult:
+      type: array
+      items:
+        properties:
+          _id:
+            type: string
+          filename:
+            type: string
+          state:
+            type: string
+            enum: [initialized, uploaded, processing, finished, failed]
+          generation_date:
+            type: string
+            format: date-time
 
 
 tags:
@@ -489,3 +540,5 @@ tags:
     description: Endpoints responsible for items (data samples) management
   - name: Sas
     description: Endpoints responsible for SAS tokens (data access tokens) management
+  - name: Upload
+    description: Endpoints responsible for upload files management
