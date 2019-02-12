@@ -1,4 +1,5 @@
 import copy
+import os
 
 from bson import ObjectId
 import dateutil.parser
@@ -21,6 +22,17 @@ class Item(DbDocument):
     @staticmethod
     def from_db_data(db_data):
         return Item(DbDocument.from_db_data(db_data))
+
+    @staticmethod
+    def from_tsv_row(row, image_width, image_height):
+        item = copy.deepcopy(row)
+        item['acquisition_time'] = item.pop('timestamp')
+        item['filename'] = os.path.basename(item.pop('url'))
+        item['image_width'] = image_width
+        item['image_height'] = image_height
+        item['extension'] = os.path.splitext(item['filename'])[1]
+        item['group_id'] = 'processed'
+        return Item(item)
 
     def serializable(self):
         data = self.get_dict()

@@ -1,8 +1,6 @@
-from datetime import datetime
 import os
 
 import dateutil
-import numpy as np
 import pandas as pd
 from PIL import Image
 
@@ -52,17 +50,13 @@ def populate_system_with_items(data_dir, db, storage_client=None):
 
     items = []
     for item in list(df.to_dict('index').values()):
-        item['acquisition_time'] = item.pop('timestamp')
-        item['filename'] = os.path.basename(item.pop('url'))
-        image_path = os.path.join(data_dir, item['filename'])
+        image_path = os.path.join(data_dir, os.path.basename(item['url']))
         if not os.path.exists(image_path):
             continue
 
         image = Image.open(image_path)
-        item['image_width'], item['image_height'] = image.size
-        item['extension'] = os.path.splitext(item['filename'])[1]
-        item['group_id'] = 'processed'
-        items.append(Item(item))
+        width, height = image.size
+        items.append(Item.from_tsv_row(item, width, height))
 
     container_name = group_id_to_container_name(items[0].group_id)
     if storage_client and not exists(storage_client, container_name):
