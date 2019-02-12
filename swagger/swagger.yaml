@@ -204,6 +204,26 @@ paths:
           schema:
             type: string
             example: 'images_00000_SPC-EAWAG-5P0X-15433639.*'
+        - name: acquisition_time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            example: '2019-01-26 00:00:00.000Z'
+        - name: acquisition_time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            example: '2019-01-27 00:00:00.000Z'
+        - name: with_eggs
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
         - name: dividing
           in: query
           required: false
@@ -220,7 +240,15 @@ paths:
             items:
               type: boolean
               nullable: true
-        - name: with_epiphytes
+        - name: with_epibiont
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: with_parasite
           in: query
           required: false
           schema:
@@ -244,6 +272,14 @@ paths:
             items:
               type: boolean
               nullable: true
+        - name: cluster
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
         - name: eating
           in: query
           required: false
@@ -260,7 +296,7 @@ paths:
             items:
               type: boolean
               nullable: true
-        - name: cropped
+        - name: partially_cropped
           in: query
           required: false
           schema:
@@ -300,7 +336,7 @@ paths:
             items:
               type: boolean
               nullable: true
-        - name: with_eggs
+        - name: ephippium
           in: query
           required: false
           schema:
@@ -308,18 +344,198 @@ paths:
             items:
               type: boolean
               nullable: true
-        - name: acquisition_time_start
+        - name: resting_egg
           in: query
           required: false
           schema:
-            type: string
-            example: '2019-01-26 00:00:00.000Z'
-        - name: acquisition_time_end
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: heterocyst
           in: query
           required: false
           schema:
-            type: string
-            example: '2019-01-27 00:00:00.000Z'
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: akinete
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: with_spines
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: beatles
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: stones
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: zeppelin
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: floyd
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: acdc
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: hendrix
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: alan_parsons
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: allman
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: dire_straits
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: eagles
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: guns
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: purple
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: van_halen
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: skynyrd
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: zz_top
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: iron
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: police
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: moore
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: inxs
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: chilli_peppers
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
 
       responses:
         '200':

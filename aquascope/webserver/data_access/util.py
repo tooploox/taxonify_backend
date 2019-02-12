@@ -7,20 +7,8 @@ from PIL import Image
 from aquascope.webserver.data_access.conversions import (item_to_blob_name,
                                                          group_id_to_container_name)
 from aquascope.webserver.data_access.db import Item
+from aquascope.webserver.data_access.db.items import TAXONOMY_FIELDS, ADDITIONAL_ATTRIBUTES_FIELDS
 from aquascope.webserver.data_access.storage.blob import create_container, upload_blob, exists
-
-
-TAXONOMY_FIELDS = [
-    'empire', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'
-]
-ADDITIONAL_ATTRIBUTES_FIELDS = [
-    'with_eggs', 'dividing', 'dead', 'with_epibiont', 'with_parasite', 'broken',
-    'colony', 'cluster', 'eating', 'multiple_species', 'partially_cropped', 'male',
-    'female', 'juvenile', 'adult', 'ephippium', 'resting_egg', 'heterocyst', 'akinete',
-    'with_spines', 'beatles', 'stones', 'zeppelin', 'floyd', 'acdc', 'hendrix',
-    'alan_parsons', 'allman', 'dire_straits', 'eagles', 'guns', 'purple', 'van_halen',
-    'skynyrd', 'zz_top', 'iron', 'police', 'moore', 'inxs', 'chilli_peppers'
-]
 
 
 def populate_db_with_items(items, db):

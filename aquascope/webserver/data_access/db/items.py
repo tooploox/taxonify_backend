@@ -7,6 +7,18 @@ from pymongo import ReplaceOne
 
 from aquascope.webserver.data_access.db.db_document import DbDocument
 
+TAXONOMY_FIELDS = [
+    'empire', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'
+]
+ADDITIONAL_ATTRIBUTES_FIELDS = [
+    'with_eggs', 'dividing', 'dead', 'with_epibiont', 'with_parasite', 'broken',
+    'colony', 'cluster', 'eating', 'multiple_species', 'partially_cropped', 'male',
+    'female', 'juvenile', 'adult', 'ephippium', 'resting_egg', 'heterocyst', 'akinete',
+    'with_spines', 'beatles', 'stones', 'zeppelin', 'floyd', 'acdc', 'hendrix',
+    'alan_parsons', 'allman', 'dire_straits', 'eagles', 'guns', 'purple', 'van_halen',
+    'skynyrd', 'zz_top', 'iron', 'police', 'moore', 'inxs', 'chilli_peppers'
+]
+
 
 class Item(DbDocument):
     def __init__(self, obj):
