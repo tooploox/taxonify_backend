@@ -11,6 +11,10 @@ from aquascope.webserver.data_access.db.items import TAXONOMY_FIELDS, ADDITIONAL
 from aquascope.webserver.data_access.storage.blob import create_container, upload_blob, exists
 
 
+class MissingTsvFileError(ValueError):
+    pass
+
+
 def populate_db_with_items(items, db):
     items_dicts = [item.get_dict() for item in items]
     db.items.insert_many(items_dicts)
@@ -24,7 +28,11 @@ def populate_db_with_uploads(uploads, db):
 def populate_system_with_items(data_dir, db, storage_client=None):
     features_path = os.path.join(data_dir, 'features.tsv')
     images = os.listdir(data_dir)
-    images.remove('features.tsv')
+
+    try:
+        images.remove('features.tsv')
+    except ValueError:
+        raise MissingTsvFileError
 
     converters = {
         'timestamp': lambda x: dateutil.parser.parse(x),
@@ -40,9 +48,6 @@ def populate_system_with_items(data_dir, db, storage_client=None):
     items = []
     for item in list(df.to_dict('index').values()):
         image_path = os.path.join(data_dir, os.path.basename(item['url']))
-        if not os.path.exists(image_path):
-            continue
-
         image = Image.open(image_path)
         width, height = image.size
         items.append(Item.from_tsv_row(item, width, height))
