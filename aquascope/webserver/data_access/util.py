@@ -6,8 +6,9 @@ from PIL import Image
 
 from aquascope.webserver.data_access.conversions import (item_to_blob_name,
                                                          group_id_to_container_name)
-from aquascope.webserver.data_access.db import Item
+from aquascope.webserver.data_access.db import Item, upload
 from aquascope.webserver.data_access.db.items import TAXONOMY_FIELDS, ADDITIONAL_ATTRIBUTES_FIELDS, MORPHOMETRIC_FIELDS
+from aquascope.webserver.data_access.storage import blob
 from aquascope.webserver.data_access.storage.blob import create_container, upload_blob, exists
 
 
@@ -23,6 +24,20 @@ def populate_db_with_items(items, db):
 def populate_db_with_uploads(uploads, db):
     uploads_dicts = [upload.get_dict() for upload in uploads]
     db.uploads.insert_many(uploads_dicts)
+
+
+def upload_package_from_stream(filename, stream, db, storage_client):
+    container_name = blob.group_id_to_container_name('upload')
+    if not blob.exists(storage_client, container_name):
+        blob.create_container(storage_client, container_name)
+
+    upload_doc = upload.create(db, filename)
+    blob_filename = str(upload_doc.inserted_id)
+    blob_meta = dict(filename=filename)
+    blob.create_blob_from_stream(storage_client, container_name, blob_filename, stream,
+                                 blob_meta)
+    upload.update_state(db, blob_filename, 'uploaded')
+    return blob_filename
 
 
 def populate_system_with_items(data_dir, db, storage_client=None):
