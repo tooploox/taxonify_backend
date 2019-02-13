@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import dateutil
 from bson import ObjectId
 
 from aquascope.webserver.data_access.db import Item
@@ -26,7 +27,7 @@ DUMMY_ITEMS = [
         "intensity_gray_moment_hu_1": 0.00162911271992,
         "intensity_gray_moment_hu_2": 6.02185718988395e-07,
         "intensity_gray_moment_hu_3": 1.26728600174152e-10,
-        "intensity_gray_median_intensity": 87,
+        "intensity_gray_median_intensity": 87.0,
         "intensity_gray_mass_displace_in_minors": 0.021203842389859,
         "intensity_gray_mean_intensity": 84.08,
         "intensity_gray_perc_25_intensity": 39.0,
@@ -40,7 +41,7 @@ DUMMY_ITEMS = [
         "intensity_red_moment_hu_1": 0.002005703596185,
         "intensity_red_moment_hu_2": 8.66777471825988e-07,
         "intensity_red_moment_hu_3": 2.00807713614223e-10,
-        "intensity_red_median_intensity": 68,
+        "intensity_red_median_intensity": 68.0,
         "intensity_red_mass_displace_in_minors": 0.039831665466914,
         "intensity_red_mean_intensity": 67.5858823529412,
         "intensity_red_perc_25_intensity": 34.0,
@@ -121,7 +122,7 @@ DUMMY_ITEMS = [
         "moore": None,
         "inxs": None,
         "chilli_peppers": None,
-        "acquisition_time": datetime.fromtimestamp(1547974800.000),  # Human time: Sunday, 20 January 2019 10:00:00,
+        "acquisition_time": dateutil.parser.parse('2019-01-20 10:00:00'),
         "filename": 'image_000.jpeg',
         "image_width": 48,
         "image_height": 32,
@@ -148,7 +149,7 @@ DUMMY_ITEMS = [
         "intensity_gray_moment_hu_1": 0.00162911271992,
         "intensity_gray_moment_hu_2": 6.02185718988395e-07,
         "intensity_gray_moment_hu_3": 1.26728600174152e-10,
-        "intensity_gray_median_intensity": 87,
+        "intensity_gray_median_intensity": 87.0,
         "intensity_gray_mass_displace_in_minors": 0.021203842389859,
         "intensity_gray_mean_intensity": 84.08,
         "intensity_gray_perc_25_intensity": 39.0,
@@ -162,7 +163,7 @@ DUMMY_ITEMS = [
         "intensity_red_moment_hu_1": 0.002005703596185,
         "intensity_red_moment_hu_2": 8.66777471825988e-07,
         "intensity_red_moment_hu_3": 2.00807713614223e-10,
-        "intensity_red_median_intensity": 68,
+        "intensity_red_median_intensity": 68.0,
         "intensity_red_mass_displace_in_minors": 0.039831665466914,
         "intensity_red_mean_intensity": 67.5858823529412,
         "intensity_red_perc_25_intensity": 34.0,
@@ -246,7 +247,7 @@ DUMMY_ITEMS = [
         "filename": "image_001.jpeg",
         "extension": ".jpeg",
         "group_id": "processed",
-        "acquisition_time": datetime.fromtimestamp(1547960400.000),  # Human time: Sunday, 20 January 2019 06:00:00
+        "acquisition_time": dateutil.parser.parse('2019-01-20 06:00:00'),
         "image_width": 100,
         "image_height": 100
     }),
@@ -270,7 +271,7 @@ DUMMY_ITEMS = [
         "intensity_gray_moment_hu_1": 0.00162911271992,
         "intensity_gray_moment_hu_2": 6.02185718988395e-07,
         "intensity_gray_moment_hu_3": 1.26728600174152e-10,
-        "intensity_gray_median_intensity": 87,
+        "intensity_gray_median_intensity": 87.0,
         "intensity_gray_mass_displace_in_minors": 0.021203842389859,
         "intensity_gray_mean_intensity": 84.08,
         "intensity_gray_perc_25_intensity": 39.0,
@@ -284,7 +285,7 @@ DUMMY_ITEMS = [
         "intensity_red_moment_hu_1": 0.002005703596185,
         "intensity_red_moment_hu_2": 8.66777471825988e-07,
         "intensity_red_moment_hu_3": 2.00807713614223e-10,
-        "intensity_red_median_intensity": 68,
+        "intensity_red_median_intensity": 68.0,
         "intensity_red_mass_displace_in_minors": 0.039831665466914,
         "intensity_red_mean_intensity": 67.5858823529412,
         "intensity_red_perc_25_intensity": 34.0,
@@ -368,7 +369,7 @@ DUMMY_ITEMS = [
         "filename": "image_002.jpeg",
         "extension": ".jpeg",
         "group_id": "processed",
-        "acquisition_time": datetime.fromtimestamp(1547110800.000),  # Human time: Thursday, 10 January 2019 10:00:00
+        "acquisition_time": dateutil.parser.parse('2019-01-10 10:00:00'),
         "image_width": 100,
         "image_height": 100
     }),
@@ -392,7 +393,7 @@ DUMMY_ITEMS = [
         "intensity_gray_moment_hu_1": 0.00162911271992,
         "intensity_gray_moment_hu_2": 6.02185718988395e-07,
         "intensity_gray_moment_hu_3": 1.26728600174152e-10,
-        "intensity_gray_median_intensity": 87,
+        "intensity_gray_median_intensity": 87.0,
         "intensity_gray_mass_displace_in_minors": 0.021203842389859,
         "intensity_gray_mean_intensity": 84.08,
         "intensity_gray_perc_25_intensity": 39.0,
@@ -406,7 +407,7 @@ DUMMY_ITEMS = [
         "intensity_red_moment_hu_1": 0.002005703596185,
         "intensity_red_moment_hu_2": 8.66777471825988e-07,
         "intensity_red_moment_hu_3": 2.00807713614223e-10,
-        "intensity_red_median_intensity": 68,
+        "intensity_red_median_intensity": 68.0,
         "intensity_red_mass_displace_in_minors": 0.039831665466914,
         "intensity_red_mean_intensity": 67.5858823529412,
         "intensity_red_perc_25_intensity": 34.0,
@@ -490,7 +491,7 @@ DUMMY_ITEMS = [
         "filename": "image_003.jpeg",
         "extension": ".jpeg",
         "group_id": "processed",
-        "acquisition_time": datetime.fromtimestamp(1546678800.000),  # Human time: Saturday, 5 January 2019 10:00:00
+        "acquisition_time": dateutil.parser.parse('2019-01-05 10:00:00'),
         "image_width": 100,
         "image_height": 100
     }),
@@ -514,7 +515,7 @@ DUMMY_ITEMS = [
         "intensity_gray_moment_hu_1": 0.00162911271992,
         "intensity_gray_moment_hu_2": 6.02185718988395e-07,
         "intensity_gray_moment_hu_3": 1.26728600174152e-10,
-        "intensity_gray_median_intensity": 87,
+        "intensity_gray_median_intensity": 87.0,
         "intensity_gray_mass_displace_in_minors": 0.021203842389859,
         "intensity_gray_mean_intensity": 84.08,
         "intensity_gray_perc_25_intensity": 39.0,
@@ -528,7 +529,7 @@ DUMMY_ITEMS = [
         "intensity_red_moment_hu_1": 0.002005703596185,
         "intensity_red_moment_hu_2": 8.66777471825988e-07,
         "intensity_red_moment_hu_3": 2.00807713614223e-10,
-        "intensity_red_median_intensity": 68,
+        "intensity_red_median_intensity": 68.0,
         "intensity_red_mass_displace_in_minors": 0.039831665466914,
         "intensity_red_mean_intensity": 67.5858823529412,
         "intensity_red_perc_25_intensity": 34.0,
@@ -612,7 +613,7 @@ DUMMY_ITEMS = [
         "filename": "image_004.jpeg",
         "extension": ".jpeg",
         "group_id": "processed",
-        "acquisition_time": datetime.fromtimestamp(1546333200.000),  # Human time: Saturday, 1 January 2019 10:00:00
+        "acquisition_time": dateutil.parser.parse('2019-01-01 10:00:00'),
         "image_width": 100,
         "image_height": 100
     })

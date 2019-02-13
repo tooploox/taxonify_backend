@@ -7,7 +7,7 @@ from PIL import Image
 from aquascope.webserver.data_access.conversions import (item_to_blob_name,
                                                          group_id_to_container_name)
 from aquascope.webserver.data_access.db import Item
-from aquascope.webserver.data_access.db.items import TAXONOMY_FIELDS, ADDITIONAL_ATTRIBUTES_FIELDS
+from aquascope.webserver.data_access.db.items import TAXONOMY_FIELDS, ADDITIONAL_ATTRIBUTES_FIELDS, MORPHOMETRIC_FIELDS
 from aquascope.webserver.data_access.storage.blob import create_container, upload_blob, exists
 
 
@@ -28,7 +28,8 @@ def populate_system_with_items(data_dir, db, storage_client=None):
 
     converters = {
         'timestamp': lambda x: dateutil.parser.parse(x),
-        'url': lambda x: os.path.basename(x)
+        'url': lambda x: os.path.basename(x),
+        **{k: lambda x: float(x) for k in MORPHOMETRIC_FIELDS}
     }
     df = pd.read_csv(features_path, converters=converters, sep='\t')
 

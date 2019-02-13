@@ -106,7 +106,7 @@ class Item(DbDocument):
     @staticmethod
     def from_tsv_row(row, image_width, image_height):
         item = copy.deepcopy(row)
-        item['acquisition_time'] = item.pop('timestamp')
+        item['acquisition_time'] = item.pop('timestamp').to_pydatetime()
         item['filename'] = os.path.basename(item.pop('url'))
         item['image_width'] = image_width
         item['image_height'] = image_height
