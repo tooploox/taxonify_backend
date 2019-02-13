@@ -3,22 +3,16 @@ import os
 import tarfile
 import tempfile
 
-from pymongo import MongoClient
+from pymongo.errors import WriteError
 
 from aquascope.tasks.celery_app import celery_app
+from aquascope.webserver.data_access.db.util import get_db_from_env
 from aquascope.webserver.data_access.db import upload
 from aquascope.webserver.data_access.storage import blob
 from aquascope.webserver.data_access.storage.blob import blob_storage_client
 from aquascope.webserver.data_access.util import populate_system_with_items
 
 logging.getLogger("azure.storage").setLevel(logging.CRITICAL)
-
-
-def get_db():
-    mongo_connection_string = os.environ['MONGO_CONNECTION_STRING']
-    mongo_client = MongoClient(mongo_connection_string)
-    db = mongo_client.get_database()
-    return db
 
 
 def get_storage_client():
@@ -34,7 +28,7 @@ def extraction_path_to_data_path(extraction_path):
 
 @celery_app.task
 def parse_upload(upload_id):
-    db = get_db()
+    db = get_db_from_env()
     upload.update_state(db, upload_id, 'processing')
     storage_client = get_storage_client()
 
@@ -47,11 +41,10 @@ def parse_upload(upload_id):
         try:
             with tarfile.open(local_filepath, "r:bz2") as tar:
                 tar.extractall(extraction_path)
-        except tarfile.ReadError:
+            data_path = extraction_path_to_data_path(extraction_path)
+            populate_system_with_items(data_path, db, storage_client)
+        except (tarfile.ReadError, WriteError) as e:
             upload.update_state(db, upload_id, 'failed')
             return
-
-        data_path = extraction_path_to_data_path(extraction_path)
-        populate_system_with_items(data_path, db, storage_client)
 
     upload.update_state(db, upload_id, 'finished')

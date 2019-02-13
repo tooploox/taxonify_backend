@@ -46,7 +46,7 @@ services:
     network_mode: host
 
   mongo:
-    image: mongo:3.4
+    image: mongo:4
     env_file:
       - mongodb_root_credentials.env
       - mongodb_user_credentials.env

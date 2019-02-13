@@ -18,6 +18,74 @@ ADDITIONAL_ATTRIBUTES_FIELDS = [
     'alan_parsons', 'allman', 'dire_straits', 'eagles', 'guns', 'purple', 'van_halen',
     'skynyrd', 'zz_top', 'iron', 'police', 'moore', 'inxs', 'chilli_peppers'
 ]
+MORPHOMETRIC_FIELDS = [
+    'file_size', 'aspect_ratio', 'maj_axis_len', 'min_axis_len', 'orientation',
+    'eccentricity', 'solidity', 'estimated_volume', 'area',
+    'intensity_gray_mass_displace_in_images', 'intensity_gray_moment_hu_4',
+    'intensity_gray_moment_hu_5', 'intensity_gray_moment_hu_6',
+    'intensity_gray_moment_hu_7', 'intensity_gray_std_intensity',
+    'intensity_gray_moment_hu_1', 'intensity_gray_moment_hu_2',
+    'intensity_gray_moment_hu_3', 'intensity_gray_median_intensity',
+    'intensity_gray_mass_displace_in_minors', 'intensity_gray_mean_intensity',
+    'intensity_gray_perc_25_intensity', 'intensity_gray_perc_75_intensity',
+    'intensity_red_mass_displace_in_images', 'intensity_red_moment_hu_4',
+    'intensity_red_moment_hu_5', 'intensity_red_moment_hu_6',
+    'intensity_red_moment_hu_7', 'intensity_red_std_intensity',
+    'intensity_red_moment_hu_1', 'intensity_red_moment_hu_2',
+    'intensity_red_moment_hu_3', 'intensity_red_median_intensity',
+    'intensity_red_mass_displace_in_minors', 'intensity_red_mean_intensity',
+    'intensity_red_perc_25_intensity', 'intensity_red_perc_75_intensity',
+    'intensity_green_mass_displace_in_images', 'intensity_green_moment_hu_4',
+    'intensity_green_moment_hu_5', 'intensity_green_moment_hu_6',
+    'intensity_green_moment_hu_7', 'intensity_green_std_intensity',
+    'intensity_green_moment_hu_1', 'intensity_green_moment_hu_2',
+    'intensity_green_moment_hu_3', 'intensity_green_median_intensity',
+    'intensity_green_mass_displace_in_minors', 'intensity_green_mean_intensity',
+    'intensity_green_perc_25_intensity', 'intensity_green_perc_75_intensity',
+    'intensity_blue_mass_displace_in_images', 'intensity_blue_moment_hu_4',
+    'intensity_blue_moment_hu_5', 'intensity_blue_moment_hu_6',
+    'intensity_blue_moment_hu_7', 'intensity_blue_std_intensity',
+    'intensity_blue_moment_hu_1', 'intensity_blue_moment_hu_2',
+    'intensity_blue_moment_hu_3', 'intensity_blue_median_intensity',
+    'intensity_blue_mass_displace_in_minors', 'intensity_blue_mean_intensity',
+    'intensity_blue_perc_25_intensity', 'intensity_blue_perc_75_intensity'
+]
+
+ITEMS_DB_SCHEMA = {
+    'bsonType': 'object',
+    'required': ['_id', 'filename', 'extension', 'group_id',
+                 'acquisition_time', 'image_width', 'image_height']
+                + TAXONOMY_FIELDS
+                + ADDITIONAL_ATTRIBUTES_FIELDS
+                + MORPHOMETRIC_FIELDS,
+    'additionalProperties': False,
+    'properties': {
+        '_id': {
+            'bsonType': 'objectId'
+        },
+        'filename': {
+            'bsonType': 'string'
+        },
+        'extension': {
+            'bsonType': 'string'
+        },
+        'group_id': {
+            'bsonType': 'string'
+        },
+        'acquisition_time': {
+            'bsonType': 'date'
+        },
+        'image_width': {
+            'bsonType': 'int'
+        },
+        'image_height': {
+            'bsonType': 'int'
+        },
+        **({k: dict(bsonType=['string', 'null']) for k in TAXONOMY_FIELDS}),
+        **({k: dict(bsonType=['bool', 'null']) for k in ADDITIONAL_ATTRIBUTES_FIELDS}),
+        **({k: dict(bsonType='double') for k in MORPHOMETRIC_FIELDS}),
+    }
+}
 
 
 class Item(DbDocument):

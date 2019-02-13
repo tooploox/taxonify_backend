@@ -4,10 +4,10 @@ import os
 from flask import Flask, request
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
-from pymongo import MongoClient
 
 from aquascope.tasks.celery import make_celery_app
 import aquascope.webserver.api as api
+from aquascope.webserver.data_access.db.util import get_db_from_env
 from aquascope.webserver.data_access.storage.blob import blob_storage_client
 
 
@@ -56,7 +56,6 @@ def make_app(db, storage_connection_string, jwt_secret_key,
 
 
 def get_app():
-    mongo_connection_string = os.environ['MONGO_CONNECTION_STRING']
     storage_connection_string = os.environ['STORAGE_CONNECTION_STRING']
     jwt_secret_key = os.environ['JWT_SECRET_KEY']
     aquascope_test_user = os.environ['AQUASCOPE_TEST_USER']
@@ -66,11 +65,10 @@ def get_app():
     celery_password = os.environ['CELERY_PASS']
     celery_address = os.environ['CELERY_ADDRESS']
 
-    mongo_client = MongoClient(mongo_connection_string)
-    db = mongo_client.get_database()
+    db = get_db_from_env()
     app = make_app(db, storage_connection_string, jwt_secret_key,
-                    aquascope_test_user, aquascope_test_pass, environment,
-                    celery_user, celery_password, celery_address)
+                   aquascope_test_user, aquascope_test_pass, environment,
+                   celery_user, celery_password, celery_address)
     return app
 
 
