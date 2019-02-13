@@ -114,8 +114,12 @@ class Item(DbDocument):
         item['group_id'] = 'processed'
         return Item(item)
 
-    def serializable(self):
-        data = self.get_dict()
+    def serializable(self, shallow=False):
+        if shallow:
+            data = self.get_dict()
+        else:
+            data = copy.deepcopy(self.get_dict())
+
         data['acquisition_time'] = data['acquisition_time'].isoformat()
         data['_id'] = str(data['_id'])
         return data

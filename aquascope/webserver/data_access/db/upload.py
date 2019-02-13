@@ -1,3 +1,5 @@
+import copy
+
 from bson import ObjectId
 
 from aquascope.webserver.data_access.db.db_document import DbDocument
@@ -25,8 +27,12 @@ class Upload(DbDocument):
     def __init__(self, obj):
         super(Upload, self).__init__(obj)
 
-    def serializable(self):
-        data = self.get_dict()
+    def serializable(self, shallow=False):
+        if shallow:
+            data = self.get_dict()
+        else:
+            data = copy.deepcopy(self.get_dict())
+
         data['generation_date'] = data['_id'].generation_time.isoformat()
         data['_id'] = str(data['_id'])
         return data

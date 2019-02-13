@@ -26,4 +26,4 @@ class UploadList(Resource):
     def get(self):
         db = app.config['db']
         docs = upload.find(db)
-        return [doc.serializable() for doc in docs]
+        return [doc.serializable(shallow=True) for doc in docs]

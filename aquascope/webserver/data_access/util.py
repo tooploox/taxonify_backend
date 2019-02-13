@@ -1,3 +1,4 @@
+import copy
 import os
 
 import dateutil
@@ -17,12 +18,12 @@ class MissingTsvFileError(ValueError):
 
 
 def populate_db_with_items(items, db):
-    items_dicts = [item.get_dict() for item in items]
+    items_dicts = [copy.deepcopy(item.get_dict()) for item in items]
     db.items.insert_many(items_dicts)
 
 
 def populate_db_with_uploads(uploads, db):
-    uploads_dicts = [upload.get_dict() for upload in uploads]
+    uploads_dicts = [copy.deepcopy(upload.get_dict()) for upload in uploads]
     db.uploads.insert_many(uploads_dicts)
 
 

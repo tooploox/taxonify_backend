@@ -1,14 +1,9 @@
-import copy
-
 
 class DbDocument(object):
     def __init__(self, obj):
         o = obj.get_dict() if isinstance(obj, DbDocument) else obj
         for k, v in o.items():
-            if isinstance(v, dict):
-                setattr(self, k, DbDocument(v))
-            else:
-                setattr(self, k, v)
+            setattr(self, k, v)
 
     def __getitem__(self, key):
         return self.__dict__[key]
@@ -19,7 +14,7 @@ class DbDocument(object):
 
     @staticmethod
     def from_db_data(db_data):
-        return DbDocument(copy.deepcopy(db_data))
+        return DbDocument(db_data)
 
     def get_dict(self):
-        return copy.deepcopy(self.__dict__)
+        return self.__dict__
