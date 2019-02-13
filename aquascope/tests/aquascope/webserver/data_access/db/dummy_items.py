@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import dateutil
 from bson import ObjectId
 
