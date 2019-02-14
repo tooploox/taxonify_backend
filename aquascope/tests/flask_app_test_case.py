@@ -8,8 +8,8 @@ import mongomock
 
 from aquascope.tests.aquascope.webserver.data_access.db.dummy_uploads import DUMMY_UPLOADS
 from aquascope.tests.aquascope.webserver.data_access.db.dummy_items import DUMMY_ITEMS
-from aquascope.webserver.data_access.db.util import create_collections
 from aquascope.webserver.app import make_app
+from aquascope.webserver.data_access.db.util import create_collections
 from aquascope.webserver.data_access.storage import blob
 from aquascope.webserver.data_access.util import populate_db_with_items, populate_db_with_uploads
 
