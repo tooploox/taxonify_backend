@@ -24,7 +24,7 @@ class Items(Resource):
         urls = get_urls_for_items(items)
 
         return {
-            'items': [item.serializable() for item in items],
+            'items': [item.serializable(shallow=True) for item in items],
             'urls': urls
         }
 
