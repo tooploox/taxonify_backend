@@ -3,7 +3,7 @@ import os
 
 from bson import ObjectId
 import dateutil.parser
-from pymongo import ReplaceOne
+from pymongo import UpdateOne
 
 from aquascope.webserver.data_access.db.db_document import DbDocument
 
@@ -18,9 +18,13 @@ ADDITIONAL_ATTRIBUTES_FIELDS = [
     'alan_parsons', 'allman', 'dire_straits', 'eagles', 'guns', 'purple', 'van_halen',
     'skynyrd', 'zz_top', 'iron', 'police', 'moore', 'inxs', 'chilli_peppers'
 ]
-MORPHOMETRIC_FIELDS = [
+
+PRIMARY_MORPHOMETRIC_FIELDS = [
     'file_size', 'aspect_ratio', 'maj_axis_len', 'min_axis_len', 'orientation',
-    'eccentricity', 'solidity', 'estimated_volume', 'area',
+    'eccentricity', 'solidity', 'estimated_volume', 'area'
+]
+
+SECONDARY_MORPHOMETRIC_FIELDS = [
     'intensity_gray_mass_displace_in_images', 'intensity_gray_moment_hu_4',
     'intensity_gray_moment_hu_5', 'intensity_gray_moment_hu_6',
     'intensity_gray_moment_hu_7', 'intensity_gray_std_intensity',
@@ -50,6 +54,10 @@ MORPHOMETRIC_FIELDS = [
     'intensity_blue_mass_displace_in_minors', 'intensity_blue_mean_intensity',
     'intensity_blue_perc_25_intensity', 'intensity_blue_perc_75_intensity'
 ]
+
+MORPHOMETRIC_FIELDS = PRIMARY_MORPHOMETRIC_FIELDS + SECONDARY_MORPHOMETRIC_FIELDS
+
+DEFAULT_ITEM_PROJECTION = {k: 0 for k in SECONDARY_MORPHOMETRIC_FIELDS}
 
 ITEMS_DB_SCHEMA = {
     'bsonType': 'object',
@@ -125,7 +133,7 @@ class Item(DbDocument):
         return data
 
 
-def find_items(db, *args, **kwargs):
+def find_items(db, with_default_projection=True, *args, **kwargs):
     query = dict()
     for key, value in kwargs.items():
         if type(value) == list:
@@ -149,13 +157,14 @@ def find_items(db, *args, **kwargs):
         else:
             query[key] = value
 
-    return (Item.from_db_data(item) for item in db.items.find(query))
+    projection = DEFAULT_ITEM_PROJECTION if with_default_projection else None
+    return (Item.from_db_data(item) for item in db.items.find(query, projection))
 
 
 def bulk_replace(db, items):
     bulks = []
     for current, update in items:
-        bulk = ReplaceOne(current.get_dict(), update.get_dict())
+        bulk = UpdateOne(current.get_dict(), {'$set': update.get_dict()})
         bulks.append(bulk)
 
     return db.items.bulk_write(bulks)
