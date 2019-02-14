@@ -1,8 +1,24 @@
-import copy
-
 from bson import ObjectId
 
 from aquascope.webserver.data_access.db.db_document import DbDocument
+
+UPLOAD_DB_SCHEMA = {
+    'bsonType': 'object',
+    'required': ['_id', 'filename', 'state'],
+    'additionalProperties': False,
+    'properties': {
+        '_id': {
+            'bsonType': 'objectId'
+        },
+        'filename': {
+            'bsonType': 'string'
+        },
+        'state': {
+            'bsonType': 'string',
+            'enum': ['initialized', 'uploaded', 'processing', 'finished', 'failed']
+        }
+    }
+}
 
 
 class Upload(DbDocument):

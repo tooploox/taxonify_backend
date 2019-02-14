@@ -204,6 +204,26 @@ paths:
           schema:
             type: string
             example: 'images_00000_SPC-EAWAG-5P0X-15433639.*'
+        - name: acquisition_time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            example: '2019-01-26 00:00:00.000Z'
+        - name: acquisition_time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            example: '2019-01-27 00:00:00.000Z'
+        - name: with_eggs
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
         - name: dividing
           in: query
           required: false
@@ -220,7 +240,15 @@ paths:
             items:
               type: boolean
               nullable: true
-        - name: with_epiphytes
+        - name: with_epibiont
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: with_parasite
           in: query
           required: false
           schema:
@@ -244,6 +272,14 @@ paths:
             items:
               type: boolean
               nullable: true
+        - name: cluster
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
         - name: eating
           in: query
           required: false
@@ -260,7 +296,7 @@ paths:
             items:
               type: boolean
               nullable: true
-        - name: cropped
+        - name: partially_cropped
           in: query
           required: false
           schema:
@@ -300,7 +336,7 @@ paths:
             items:
               type: boolean
               nullable: true
-        - name: with_eggs
+        - name: ephippium
           in: query
           required: false
           schema:
@@ -308,18 +344,198 @@ paths:
             items:
               type: boolean
               nullable: true
-        - name: acquisition_time_start
+        - name: resting_egg
           in: query
           required: false
           schema:
-            type: string
-            example: '2019-01-26 00:00:00.000Z'
-        - name: acquisition_time_end
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: heterocyst
           in: query
           required: false
           schema:
-            type: string
-            example: '2019-01-27 00:00:00.000Z'
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: akinete
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: with_spines
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: beatles
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: stones
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: zeppelin
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: floyd
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: acdc
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: hendrix
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: alan_parsons
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: allman
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: dire_straits
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: eagles
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: guns
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: purple
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: van_halen
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: skynyrd
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: zz_top
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: iron
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: police
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: moore
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: inxs
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: chilli_peppers
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
 
       responses:
         '200':
@@ -410,13 +626,26 @@ components:
           type: string
         species:
           type: string
+        acquisition_time:
+          type: string
+          format: date-time
+        image_width:
+          type: integer
+        image_height:
+          type: integer
+        with_eggs:
+          type: boolean
+          nullable: true
         dividing:
           type: boolean
           nullable: true
         dead:
           type: boolean
           nullable: true
-        with_epiphytes:
+        with_epibiont:
+          type: boolean
+          nullable: true
+        with_parasite:
           type: boolean
           nullable: true
         broken:
@@ -425,13 +654,16 @@ components:
         colony:
           type: boolean
           nullable: true
+        cluster:
+          type: boolean
+          nullable: true
         eating:
           type: boolean
           nullable: true
         multiple_species:
           type: boolean
           nullable: true
-        cropped:
+        partially_cropped:
           type: boolean
           nullable: true
         male:
@@ -446,16 +678,277 @@ components:
         adult:
           type: boolean
           nullable: true
-        with_eggs:
+        ephippium:
           type: boolean
           nullable: true
-        acquisition_time:
-          type: string
-          format: date-time
-        image_width:
-          type: integer
-        image_height:
-          type: integer
+        resting_egg:
+          type: boolean
+          nullable: true
+        heterocyst:
+          type: boolean
+          nullable: true
+        akinete:
+          type: boolean
+          nullable: true
+        with_spines:
+          type: boolean
+          nullable: true
+        beatles:
+          type: boolean
+          nullable: true
+        stones:
+          type: boolean
+          nullable: true
+        zeppelin:
+          type: boolean
+          nullable: true
+        floyd:
+          type: boolean
+          nullable: true
+        acdc:
+          type: boolean
+          nullable: true
+        hendrix:
+          type: boolean
+          nullable: true
+        alan_parsons:
+          type: boolean
+          nullable: true
+        allman:
+          type: boolean
+          nullable: true
+        dire_straits:
+          type: boolean
+          nullable: true
+        eagles:
+          type: boolean
+          nullable: true
+        guns:
+          type: boolean
+          nullable: true
+        purple:
+          type: boolean
+          nullable: true
+        van_halen:
+          type: boolean
+          nullable: true
+        skynyrd:
+          type: boolean
+          nullable: true
+        zz_top:
+          type: boolean
+          nullable: true
+        iron:
+          type: boolean
+          nullable: true
+        police:
+          type: boolean
+          nullable: true
+        moore:
+          type: boolean
+          nullable: true
+        inxs:
+          type: boolean
+          nullable: true
+        chilli_peppers:
+          type: boolean
+          nullable: true
+        file_size:
+          type: number
+          format: float
+        aspect_ratio:
+          type: number
+          format: float
+        maj_axis_len:
+          type: number
+          format: float
+        min_axis_len:
+          type: number
+          format: float
+        orientation:
+          type: number
+          format: float
+        eccentricity:
+          type: number
+          format: float
+        solidity:
+          type: number
+          format: float
+        estimated_volume:
+          type: number
+          format: float
+        area:
+          type: number
+          format: float
+        intensity_gray_mass_displace_in_images:
+          type: number
+          format: float
+        intensity_gray_moment_hu_4:
+          type: number
+          format: float
+        intensity_gray_moment_hu_5:
+          type: number
+          format: float
+        intensity_gray_moment_hu_6:
+          type: number
+          format: float
+        intensity_gray_moment_hu_7:
+          type: number
+          format: float
+        intensity_gray_std_intensity:
+          type: number
+          format: float
+        intensity_gray_moment_hu_1:
+          type: number
+          format: float
+        intensity_gray_moment_hu_2:
+          type: number
+          format: float
+        intensity_gray_moment_hu_3:
+          type: number
+          format: float
+        intensity_gray_median_intensity:
+          type: number
+          format: float
+        intensity_gray_mass_displace_in_minors:
+          type: number
+          format: float
+        intensity_gray_mean_intensity:
+          type: number
+          format: float
+        intensity_gray_perc_25_intensity:
+          type: number
+          format: float
+        intensity_gray_perc_75_intensity:
+          type: number
+          format: float
+        intensity_red_mass_displace_in_images:
+          type: number
+          format: float
+        intensity_red_moment_hu_4:
+          type: number
+          format: float
+        intensity_red_moment_hu_5:
+          type: number
+          format: float
+        intensity_red_moment_hu_6:
+          type: number
+          format: float
+        intensity_red_moment_hu_7:
+          type: number
+          format: float
+        intensity_red_std_intensity:
+          type: number
+          format: float
+        intensity_red_moment_hu_1:
+          type: number
+          format: float
+        intensity_red_moment_hu_2:
+          type: number
+          format: float
+        intensity_red_moment_hu_3:
+          type: number
+          format: float
+        intensity_red_median_intensity:
+          type: number
+          format: float
+        intensity_red_mass_displace_in_minors:
+          type: number
+          format: float
+        intensity_red_mean_intensity:
+          type: number
+          format: float
+        intensity_red_perc_25_intensity:
+          type: number
+          format: float
+        intensity_red_perc_75_intensity:
+          type: number
+          format: float
+        intensity_green_mass_displace_in_images:
+          type: number
+          format: float
+        intensity_green_moment_hu_4:
+          type: number
+          format: float
+        intensity_green_moment_hu_5:
+          type: number
+          format: float
+        intensity_green_moment_hu_6:
+          type: number
+          format: float
+        intensity_green_moment_hu_7:
+          type: number
+          format: float
+        intensity_green_std_intensity:
+          type: number
+          format: float
+        intensity_green_moment_hu_1:
+          type: number
+          format: float
+        intensity_green_moment_hu_2:
+          type: number
+          format: float
+        intensity_green_moment_hu_3:
+          type: number
+          format: float
+        intensity_green_median_intensity:
+          type: number
+          format: float
+        intensity_green_mass_displace_in_minors:
+          type: number
+          format: float
+        intensity_green_mean_intensity:
+          type: number
+          format: float
+        intensity_green_perc_25_intensity:
+          type: number
+          format: float
+        intensity_green_perc_75_intensity:
+          type: number
+          format: float
+        intensity_blue_mass_displace_in_images:
+          type: number
+          format: float
+        intensity_blue_moment_hu_4:
+          type: number
+          format: float
+        intensity_blue_moment_hu_5:
+          type: number
+          format: float
+        intensity_blue_moment_hu_6:
+          type: number
+          format: float
+        intensity_blue_moment_hu_7:
+          type: number
+          format: float
+        intensity_blue_std_intensity:
+          type: number
+          format: float
+        intensity_blue_moment_hu_1:
+          type: number
+          format: float
+        intensity_blue_moment_hu_2:
+          type: number
+          format: float
+        intensity_blue_moment_hu_3:
+          type: number
+          format: float
+        intensity_blue_median_intensity:
+          type: number
+          format: float
+        intensity_blue_mass_displace_in_minors:
+          type: number
+          format: float
+        intensity_blue_mean_intensity:
+          type: number
+          format: float
+        intensity_blue_perc_25_intensity:
+          type: number
+          format: float
+        intensity_blue_perc_75_intensity:
+          type: number
+          format: float
+
     ListOfItems:
       type: array
       items:

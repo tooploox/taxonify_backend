@@ -7,7 +7,7 @@ from aquascope.tests.aquascope.webserver.data_access.db.dummy_uploads import DUM
 from aquascope.tests.flask_app_test_case import FlaskAppTestCase
 
 TEST_FILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                              '../../../../../data/metadata.csv')
+                              '../../../../../data/5p0xMAG_small/features.tsv')
 
 
 class TestPutUpload(FlaskAppTestCase):

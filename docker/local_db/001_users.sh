@@ -30,6 +30,10 @@ db.createUser({
   roles: [{
     role: 'readWrite',
     db: '$db'
+  },
+  {
+    role: 'dbAdmin',
+    db: '$db'
   }]
 })
 EOF
