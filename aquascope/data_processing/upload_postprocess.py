@@ -2,6 +2,7 @@ import os
 import tarfile
 import tempfile
 
+from pandas.errors import EmptyDataError
 from pymongo.errors import WriteError
 
 from aquascope.webserver.data_access.db import upload
@@ -9,13 +10,13 @@ from aquascope.webserver.data_access.storage import blob
 from aquascope.webserver.data_access.util import populate_system_with_items, MissingTsvFileError
 
 
-def extraction_path_to_data_path(extraction_path):
-    data_dir = os.listdir(extraction_path)[0]
-    data_dir = os.path.join(extraction_path, data_dir)
-    return data_dir
-
-
 def parse_upload_package(upload_id, db, storage_client):
+
+    def extraction_path_to_data_path(extr_path):
+        data_dir = os.listdir(extr_path)[0]
+        data_dir = os.path.join(extr_path, data_dir)
+        return data_dir
+
     upload.update_state(db, upload_id, 'processing')
 
     with tempfile.TemporaryDirectory() as tmpdirname:
@@ -30,7 +31,7 @@ def parse_upload_package(upload_id, db, storage_client):
             data_path = extraction_path_to_data_path(extraction_path)
             populate_system_with_items(data_path, db, storage_client)
         except (tarfile.ReadError, WriteError, MissingTsvFileError,
-                FileNotFoundError, OSError):
+                FileNotFoundError, OSError, IndexError, EmptyDataError):
             upload.update_state(db, upload_id, 'failed')
             return
 
