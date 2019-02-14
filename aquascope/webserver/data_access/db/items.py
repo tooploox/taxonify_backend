@@ -96,6 +96,12 @@ ITEMS_DB_SCHEMA = {
 }
 
 
+def make_item_dict_serializable(item_dict):
+    item_dict['acquisition_time'] = item_dict['acquisition_time'].isoformat()
+    item_dict['_id'] = str(item_dict['_id'])
+    return item_dict
+
+
 class Item(DbDocument):
     def __init__(self, obj):
         super(Item, self).__init__(obj)
@@ -128,12 +134,10 @@ class Item(DbDocument):
         else:
             data = copy.deepcopy(self.get_dict())
 
-        data['acquisition_time'] = data['acquisition_time'].isoformat()
-        data['_id'] = str(data['_id'])
-        return data
+        return make_item_dict_serializable(data)
 
 
-def find_items(db, with_default_projection=True, *args, **kwargs):
+def find_items(db, with_default_projection=True, serializable=False, *args, **kwargs):
     query = dict()
     for key, value in kwargs.items():
         if type(value) == list:
@@ -158,6 +162,9 @@ def find_items(db, with_default_projection=True, *args, **kwargs):
             query[key] = value
 
     projection = DEFAULT_ITEM_PROJECTION if with_default_projection else None
+    if serializable:
+        return (make_item_dict_serializable(item) for item in db.items.find(query, projection))
+
     return (Item.from_db_data(item) for item in db.items.find(query, projection))
 
 

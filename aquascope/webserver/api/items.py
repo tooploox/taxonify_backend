@@ -5,7 +5,7 @@ from flask_restful import Resource
 
 
 from aquascope.webserver.data_access.db import Item, bulk_replace, find_items
-from aquascope.webserver.data_access.storage.blob import get_urls_for_items
+from aquascope.webserver.data_access.storage.blob import get_urls_for_items_dicts
 from aquascope.webserver.schema.items import PostItemsUpdateSchema, GetItemsSchema
 from aquascope.webserver.schema.custom_schema import FormattedValidationError
 
@@ -20,11 +20,11 @@ class Items(Resource):
             return e.formatted_messages, 400
 
         db = app.config['db']
-        items = list(find_items(db, **args))
-        urls = get_urls_for_items(items)
+        items = list(find_items(db, with_default_projection=True, serializable=True, **args))
+        urls = get_urls_for_items_dicts(items)
 
         return {
-            'items': [item.serializable(shallow=True) for item in items],
+            'items': items,
             'urls': urls
         }
 
