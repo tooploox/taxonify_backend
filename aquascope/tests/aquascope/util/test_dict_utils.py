@@ -19,17 +19,17 @@ class TestAddListToDictionary(unittest.TestCase):
 
     def test_add_single_elem_list(self):
         dictionary = {
-            "a": {
-                "b": {
-                    "c": {}
+            "A": {
+                "B": {
+                    "C": {}
                 }
             }
         }
         elements = ["1"]
         expected_dict = {
-            "a": {
-                "b": {
-                    "c": {}
+            "A": {
+                "B": {
+                    "C": {}
                 }
             },
             "1": {}
@@ -39,17 +39,17 @@ class TestAddListToDictionary(unittest.TestCase):
 
     def test_add_subelem_already_present(self):
         dictionary = {
-            "a": {
-                "b": {
-                    "c": {}
+            "A": {
+                "B": {
+                    "C": {}
                 }
             }
         }
-        elements = ["a", "b"]
+        elements = ["A", "B"]
         expected_dict = {
-            "a": {
-                "b": {
-                    "c": {}
+            "A": {
+                "B": {
+                    "C": {}
                 }
             }
         }
@@ -58,17 +58,17 @@ class TestAddListToDictionary(unittest.TestCase):
 
     def test_add_elem_already_present(self):
         dictionary = {
-            "a": {
-                "b": {
-                    "c": {}
+            "A": {
+                "B": {
+                    "C": {}
                 }
             }
         }
-        elements = ["a", "b", "c"]
+        elements = ["A", "B", "C"]
         expected_dict = {
-            "a": {
-                "b": {
-                    "c": {}
+            "A": {
+                "B": {
+                    "C": {}
                 }
             }
         }
@@ -77,17 +77,17 @@ class TestAddListToDictionary(unittest.TestCase):
 
     def test_add_list_with_nan(self):
         dictionary = {
-            "a": {
-                "b": {
-                    "c": {}
+            "A": {
+                "B": {
+                    "C": {}
                 }
             }
         }
         elements = ["1", float('NaN'), "2"]
         expected_dict = {
-            "a": {
-                "b": {
-                    "c": {}
+            "A": {
+                "B": {
+                    "C": {}
                 }
             },
             "1": {}
@@ -104,17 +104,17 @@ class TestAddListToDictionary(unittest.TestCase):
 
     def test_add_empty_list_to_non_empty(self):
         dictionary = {
-            "a": {
-                "b": {
-                    "c": {}
+            "A": {
+                "B": {
+                    "C": {}
                 }
             }
         }
         elements = []
         expected_dict = {
-            "a": {
-                "b": {
-                    "c": {}
+            "A": {
+                "B": {
+                    "C": {}
                 }
             }
         }
@@ -123,17 +123,17 @@ class TestAddListToDictionary(unittest.TestCase):
 
     def test_add_normal_list_to_non_empty_and_no_match(self):
         dictionary = {
-            "a": {
-                "b": {
-                    "c": {}
+            "A": {
+                "B": {
+                    "C": {}
                 }
             }
         }
         elements = ["1", "2", "3"]
         expected_dict = {
-            "a": {
-                "b": {
-                    "c": {}
+            "A": {
+                "B": {
+                    "C": {}
                 }
             },
             "1": {
@@ -149,8 +149,8 @@ class TestAddListToDictionary(unittest.TestCase):
         dictionary = {
             "1": {
                 "2": {
-                    "c": {
-                        "d": {}
+                    "C": {
+                        "D": {}
                     }
                 }
             }
@@ -159,14 +159,40 @@ class TestAddListToDictionary(unittest.TestCase):
         expected_dict = {
             "1": {
                 "2": {
-                    "c": {
-                        "d": {}
+                    "C": {
+                        "D": {}
                     },
                     "3": {
                         "4": {
                             "5": {}
                         }
                     }
+                }
+            }
+        }
+        add(dictionary, elements)
+        self.assertDictEqual(dictionary, expected_dict)
+
+    def test_capitalization(self):
+        dictionary = {
+            "alpha": {
+                "Beta": {
+                    "Charlie": {}
+                }
+            }
+        }
+        elements = ["alpha", "Beta", "cHaRlIe Daniel", "delta"]
+        expected_dict = {
+            "Alpha": {
+                "Beta": {
+                    "Charlie daniel": {
+                        "Delta": {}
+                    }
+                }
+            },
+            "alpha": {
+                "Beta": {
+                    "Charlie": {},
                 }
             }
         }
