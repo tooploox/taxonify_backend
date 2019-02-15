@@ -1,3 +1,6 @@
+strings_to_remove = ["Sp", "Sp."]
+
+
 def add(node, values):
     """Add values as consecutive levels to the node dictionary
     node -- a dictionary
@@ -6,8 +9,10 @@ def add(node, values):
     if values:
         value = values[0]
         if isinstance(value, str):
-            if value not in node:
-                node[value] = {}
-            rest = values[1:]
-            if rest:
-                add(node[value], rest)
+            capitalized_value = value.capitalize().strip()
+            if capitalized_value not in strings_to_remove:
+                if capitalized_value not in node:
+                    node[capitalized_value] = {}
+                rest = values[1:]
+                if rest:
+                    add(node[capitalized_value], rest)
