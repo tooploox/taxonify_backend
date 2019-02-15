@@ -14,9 +14,13 @@ class Upload(Resource):
 
         upload_id = upload_package_from_stream(filename, request.stream, db, storage_client)
 
-        celery_app = app.config['celery']
-        celery_app.send_task('aquascope.tasks.upload_postprocess.parse_upload',
-                             args=[upload_id])
+        try:
+            celery_app = app.config['celery']
+            celery_app.send_task('aquascope.tasks.upload_postprocess.parse_upload',
+                                 args=[upload_id])
+        except ValueError as e:
+            app.logger.critical(f'celery connection error: {str(e)}')
+            return 'Server connectivity issue', 500
 
         return None, 204
 
