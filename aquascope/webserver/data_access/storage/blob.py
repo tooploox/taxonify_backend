@@ -4,7 +4,7 @@ from azure.storage.blob import BlobPermissions
 from azure.storage.blob.blockblobservice import BlockBlobService
 from flask import current_app as app
 
-from aquascope.webserver.data_access.conversions import item_to_blob_name, group_id_to_container_name
+from aquascope.webserver.data_access.conversions import item_id_and_extension_to_blob_name, group_id_to_container_name
 
 
 def blob_storage_client(connection_string):
@@ -64,12 +64,12 @@ def make_blob_url(client, container_name, blob_name, sas_token=None):
     return client.make_blob_url(container_name, blob_name, sas_token=sas_token)
 
 
-def get_url_for_item(client, item):
-    blob_name = item_to_blob_name(item)
-    container_name = group_id_to_container_name(item.group_id)
+def get_url_for_item_dict(client, item):
+    blob_name = item_id_and_extension_to_blob_name(item['_id'], item['extension'])
+    container_name = group_id_to_container_name(item['group_id'])
     return make_blob_url(client, container_name, blob_name)
 
 
-def get_urls_for_items(items):
+def get_urls_for_items_dicts(items):
     client = app.config['storage_client']
-    return {str(item._id): get_url_for_item(client, item) for item in items}
+    return {str(item['_id']): get_url_for_item_dict(client, item) for item in items}

@@ -1,11 +1,22 @@
+import copy
+
 import dateutil
 from bson import ObjectId
 
 from aquascope.webserver.data_access.db import Item
+from aquascope.webserver.data_access.db.items import DEFAULT_ITEM_PROJECTION
 
 
-DUMMY_ITEMS = [
-    Item({
+def project_dict(item_dict, projection):
+    for k, v in projection.items():
+        if k in item_dict and v == 0:
+            item_dict.pop(k, None)
+
+    return item_dict
+
+
+_DUMMY_ITEMS = [
+    {
         "_id": ObjectId('000000000000000000000000'),
         "file_size": 1.0,
         "aspect_ratio": 1.0,
@@ -126,8 +137,8 @@ DUMMY_ITEMS = [
         "image_height": 32,
         "extension": ".jpeg",
         "group_id": "processed"
-    }),
-    Item({
+    },
+    {
         "_id": ObjectId('000000000000000000000001'),
         "file_size": 1.0,
         "aspect_ratio": 1.0,
@@ -248,8 +259,8 @@ DUMMY_ITEMS = [
         "acquisition_time": dateutil.parser.parse('2019-01-20 06:00:00'),
         "image_width": 100,
         "image_height": 100
-    }),
-    Item({
+    },
+    {
         "_id": ObjectId('000000000000000000000002'),
         "file_size": 1.0,
         "aspect_ratio": 1.0,
@@ -370,8 +381,8 @@ DUMMY_ITEMS = [
         "acquisition_time": dateutil.parser.parse('2019-01-10 10:00:00'),
         "image_width": 100,
         "image_height": 100
-    }),
-    Item({
+    },
+    {
         "_id": ObjectId('000000000000000000000003'),
         "file_size": 1.0,
         "aspect_ratio": 1.0,
@@ -492,8 +503,8 @@ DUMMY_ITEMS = [
         "acquisition_time": dateutil.parser.parse('2019-01-05 10:00:00'),
         "image_width": 100,
         "image_height": 100
-    }),
-    Item({
+    },
+    {
         "_id": ObjectId('000000000000000000000004'),
         "file_size": 1.0,
         "aspect_ratio": 1.0,
@@ -614,5 +625,11 @@ DUMMY_ITEMS = [
         "acquisition_time": dateutil.parser.parse('2019-01-01 10:00:00'),
         "image_width": 100,
         "image_height": 100
-    })
+    }
 ]
+
+DUMMY_ITEMS_WITH_DEFAULT_PROJECTION = [
+    Item(project_dict(copy.deepcopy(item), DEFAULT_ITEM_PROJECTION)) for item in _DUMMY_ITEMS
+]
+
+DUMMY_ITEMS = [Item(item) for item in _DUMMY_ITEMS]

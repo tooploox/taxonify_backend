@@ -14,5 +14,5 @@ def container_name_to_group_id(container_name):
     return container_to_group_id[container_name]
 
 
-def item_to_blob_name(item):
-    return str(item._id) + item.extension
+def item_id_and_extension_to_blob_name(item_id, item_extension):
+    return str(item_id) + item_extension

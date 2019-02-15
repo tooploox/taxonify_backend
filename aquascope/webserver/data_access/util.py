@@ -5,7 +5,7 @@ import dateutil
 import pandas as pd
 from PIL import Image
 
-from aquascope.webserver.data_access.conversions import (item_to_blob_name,
+from aquascope.webserver.data_access.conversions import (item_id_and_extension_to_blob_name,
                                                          group_id_to_container_name)
 from aquascope.webserver.data_access.db import Item, upload
 from aquascope.webserver.data_access.db.items import TAXONOMY_FIELDS, ADDITIONAL_ATTRIBUTES_FIELDS, MORPHOMETRIC_FIELDS
@@ -75,7 +75,7 @@ def populate_system_with_items(data_dir, db, storage_client=None):
     for item in items:
         result = db.items.insert_one(item.get_dict())
         item._id = result.inserted_id
-        blob_name = item_to_blob_name(item)
+        blob_name = item_id_and_extension_to_blob_name(item._id, item.extension)
 
         image_path = os.path.join(data_dir, item.filename)
         blob_meta = dict(filename=item.filename)
