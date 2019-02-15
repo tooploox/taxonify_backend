@@ -8,7 +8,7 @@ flask-cors = "*"
 
 [packages]
 azure = "==4.0.0"
-celery = "*"
+celery = "==4.1.1"
 fire = "*"
 flatten-dict = "*"
 flask = "*"
