@@ -15,7 +15,7 @@ def project_dict(item_dict, projection):
     return item_dict
 
 
-DUMMY_ITEMS = [
+_DUMMY_ITEMS = [
     {
         "_id": ObjectId('000000000000000000000000'),
         "file_size": 1.0,
@@ -629,7 +629,7 @@ DUMMY_ITEMS = [
 ]
 
 DUMMY_ITEMS_WITH_DEFAULT_PROJECTION = [
-    Item(project_dict(copy.deepcopy(item), DEFAULT_ITEM_PROJECTION)) for item in DUMMY_ITEMS
+    Item(project_dict(copy.deepcopy(item), DEFAULT_ITEM_PROJECTION)) for item in _DUMMY_ITEMS
 ]
 
-DUMMY_ITEMS = [Item(item) for item in DUMMY_ITEMS]
+DUMMY_ITEMS = [Item(item) for item in _DUMMY_ITEMS]
