@@ -142,3 +142,7 @@ class GetItemsSchema(CustomSchema):
     moore = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
     inxs = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
     chilli_peppers = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
+
+
+class GetPagedItemsSchema(GetItemsSchema):
+    continuation_token = fields.Integer(required=False, allow_none=False)

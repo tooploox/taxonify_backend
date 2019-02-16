@@ -41,7 +41,7 @@ class FlaskAppTestCase(unittest.TestCase):
 
         cls.app = make_app(cls.db, storage_connection_string, 'jwtdummysecret', cls.auth_user, auth_pass,
                            environment='TESTING', celery_user='',
-                           celery_password='', celery_address='')
+                           celery_password='', celery_address='', page_size=500)
 
     def purge_storage(self):
         storage_client = self.app.config['storage_client']
