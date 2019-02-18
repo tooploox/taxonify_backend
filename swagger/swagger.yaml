@@ -120,6 +120,422 @@ paths:
             UnknownArgumentsResult:
               message: "Unknown arguments: <arguments>"
 
+  /items/paged:
+    get:
+      description: 'Obtains list of data samples that match provided query'
+      operationId: get_paged_items
+      tags:
+        - Items
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: continuation_token
+          in: query
+          required: false
+          schema:
+            type: integer
+            example: 1
+        - name: empire
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 'prokaryota'
+        - name: kingdom
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 'Bacteria'
+        - name: phylum
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 'Cyanobacteria'
+        - name: class
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 'Cyanophyceae'
+        - name: order
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 'Nostocales'
+        - name: family
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 'Nostocaceae'
+        - name: genus
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 'Anabaena'
+        - name: species
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 'sp'
+        - name: filename
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 'images_00000_SPC-EAWAG-5P0X-15433639.*'
+        - name: acquisition_time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            example: '2019-01-26 00:00:00.000Z'
+        - name: acquisition_time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            example: '2019-01-27 00:00:00.000Z'
+        - name: with_eggs
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: dividing
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: dead
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: with_epibiont
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: with_parasite
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: broken
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: colony
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: cluster
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: eating
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: multiple_species
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: partially_cropped
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: male
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: female
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: juvenile
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: adult
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: ephippium
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: resting_egg
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: heterocyst
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: akinete
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: with_spines
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: beatles
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: stones
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: zeppelin
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: floyd
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: acdc
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: hendrix
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: alan_parsons
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: allman
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: dire_straits
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: eagles
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: guns
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: purple
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: van_halen
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: skynyrd
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: zz_top
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: iron
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: police
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: moore
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: inxs
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+        - name: chilli_peppers
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: boolean
+              nullable: true
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedItemsQueryResult'
+        '400':
+          description: Unknown arguments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownArgumentsResult'
+
   /items:
     post:
       description: 'Updates data samples'
@@ -791,11 +1207,23 @@ components:
         type: string
         format: url
     ItemsQueryResult:
+      type: object
+      required: [items, urls]
       properties:
         items:
           $ref: '#/components/schemas/ListOfItems'
         urls:
           $ref: '#/components/schemas/ListOfUrls'
+    PagedItemsQueryResult:
+      type: object
+      required: [items, urls]
+      properties:
+        items:
+          $ref: '#/components/schemas/ListOfItems'
+        urls:
+          $ref: '#/components/schemas/ListOfUrls'
+        continuation_token:
+          type: integer
     UnknownArgumentsResult:
       type: object
       properties:
