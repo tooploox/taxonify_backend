@@ -1,4 +1,5 @@
 import copy
+import math
 import unittest
 from unittest import mock
 
@@ -9,6 +10,135 @@ from aquascope.tests.flask_app_test_case import FlaskAppTestCase
 from aquascope.webserver.data_access.db import Item
 
 MONGO_CONNECTION_STRING = 'mongodb://example.server.com/aquascopedb'
+
+
+class TestGetPagedItems(FlaskAppTestCase):
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_can_get_single_page(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            self.app.config['page_size'] = 2
+
+            request_data = {}
+            res = self.client().get('/items/paged', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            expected_items = [DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[0], DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[1]]
+            expected_items = [item.serializable() for item in expected_items]
+
+            self.assertCountEqual(response['items'], expected_items)
+            self.assertTrue('continuation_token' in response)
+            self.assertEqual(2, response['continuation_token'])
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_can_get_all_items_in_one_page(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            self.app.config['page_size'] = 500
+
+            request_data = {}
+            res = self.client().get('/items/paged', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            expected_items = DUMMY_ITEMS_WITH_DEFAULT_PROJECTION
+            expected_items = [item.serializable() for item in expected_items]
+
+            self.assertCountEqual(response['items'], expected_items)
+            self.assertFalse('continuation_token' in response)
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_can_get_requested_page(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            self.app.config['page_size'] = 2
+
+            request_data = {
+                'continuation_token': 2
+            }
+            res = self.client().get('/items/paged', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            expected_items = [DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[2], DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[3]]
+            expected_items = [item.serializable() for item in expected_items]
+
+            self.assertCountEqual(response['items'], expected_items)
+            self.assertTrue('continuation_token' in response)
+            self.assertEqual(3, response['continuation_token'])
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_can_get_last_page(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            self.app.config['page_size'] = 2
+
+            last_page_idx = math.ceil(len(DUMMY_ITEMS_WITH_DEFAULT_PROJECTION) / self.app.config['page_size'])
+            request_data = {
+                'continuation_token': last_page_idx
+            }
+            res = self.client().get('/items/paged', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+
+            expected_items_start = (last_page_idx - 1) * self.app.config['page_size']
+            expected_items = DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[expected_items_start:] #[DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[4]]
+            expected_items = [item.serializable() for item in expected_items]
+
+            self.assertCountEqual(response['items'], expected_items)
+            self.assertFalse('continuation_token' in response)
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_cant_get_negative_page(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            self.app.config['page_size'] = 2
+
+            request_data = {
+                'continuation_token': -10
+            }
+            res = self.client().get('/items/paged', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 400)
+
+            wrong_parameters = ['continuation_token']
+            res_wrong_parameters = [item['parameter'] for item in json.loads(res.data)["messages"]]
+            self.assertCountEqual(wrong_parameters, res_wrong_parameters)
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_cant_get_zero_page(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            self.app.config['page_size'] = 2
+
+            request_data = {
+                'continuation_token': 0
+            }
+            res = self.client().get('/items/paged', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 400)
+
+            wrong_parameters = ['continuation_token']
+            res_wrong_parameters = [item['parameter'] for item in json.loads(res.data)["messages"]]
+            self.assertCountEqual(wrong_parameters, res_wrong_parameters)
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_can_get_zero_items_because_page_is_too_far(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            self.app.config['page_size'] = 2
+
+            request_data = {
+                'continuation_token': 10
+            }
+            res = self.client().get('/items/paged', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            expected_items = []
+            self.assertCountEqual(response['items'], expected_items)
+            self.assertFalse('continuation_token' in response)
 
 
 class TestGetItems(FlaskAppTestCase):

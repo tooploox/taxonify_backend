@@ -137,7 +137,7 @@ class Item(DbDocument):
         return make_item_dict_serializable(data)
 
 
-def find_items(db, with_default_projection=True, serializable=False, *args, **kwargs):
+def build_find_query(*args, **kwargs):
     query = dict()
     for key, value in kwargs.items():
         if type(value) == list:
@@ -161,11 +161,29 @@ def find_items(db, with_default_projection=True, serializable=False, *args, **kw
         else:
             query[key] = value
 
-    projection = DEFAULT_ITEM_PROJECTION if with_default_projection else None
-    if serializable:
-        return (make_item_dict_serializable(item) for item in db.items.find(query, projection))
+    return query
 
-    return (Item.from_db_data(item) for item in db.items.find(query, projection))
+
+def format_query_result(result, serializable):
+    if serializable:
+        return (make_item_dict_serializable(item) for item in result)
+
+    return (Item.from_db_data(item) for item in result)
+
+
+def paged_find_items(db, page_number, page_size, with_default_projection=True,
+                     serializable=False, *args, **kwargs):
+    query = build_find_query(*args, **kwargs)
+    projection = DEFAULT_ITEM_PROJECTION if with_default_projection else None
+    result = db.items.find(query, projection).skip(page_size * (page_number - 1)).limit(page_size)
+    return format_query_result(result, serializable)
+
+
+def find_items(db, with_default_projection=True, serializable=False, *args, **kwargs):
+    query = build_find_query(*args, **kwargs)
+    projection = DEFAULT_ITEM_PROJECTION if with_default_projection else None
+    result = db.items.find(query, projection)
+    return format_query_result(result, serializable)
 
 
 def bulk_replace(db, items):
