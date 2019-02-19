@@ -88,6 +88,38 @@ class TestGetPagedItems(FlaskAppTestCase):
             self.assertFalse('continuation_token' in response)
 
     @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_cant_get_negative_page(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            self.app.config['page_size'] = 2
+
+            request_data = {
+                'continuation_token': -10
+            }
+            res = self.client().get('/items/paged', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 400)
+
+            wrong_parameters = ['continuation_token']
+            res_wrong_parameters = [item['parameter'] for item in json.loads(res.data)["messages"]]
+            self.assertCountEqual(wrong_parameters, res_wrong_parameters)
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_cant_get_zero_page(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            self.app.config['page_size'] = 2
+
+            request_data = {
+                'continuation_token': 0
+            }
+            res = self.client().get('/items/paged', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 400)
+
+            wrong_parameters = ['continuation_token']
+            res_wrong_parameters = [item['parameter'] for item in json.loads(res.data)["messages"]]
+            self.assertCountEqual(wrong_parameters, res_wrong_parameters)
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
     def test_api_can_get_zero_items_because_page_is_too_far(self, mock_make_blob_url):
         mock_make_blob_url.return_value = 'mockedurl'
         with self.app.app_context():

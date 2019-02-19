@@ -1,4 +1,5 @@
 from marshmallow import fields
+from marshmallow.validate import Range
 
 from aquascope.webserver.schema.custom_fields import (List, NullableBoolean,
                                                       LowercaseNullableString, NullableString)
@@ -145,4 +146,4 @@ class GetItemsSchema(CustomSchema):
 
 
 class GetPagedItemsSchema(GetItemsSchema):
-    continuation_token = fields.Integer(required=False, allow_none=False)
+    continuation_token = fields.Integer(required=False, allow_none=False, validate=Range(1))
