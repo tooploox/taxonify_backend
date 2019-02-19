@@ -1,4 +1,5 @@
 import copy
+import math
 import unittest
 from unittest import mock
 
@@ -74,14 +75,17 @@ class TestGetPagedItems(FlaskAppTestCase):
         with self.app.app_context():
             self.app.config['page_size'] = 2
 
+            last_page_idx = math.ceil(len(DUMMY_ITEMS_WITH_DEFAULT_PROJECTION) / self.app.config['page_size'])
             request_data = {
-                'continuation_token': 3
+                'continuation_token': last_page_idx
             }
             res = self.client().get('/items/paged', query_string=request_data, headers=self.headers)
             self.assertEqual(res.status_code, 200)
 
             response = res.json
-            expected_items = [DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[4]]
+
+            expected_items_start = (last_page_idx - 1) * self.app.config['page_size']
+            expected_items = DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[expected_items_start:] #[DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[4]]
             expected_items = [item.serializable() for item in expected_items]
 
             self.assertCountEqual(response['items'], expected_items)
