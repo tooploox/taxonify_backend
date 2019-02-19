@@ -32,7 +32,7 @@ class PagedItems(Resource):
             'urls': urls
         }
 
-        if len(items) == page_size:
+        if len(items) == page_size and page_size > 0:
             response['continuation_token'] = page_number + 1
 
         return response
