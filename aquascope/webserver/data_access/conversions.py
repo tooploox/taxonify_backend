@@ -1,3 +1,5 @@
+import pandas as pd
+
 GROUP_ID_TO_CONTAINER = {
     'processed': 'data',
     'upload': 'upload',
@@ -19,8 +21,8 @@ def item_id_and_extension_to_blob_name(item_id, item_extension):
 
 
 def list_of_item_dicts_to_dataframe(item_dicts):
-    pass
+    return pd.DataFrame(item_dicts)
 
 
-def list_of_item_dicts_to_tsv(item_dicts):
+def list_of_item_dicts_to_tsv(item_dicts, tsv_path):
     pass
