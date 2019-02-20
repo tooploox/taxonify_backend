@@ -25,4 +25,5 @@ def list_of_item_dicts_to_dataframe(item_dicts):
 
 
 def list_of_item_dicts_to_tsv(item_dicts, tsv_path):
-    pass
+    df = list_of_item_dicts_to_dataframe(item_dicts)
+    df.to_csv(tsv_path, sep='\t', index=False)

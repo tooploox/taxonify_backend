@@ -12,7 +12,7 @@ def upload_export_file(client, local_filepath):
     if not exists(client, container_name):
         create_container(client, container_name)
 
-    blob_name = str(uuid.uuid1())
+    blob_name = str(uuid.uuid1()) + '.tsv'
     upload_blob(client, container_name, blob_name, local_filepath, None)
 
     sas = generate_download_sas(client, container_name, blob_name,

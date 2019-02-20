@@ -22,7 +22,7 @@ class Export(Resource):
         storage_client = app.config['storage_client']
 
         limit = args.pop('limit', 0)
-        items = list(paged_find_items(db, limit, 1, with_default_projection=False,
+        items = list(paged_find_items(db, 1, limit, with_default_projection=False,
                                       serializable=True, **args))
 
         exported_items_url = export_items(items, storage_client)
