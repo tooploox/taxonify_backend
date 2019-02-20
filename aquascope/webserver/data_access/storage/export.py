@@ -1,8 +1,8 @@
 import uuid
 
 from aquascope.webserver.data_access.conversions import group_id_to_container_name
-from aquascope.webserver.data_access.storage.blob import exists, create_container, upload_blob, generate_download_sas, \
-    make_blob_url
+from aquascope.webserver.data_access.storage.blob import (exists, create_container, upload_blob, generate_download_sas,
+                                                          make_blob_url)
 
 EXPORT_SAS_EXPIRY_MINUTES = 1440
 
