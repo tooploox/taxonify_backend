@@ -1703,7 +1703,11 @@ components:
             format: date-time
     ExportResult:
       type: object
+      required: [status]
       properties:
+        status:
+          type: string
+          enum: [ok, empty]
         url:
           type: string
           format: url

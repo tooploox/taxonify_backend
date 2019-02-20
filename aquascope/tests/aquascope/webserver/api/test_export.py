@@ -50,6 +50,7 @@ class TestGetPagedItems(FlaskAppTestCase):
             self.assertEqual(res.status_code, 200)
 
             response = res.json
+            self.assertEqual(response['status'], 'ok')
             self.assertTrue('url' in response)
 
             items = self.url_to_items(response['url'])
@@ -66,6 +67,7 @@ class TestGetPagedItems(FlaskAppTestCase):
             self.assertEqual(res.status_code, 200)
 
             response = res.json
+            self.assertEqual(response['status'], 'ok')
             self.assertTrue('url' in response)
 
             items = self.url_to_items(response['url'])
@@ -82,6 +84,7 @@ class TestGetPagedItems(FlaskAppTestCase):
             self.assertEqual(res.status_code, 200)
 
             response = res.json
+            self.assertEqual(response['status'], 'ok')
             self.assertTrue('url' in response)
 
             items = self.url_to_items(response['url'])
@@ -98,6 +101,7 @@ class TestGetPagedItems(FlaskAppTestCase):
             self.assertEqual(res.status_code, 200)
 
             response = res.json
+            self.assertEqual(response['status'], 'ok')
             self.assertTrue('url' in response)
 
             items = self.url_to_items(response['url'])
@@ -116,9 +120,22 @@ class TestGetPagedItems(FlaskAppTestCase):
             self.assertEqual(res.status_code, 200)
 
             response = res.json
+            self.assertEqual(response['status'], 'ok')
             self.assertTrue('url' in response)
 
             items = self.url_to_items(response['url'])
             items = [item.serializable() for item in items]
             expected_items = [item.serializable() for item in DUMMY_ITEMS[:1]]
             self.assertCountEqual(items, expected_items)
+
+    def test_api_can_get_export_with_filter_that_doesnt_match_any_items(self):
+        with self.app.app_context():
+            request_data = {
+                'empire': 'eukaryota'
+            }
+            res = self.client().get('/export', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            self.assertEqual(response['status'], 'empty')
+            self.assertFalse('url' in response)

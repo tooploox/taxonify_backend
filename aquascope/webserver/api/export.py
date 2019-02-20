@@ -25,5 +25,8 @@ class Export(Resource):
         items = list(paged_find_items(db, 1, limit, with_default_projection=False,
                                       serializable=True, **args))
 
+        if not items:
+            return dict(status='empty')
+
         exported_items_url = export_items(items, storage_client)
-        return dict(url=exported_items_url)
+        return dict(status='ok', url=exported_items_url)
