@@ -56,3 +56,69 @@ class TestGetPagedItems(FlaskAppTestCase):
             items = [item.serializable() for item in items]
             expected_items = [item.serializable() for item in DUMMY_ITEMS]
             self.assertCountEqual(items, expected_items)
+
+    def test_api_can_get_export_with_limit_to_single_item(self):
+        with self.app.app_context():
+            request_data = {
+                'limit': 1
+            }
+            res = self.client().get('/export', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            self.assertTrue('url' in response)
+
+            items = self.url_to_items(response['url'])
+            items = [item.serializable() for item in items]
+            expected_items = [DUMMY_ITEMS[0].serializable()]
+            self.assertCountEqual(items, expected_items)
+
+    def test_api_can_get_export_with_attribute_filter(self):
+        with self.app.app_context():
+            request_data = {
+                'eating': True
+            }
+            res = self.client().get('/export', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            self.assertTrue('url' in response)
+
+            items = self.url_to_items(response['url'])
+            items = [item.serializable() for item in items]
+            expected_items = [item.serializable() for item in DUMMY_ITEMS[:2]]
+            self.assertCountEqual(items, expected_items)
+
+    def test_api_can_get_export_with_taxonomy_filter(self):
+        with self.app.app_context():
+            request_data = {
+                'empire': 'prokaryota'
+            }
+            res = self.client().get('/export', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            self.assertTrue('url' in response)
+
+            items = self.url_to_items(response['url'])
+            items = [item.serializable() for item in items]
+            expected_items = [item.serializable() for item in DUMMY_ITEMS[:4]]
+            self.assertCountEqual(items, expected_items)
+
+    def test_api_can_get_export_with_filters_and_limit(self):
+        with self.app.app_context():
+            request_data = {
+                'eating': True,
+                'empire': 'prokaryota',
+                'limit': 1
+            }
+            res = self.client().get('/export', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            self.assertTrue('url' in response)
+
+            items = self.url_to_items(response['url'])
+            items = [item.serializable() for item in items]
+            expected_items = [item.serializable() for item in DUMMY_ITEMS[:1]]
+            self.assertCountEqual(items, expected_items)
