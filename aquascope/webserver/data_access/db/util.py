@@ -1,5 +1,6 @@
 import os
 
+import pymongo
 from pymongo import MongoClient
 from pymongo.errors import CollectionInvalid
 
@@ -20,6 +21,8 @@ def create_collections(db):
             db.create_collection(collection, validator={'$jsonSchema': schema})
         except CollectionInvalid:
             pass
+
+    db.users.create_index([('username', pymongo.ASCENDING)], unique=True)
 
 
 def get_db(connection_string):

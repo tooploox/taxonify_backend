@@ -1,6 +1,6 @@
 from marshmallow import fields
+from marshmallow.validate import Regexp
 
-from aquascope.webserver.schema.custom_fields import List
 from aquascope.webserver.schema.custom_schema import CustomSchema
 
 
@@ -10,5 +10,6 @@ class UserSchema(CustomSchema):
 
 
 class NewUserSchema(CustomSchema):
-    # missing validation
-    username = fields.String(allow_none=False, required=True)
+    username = fields.String(allow_none=False, required=True,
+                             validate=Regexp('^[a-zA-Z0-9.]{1,64}$', 0,
+                                             'Username is invalid'))

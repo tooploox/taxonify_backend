@@ -5,10 +5,10 @@ from flask_restful import Resource
 from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 jwt_refresh_token_required, get_jwt_identity,
                                 jwt_required)
-
+from pymongo.errors import DuplicateKeyError
 
 from aquascope.webserver.data_access.db import users
-from aquascope.webserver.schema.user import UserSchema
+from aquascope.webserver.schema.user import UserSchema, NewUserSchema
 from aquascope.webserver.schema.custom_schema import FormattedValidationError
 
 
@@ -56,7 +56,7 @@ class UserList(Resource):
     @jwt_required
     def get(self):
         db = app.config['db']
-        docs = upload.find(db)
+        docs = users.list_all(db)
         return list(docs)
 
 
@@ -64,15 +64,19 @@ class UserNew(Resource):
     @jwt_required
     def post(self):
         pass
-        # json_data = request.get_json(force=True)
-        # schema = PostUserListSchema()
-        #
-        # try:
-        #     args = schema.load(json_data)
-        # except FormattedValidationError as e:
-        #     return e.formatted_messages, 400
-        #
-        # current, update = args['current'], args['update']
-        #
-        #
-        # result = replace(db, )
+        json_data = request.get_json(force=True)
+        schema = NewUserSchema()
+
+        try:
+            args = schema.load(json_data)
+        except FormattedValidationError as e:
+            return e.formatted_messages, 400
+
+        db = app.config['db']
+
+        try:
+            users.create(db, args['username'])
+        except DuplicateKeyError:
+            return dict(message='User already exists in the system.'), 400
+
+        return None, 204
