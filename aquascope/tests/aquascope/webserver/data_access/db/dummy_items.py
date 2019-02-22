@@ -571,7 +571,7 @@ _DUMMY_ITEMS = [
         "intensity_blue_mean_intensity": 98.6188235294118,
         "intensity_blue_perc_25_intensity": 46.0,
         "intensity_blue_perc_75_intensity": 144.0,
-        "empire": "prokaryota",
+        "empire": None,
         "kingdom": "bacteria",
         "phylum": "cyanobacteria",
         "class": "cyanophyceae",
