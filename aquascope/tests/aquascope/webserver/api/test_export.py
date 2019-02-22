@@ -1,11 +1,11 @@
 import os
 import tempfile
-import urllib.request
 
 import dateutil
 import pandas as pd
 from bson import ObjectId
 from flask import json
+import requests
 
 from aquascope.tests.aquascope.webserver.data_access.db.dummy_items import DUMMY_ITEMS
 from aquascope.tests.flask_app_test_case import FlaskAppTestCase
@@ -18,7 +18,9 @@ class TestGetPagedItems(FlaskAppTestCase):
     def url_to_items(url):
         with tempfile.TemporaryDirectory() as tmpdirname:
             tmp_filepath = os.path.join(tmpdirname, 'data.tsv')
-            urllib.request.urlretrieve(url, tmp_filepath)
+            req = requests.get(url)
+            with open(tmp_filepath, 'wb') as f:
+                f.write(req.content)
 
             converters = {
                 'acquisition_time': lambda x: dateutil.parser.parse(x),
