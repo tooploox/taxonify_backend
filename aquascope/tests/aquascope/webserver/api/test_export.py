@@ -89,7 +89,7 @@ class TestGetPagedItems(FlaskAppTestCase):
 
             items = self.url_to_items(response['url'])
             items = [item.serializable() for item in items]
-            expected_items = [item.serializable() for item in DUMMY_ITEMS[:2]]
+            expected_items = [item.serializable() for item in DUMMY_ITEMS if item.eating]
             self.assertCountEqual(items, expected_items)
 
     def test_api_can_get_export_with_taxonomy_filter(self):
@@ -106,7 +106,7 @@ class TestGetPagedItems(FlaskAppTestCase):
 
             items = self.url_to_items(response['url'])
             items = [item.serializable() for item in items]
-            expected_items = [item.serializable() for item in DUMMY_ITEMS[:4]]
+            expected_items = [item.serializable() for item in DUMMY_ITEMS if item.empire is 'prokaryota']
             self.assertCountEqual(items, expected_items)
 
     def test_api_can_get_export_with_filters_and_limit(self):
