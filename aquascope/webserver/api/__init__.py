@@ -3,4 +3,4 @@ from .export import Export
 from .items import Items, PagedItems
 from .sas import Sas
 from .upload import Upload, UploadList
-from .user import UserLogin, UserTokenRefresh
+from .user import UserLogin, UserList, UserNew, UserTokenRefresh
