@@ -8,7 +8,6 @@ DEFAULT_USERS_PROJECTION = {'_id': 0}
 USERS_DB_SCHEMA = {
     'bsonType': 'object',
     'required': ['_id', 'username'],
-    #'uniqueItems': ['_id', 'username'],
     'additionalProperties': False,
     'properties': {
         '_id': {
@@ -19,24 +18,6 @@ USERS_DB_SCHEMA = {
         }
     }
 }
-
-
-# class User(DbDocument):
-#     def __init__(self, obj):
-#         super(User, self).__init__(obj)
-#
-#     def serializable(self, shallow=False):
-#         if shallow:
-#             data = self.get_dict()
-#         else:
-#             data = copy.deepcopy(self.get_dict())
-#
-#         data['_id'] = str(data['_id'])
-#         return data
-#
-#     @staticmethod
-#     def from_db_data(db_data):
-#         return User(DbDocument.from_db_data(db_data))
 
 
 def exists(db, username):
