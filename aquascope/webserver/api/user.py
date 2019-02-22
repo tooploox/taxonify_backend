@@ -77,6 +77,6 @@ class UserNew(Resource):
         try:
             users.create(db, args['username'])
         except DuplicateKeyError:
-            return dict(message='User already exists in the system.'), 400
+            return dict(message='User already exists in the system.'), 401
 
         return None, 204

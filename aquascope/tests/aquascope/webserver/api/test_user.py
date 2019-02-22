@@ -100,7 +100,7 @@ class TestUserNew(FlaskAppTestCase):
         request_data = json.dumps(new_user)
 
         res = self.client().post('/user/new', data=request_data, headers=self.headers)
-        self.assertEqual(res.status_code, 400)
+        self.assertEqual(res.status_code, 401)
 
         res = self.client().get('/user/list', headers=self.headers)
         self.assertEqual(res.status_code, 200)
