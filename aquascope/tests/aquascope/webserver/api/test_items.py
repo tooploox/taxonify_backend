@@ -207,7 +207,7 @@ class TestGetItems(FlaskAppTestCase):
 
             self.assertCountEqual(response['items'], expected_items)
 
-    def test_api_can_get_items_with_bad_argument(self):
+    def test_api_cant_get_items_with_bad_argument(self):
         with self.app.app_context():
             request_data = {
                 'invalid_key': [True, '']
@@ -230,7 +230,7 @@ class TestGetItems(FlaskAppTestCase):
             self.assertCountEqual(response['items'], expected_items)
 
     @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
-    def test_api_can_get_items_with_time_range(self, mock_make_blob_url):
+    def test_api_can_get_items_with_acquisition_time_range(self, mock_make_blob_url):
         mock_make_blob_url.return_value = 'mockedurl'
         with self.app.app_context():
             request_data = {
