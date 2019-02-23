@@ -1,81 +1,25 @@
 from marshmallow import fields
 from marshmallow.validate import Range
 
+from aquascope.webserver.data_access.db.items import (ADDITIONAL_ATTRIBUTES_FIELDS, PRIMARY_MORPHOMETRIC_FIELDS,
+                                                      TAXONOMY_FIELDS)
 from aquascope.webserver.schema.custom_fields import (List, NullableBoolean,
                                                       LowercaseNullableString, NullableString)
 from aquascope.webserver.schema.custom_schema import (CustomSchema, FormattedValidationError)
 
 
-class PostItemSchema(CustomSchema):
-
-    id = fields.String(data_key='_id', attribute='_id', required=True)
-    filename = fields.String(required=True, allow_none=True)
-    extension = LowercaseNullableString(required=True, allow_none=True)
-    group_id = LowercaseNullableString(required=True, allow_none=True)
-
-    empire = LowercaseNullableString(required=True, allow_none=True)
-    kingdom = LowercaseNullableString(required=True, allow_none=True)
-    phylum = LowercaseNullableString(required=True, allow_none=True)
-    class_field = LowercaseNullableString(data_key='class', attribute='class', required=True, allow_none=True)
-    order = LowercaseNullableString(required=True, allow_none=True)
-    family = LowercaseNullableString(required=True, allow_none=True)
-    genus = LowercaseNullableString(required=True, allow_none=True)
-    species = LowercaseNullableString(required=True, allow_none=True)
-
-    with_eggs = fields.Boolean(allow_none=True, required=True)
-    dividing = fields.Boolean(allow_none=True, required=True)
-    dead = fields.Boolean(allow_none=True, required=True)
-    with_epibiont = fields.Boolean(allow_none=True, required=True)
-    with_parasite = fields.Boolean(allow_none=True, required=True)
-    broken = fields.Boolean(allow_none=True, required=True)
-    colony = fields.Boolean(allow_none=True, required=True)
-    cluster = fields.Boolean(allow_none=True, required=True)
-    eating = fields.Boolean(allow_none=True, required=True)
-    multiple_species = fields.Boolean(allow_none=True, required=True)
-    partially_cropped = fields.Boolean(allow_none=True, required=True)
-    male = fields.Boolean(allow_none=True, required=True)
-    female = fields.Boolean(allow_none=True, required=True)
-    juvenile = fields.Boolean(allow_none=True, required=True)
-    adult = fields.Boolean(allow_none=True, required=True)
-    ephippium = fields.Boolean(allow_none=True, required=True)
-    resting_egg = fields.Boolean(allow_none=True, required=True)
-    heterocyst = fields.Boolean(allow_none=True, required=True)
-    akinete = fields.Boolean(allow_none=True, required=True)
-    with_spines = fields.Boolean(allow_none=True, required=True)
-    beatles = fields.Boolean(allow_none=True, required=True)
-    stones = fields.Boolean(allow_none=True, required=True)
-    zeppelin = fields.Boolean(allow_none=True, required=True)
-    floyd = fields.Boolean(allow_none=True, required=True)
-    acdc = fields.Boolean(allow_none=True, required=True)
-    hendrix = fields.Boolean(allow_none=True, required=True)
-    alan_parsons = fields.Boolean(allow_none=True, required=True)
-    allman = fields.Boolean(allow_none=True, required=True)
-    dire_straits = fields.Boolean(allow_none=True, required=True)
-    eagles = fields.Boolean(allow_none=True, required=True)
-    guns = fields.Boolean(allow_none=True, required=True)
-    purple = fields.Boolean(allow_none=True, required=True)
-    van_halen = fields.Boolean(allow_none=True, required=True)
-    skynyrd = fields.Boolean(allow_none=True, required=True)
-    zz_top = fields.Boolean(allow_none=True, required=True)
-    iron = fields.Boolean(allow_none=True, required=True)
-    police = fields.Boolean(allow_none=True, required=True)
-    moore = fields.Boolean(allow_none=True, required=True)
-    inxs = fields.Boolean(allow_none=True, required=True)
-    chilli_peppers = fields.Boolean(allow_none=True, required=True)
-
-    acquisition_time = fields.String(required=True)
-    image_width = fields.Integer(required=True)
-    image_height = fields.Integer(required=True)
-
-    file_size = fields.Float(allow_none=False, required=True)
-    aspect_ratio = fields.Float(allow_none=False, required=True)
-    maj_axis_len = fields.Float(allow_none=False, required=True)
-    min_axis_len = fields.Float(allow_none=False, required=True)
-    orientation = fields.Float(allow_none=False, required=True)
-    eccentricity = fields.Float(allow_none=False, required=True)
-    solidity = fields.Float(allow_none=False, required=True)
-    estimated_volume = fields.Float(allow_none=False, required=True)
-    area = fields.Float(allow_none=False, required=True)
+PostItemSchema = type('PostItemSchema', (CustomSchema,), {
+    '_id': fields.String(required=True),
+    'filename': fields.String(required=True, allow_none=True),
+    'extension': LowercaseNullableString(required=True, allow_none=True),
+    'group_id': LowercaseNullableString(required=True, allow_none=True),
+    'acquisition_time': fields.String(required=True),
+    'image_width': fields.Integer(required=True),
+    'image_height': fields.Integer(required=True),
+    **({k: LowercaseNullableString(required=True, allow_none=True) for k in TAXONOMY_FIELDS}),
+    **({k: fields.Boolean(allow_none=True, required=True) for k in ADDITIONAL_ATTRIBUTES_FIELDS}),
+    **({k: fields.Float(allow_none=False, required=True) for k in PRIMARY_MORPHOMETRIC_FIELDS})
+})
 
 
 class PostItemsUpdateSchema(CustomSchema):
@@ -89,60 +33,14 @@ class PostItemsUpdateSchema(CustomSchema):
         return super().load(json_data, many, partial, unknown)
 
 
-class GetItemsSchema(CustomSchema):
-    empire = LowercaseNullableString(required=False, allow_none=True)
-    kingdom = LowercaseNullableString(required=False, allow_none=True)
-    phylum = LowercaseNullableString(required=False, allow_none=True)
-    class_field = LowercaseNullableString(data_key='class', attribute='class', required=False, allow_none=True)
-    order = LowercaseNullableString(required=False, allow_none=True)
-    family = LowercaseNullableString(required=False, allow_none=True)
-    genus = LowercaseNullableString(required=False, allow_none=True)
-    species = LowercaseNullableString(required=False, allow_none=True)
-    filename = NullableString(required=False, allow_none=True)
+GetItemsSchema = type('GetItemsSchema', (CustomSchema,), {
+    'filename': NullableString(required=False, allow_none=True),
+    'acquisition_time_start': fields.DateTime(required=False),
+    'acquisition_time_end': fields.DateTime(required=False),
+    **({k: LowercaseNullableString(required=False, allow_none=True) for k in TAXONOMY_FIELDS}),
+    **({k: List(NullableBoolean(allow_none=True), allow_none=True, required=False) for k in ADDITIONAL_ATTRIBUTES_FIELDS}),
 
-    acquisition_time_start = fields.DateTime(required=False)
-    acquisition_time_end = fields.DateTime(required=False)
-
-    with_eggs = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    dividing = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    dead = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    with_epibiont = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    with_parasite = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    broken = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    colony = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    cluster = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    eating = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    multiple_species = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    partially_cropped = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    male = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    female = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    juvenile = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    adult = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    ephippium = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    resting_egg = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    heterocyst = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    akinete = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    with_spines = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    beatles = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    stones = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    zeppelin = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    floyd = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    acdc = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    hendrix = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    alan_parsons = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    allman = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    dire_straits = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    eagles = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    guns = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    purple = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    van_halen = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    skynyrd = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    zz_top = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    iron = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    police = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    moore = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    inxs = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
-    chilli_peppers = List(NullableBoolean(allow_none=True), allow_none=True, required=False)
+})
 
 
 class GetPagedItemsSchema(GetItemsSchema):
