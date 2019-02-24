@@ -2,7 +2,7 @@ from marshmallow import fields
 from marshmallow.validate import Range
 
 from aquascope.webserver.data_access.db.items import (ADDITIONAL_ATTRIBUTES_FIELDS, PRIMARY_MORPHOMETRIC_FIELDS,
-                                                      TAXONOMY_FIELDS)
+                                                      TAXONOMY_FIELDS, ANNOTABLE_FIELDS)
 from aquascope.webserver.schema.custom_fields import (List, NullableBoolean,
                                                       LowercaseNullableString, NullableString)
 from aquascope.webserver.schema.custom_schema import (CustomSchema, FormattedValidationError)
@@ -18,7 +18,8 @@ PostItemSchema = type('PostItemSchema', (CustomSchema,), {
     'image_height': fields.Integer(required=True),
     **({k: LowercaseNullableString(required=True, allow_none=True) for k in TAXONOMY_FIELDS}),
     **({k: fields.Boolean(allow_none=True, required=True) for k in ADDITIONAL_ATTRIBUTES_FIELDS}),
-    **({k: fields.Float(allow_none=False, required=True) for k in PRIMARY_MORPHOMETRIC_FIELDS})
+    **({k: fields.Float(allow_none=False, required=True) for k in PRIMARY_MORPHOMETRIC_FIELDS}),
+    **({f'{k}_modified_by': NullableString(required=True, allow_none=True) for k in ANNOTABLE_FIELDS})
 })
 
 

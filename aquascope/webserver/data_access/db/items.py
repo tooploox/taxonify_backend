@@ -57,6 +57,8 @@ SECONDARY_MORPHOMETRIC_FIELDS = [
 
 MORPHOMETRIC_FIELDS = PRIMARY_MORPHOMETRIC_FIELDS + SECONDARY_MORPHOMETRIC_FIELDS
 
+ANNOTABLE_FIELDS = TAXONOMY_FIELDS + ADDITIONAL_ATTRIBUTES_FIELDS
+
 DEFAULT_ITEM_PROJECTION = {k: 0 for k in SECONDARY_MORPHOMETRIC_FIELDS}
 
 ITEMS_DB_SCHEMA = {
@@ -92,6 +94,7 @@ ITEMS_DB_SCHEMA = {
         **({k: dict(bsonType=['string', 'null']) for k in TAXONOMY_FIELDS}),
         **({k: dict(bsonType=['bool', 'null']) for k in ADDITIONAL_ATTRIBUTES_FIELDS}),
         **({k: dict(bsonType='double') for k in MORPHOMETRIC_FIELDS}),
+        **({f'{k}_modified_by': dict(bsonType=['string', 'null']) for k in ANNOTABLE_FIELDS})
     }
 }
 
