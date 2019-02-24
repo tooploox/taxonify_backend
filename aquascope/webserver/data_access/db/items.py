@@ -67,7 +67,9 @@ ITEMS_DB_SCHEMA = {
                  'acquisition_time', 'image_width', 'image_height']
                 + TAXONOMY_FIELDS
                 + ADDITIONAL_ATTRIBUTES_FIELDS
-                + MORPHOMETRIC_FIELDS,
+                + MORPHOMETRIC_FIELDS
+                + [f'{k}_modified_by' for k in ANNOTABLE_FIELDS]
+                + [f'{k}_modification_date' for k in ANNOTABLE_FIELDS],
     'additionalProperties': False,
     'properties': {
         '_id': {
@@ -94,12 +96,18 @@ ITEMS_DB_SCHEMA = {
         **({k: dict(bsonType=['string', 'null']) for k in TAXONOMY_FIELDS}),
         **({k: dict(bsonType=['bool', 'null']) for k in ADDITIONAL_ATTRIBUTES_FIELDS}),
         **({k: dict(bsonType='double') for k in MORPHOMETRIC_FIELDS}),
-        **({f'{k}_modified_by': dict(bsonType=['string', 'null']) for k in ANNOTABLE_FIELDS})
+        **({f'{k}_modified_by': dict(bsonType=['string', 'null']) for k in ANNOTABLE_FIELDS}),
+        **({f'{k}_modification_date': dict(bsonType=['date', 'null']) for k in ANNOTABLE_FIELDS})
     }
 }
 
 
 def make_item_dict_serializable(item_dict):
+    for field in ANNOTABLE_FIELDS:
+        date_field = f'{field}_modification_date'
+        if item_dict[date_field]:
+            item_dict[date_field] = item_dict[date_field].isoformat()
+
     item_dict['acquisition_time'] = item_dict['acquisition_time'].isoformat()
     item_dict['_id'] = str(item_dict['_id'])
     return item_dict
@@ -113,7 +121,6 @@ class Item(DbDocument):
     def from_request(request_dict):
         data = copy.deepcopy(request_dict)
         data['_id'] = ObjectId(data['_id'])
-        data['acquisition_time'] = dateutil.parser.parse(data['acquisition_time'])
         return Item(data)
 
     @staticmethod

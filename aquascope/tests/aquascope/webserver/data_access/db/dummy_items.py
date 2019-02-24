@@ -137,7 +137,8 @@ _DUMMY_ITEMS = [
         "acquisition_time": dateutil.parser.parse('2019-01-20 10:00:00'),
         "image_width": 48,
         "image_height": 32,
-        **({f'{k}_modified_by': 'user1' for k in ANNOTABLE_FIELDS})
+        **({f'{k}_modified_by': 'user1' for k in ANNOTABLE_FIELDS}),
+        **({f'{k}_modification_date': dateutil.parser.parse('2019-01-21 10:00:00') for k in ANNOTABLE_FIELDS})
     },
     {
         "_id": ObjectId('000000000000000000000001'),
@@ -260,7 +261,8 @@ _DUMMY_ITEMS = [
         "acquisition_time": dateutil.parser.parse('2019-01-20 06:00:00'),
         "image_width": 100,
         "image_height": 100,
-        **({f'{k}_modified_by': 'user2' for k in ANNOTABLE_FIELDS})
+        **({f'{k}_modified_by': 'user2' for k in ANNOTABLE_FIELDS}),
+        **({f'{k}_modification_date': dateutil.parser.parse('2019-01-21 06:00:00') for k in ANNOTABLE_FIELDS})
     },
     {
         "_id": ObjectId('000000000000000000000002'),
@@ -383,7 +385,8 @@ _DUMMY_ITEMS = [
         "acquisition_time": dateutil.parser.parse('2019-01-10 10:00:00'),
         "image_width": 100,
         "image_height": 100,
-        **({f'{k}_modified_by': None for k in ANNOTABLE_FIELDS})
+        **({f'{k}_modified_by': None for k in ANNOTABLE_FIELDS}),
+        **({f'{k}_modification_date': None for k in ANNOTABLE_FIELDS})
     },
     {
         "_id": ObjectId('000000000000000000000003'),
@@ -506,7 +509,8 @@ _DUMMY_ITEMS = [
         "acquisition_time": dateutil.parser.parse('2019-01-05 10:00:00'),
         "image_width": 100,
         "image_height": 100,
-        **({f'{k}_modified_by': 'user1' for k in ANNOTABLE_FIELDS})
+        **({f'{k}_modified_by': 'user1' for k in ANNOTABLE_FIELDS}),
+        **({f'{k}_modification_date': dateutil.parser.parse('2019-01-05 10:00:00') for k in ANNOTABLE_FIELDS})
     },
     {
         "_id": ObjectId('000000000000000000000004'),
@@ -629,7 +633,8 @@ _DUMMY_ITEMS = [
         "acquisition_time": dateutil.parser.parse('2019-01-01 10:00:00'),
         "image_width": 100,
         "image_height": 100,
-        **({f'{k}_modified_by': None for k in ANNOTABLE_FIELDS})
+        **({f'{k}_modified_by': None for k in ANNOTABLE_FIELDS}),
+        **({f'{k}_modification_date': None for k in ANNOTABLE_FIELDS})
     }
 ]
 

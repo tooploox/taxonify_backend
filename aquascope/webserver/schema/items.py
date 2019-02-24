@@ -13,13 +13,14 @@ PostItemSchema = type('PostItemSchema', (CustomSchema,), {
     'filename': fields.String(required=True, allow_none=True),
     'extension': LowercaseNullableString(required=True, allow_none=True),
     'group_id': LowercaseNullableString(required=True, allow_none=True),
-    'acquisition_time': fields.String(required=True),
+    'acquisition_time': fields.DateTime(required=True),
     'image_width': fields.Integer(required=True),
     'image_height': fields.Integer(required=True),
     **({k: LowercaseNullableString(required=True, allow_none=True) for k in TAXONOMY_FIELDS}),
     **({k: fields.Boolean(allow_none=True, required=True) for k in ADDITIONAL_ATTRIBUTES_FIELDS}),
     **({k: fields.Float(allow_none=False, required=True) for k in PRIMARY_MORPHOMETRIC_FIELDS}),
-    **({f'{k}_modified_by': NullableString(required=True, allow_none=True) for k in ANNOTABLE_FIELDS})
+    **({f'{k}_modified_by': NullableString(required=True, allow_none=True) for k in ANNOTABLE_FIELDS}),
+    **({f'{k}_modification_date': fields.DateTime(required=True, allow_none=True) for k in ANNOTABLE_FIELDS})
 })
 
 
