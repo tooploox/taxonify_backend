@@ -5,7 +5,8 @@ from unittest import mock
 
 from flask import json
 
-from aquascope.tests.aquascope.webserver.data_access.db.dummy_items import DUMMY_ITEMS, DUMMY_ITEMS_WITH_DEFAULT_PROJECTION
+from aquascope.tests.aquascope.webserver.data_access.db.dummy_items import DUMMY_ITEMS, \
+    DUMMY_ITEMS_WITH_DEFAULT_PROJECTION
 from aquascope.tests.flask_app_test_case import FlaskAppTestCase
 from aquascope.webserver.data_access.db import Item
 
@@ -85,7 +86,8 @@ class TestGetPagedItems(FlaskAppTestCase):
             response = res.json
 
             expected_items_start = (last_page_idx - 1) * self.app.config['page_size']
-            expected_items = DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[expected_items_start:] #[DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[4]]
+            expected_items = DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[
+                             expected_items_start:]
             expected_items = [item.serializable() for item in expected_items]
 
             self.assertCountEqual(response['items'], expected_items)
@@ -248,18 +250,188 @@ class TestGetItems(FlaskAppTestCase):
 
     def test_api_get_emits_errors_for_all_wrong_parameters(self):
         with self.app.app_context():
-            res = self.client().get('/items', query_string="eating=bar&multiple_species=foobar&eating=foo", headers=self.headers)
+            res = self.client().get('/items', query_string="eating=bar&multiple_species=foobar&eating=foo",
+                                    headers=self.headers)
             wrong_parameters = ['eating.0', 'eating.1', 'multiple_species.0']
 
             res_wrong_parameters = [item['parameter'] for item in json.loads(res.data)["messages"]]
             self.assertCountEqual(wrong_parameters, res_wrong_parameters)
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_can_get_items_with_given_field_last_modified_by_given_user(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            request_data = {
+                'eating': [True, ''],
+                'modified_by': 'user1'
+            }
+            res = self.client().get('/items', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            expected_items = [DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[0], DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[3]]
+            expected_items = [item.serializable() for item in expected_items]
+
+            self.assertCountEqual(response['items'], expected_items)
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_can_get_items_with_given_fields_last_modified_by_given_user(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            request_data = {
+                'eating': [True, ''],
+                'empire': 'prokaryota',
+                'modified_by': 'user1'
+            }
+            res = self.client().get('/items', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            expected_items = [DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[0], DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[3]]
+            expected_items = [item.serializable() for item in expected_items]
+
+            self.assertCountEqual(response['items'], expected_items)
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_can_get_items_with_given_fields_last_modified_by_given_user_that_have_single_match(self,
+                                                                                                mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            request_data = {
+                'eating': True,
+                'empire': 'prokaryota',
+                'modified_by': 'user1'
+            }
+            res = self.client().get('/items', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            expected_items = [DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[0]]
+            expected_items = [item.serializable() for item in expected_items]
+
+            self.assertCountEqual(response['items'], expected_items)
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_can_get_zero_items_with_given_fields_last_modified_by_given_user_that_have_no_match(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            request_data = {
+                'allman': False,
+                'eating': [True, ''],
+                'empire': 'prokaryota',
+                'modified_by': 'user1'
+            }
+            res = self.client().get('/items', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            expected_items = []
+            self.assertCountEqual(response['items'], expected_items)
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_can_get_items_with_any_field_last_modified_by_given_user(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        request_data = {
+            'modified_by': 'user2'
+        }
+
+        res = self.client().get('/items', query_string=request_data, headers=self.headers)
+        self.assertEqual(res.status_code, 200)
+
+        response = res.json
+        expected_items = [DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[1], DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[3]]
+        expected_items = [item.serializable() for item in expected_items]
+        self.assertCountEqual(response['items'], expected_items)
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_can_get_items_with_any_field_last_modified_by_given_user_and_other_nonannotable_criteria(self,
+                                                                                                      mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        request_data = {
+            'acquisition_time_start': '2019-01-20T02:00:00.001Z',
+            'acquisition_time_end': '2019-01-20T12:06:34.151Z',
+            'modified_by': 'user2'
+        }
+
+        res = self.client().get('/items', query_string=request_data, headers=self.headers)
+        self.assertEqual(res.status_code, 200)
+
+        response = res.json
+        expected_items = [DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[1]]
+        expected_items = [item.serializable() for item in expected_items]
+        self.assertCountEqual(response['items'], expected_items)
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_get_zero_items_with_given_fields_last_modified_by_nonexisting_user(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            request_data = {
+                'eating': [True, ''],
+                'empire': 'prokaryota',
+                'modified_by': 'nosuchuser1'
+            }
+            res = self.client().get('/items', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            expected_items = []
+
+            self.assertCountEqual(response['items'], expected_items)
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_get_zero_items_with_any_field_last_modified_by_nonexisting_user(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            request_data = {
+                'modified_by': 'nosuchuser1'
+            }
+            res = self.client().get('/items', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            expected_items = []
+
+            self.assertCountEqual(response['items'], expected_items)
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_get_items_with_any_field_last_modified_by_null_user(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            request_data = {
+                'modified_by': ''
+            }
+            res = self.client().get('/items', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            expected_items = [DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[2], DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[4]]
+            expected_items = [item.serializable() for item in expected_items]
+
+            self.assertCountEqual(response['items'], expected_items)
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_can_get_items_with_given_field_and_modification_time_range(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            request_data = {
+                'eating': [True, ''],
+                'modification_time_start': '2019-01-18T18:00:00.000Z',
+                'modification_time_end': '2019-01-25T18:00:00.000Z'
+            }
+            res = self.client().get('/items', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            expected_items = [DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[0], DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[1]]
+            expected_items = [item.serializable() for item in expected_items]
+
+            self.assertCountEqual(response['items'], expected_items)
 
 
 class TestPostItems(FlaskAppTestCase):
 
     def test_api_can_post_update_pairs(self):
         with self.app.app_context():
-
             item0 = copy.deepcopy(DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[0])
 
             replace_item0 = copy.deepcopy(item0)
@@ -335,7 +507,6 @@ class TestPostItems(FlaskAppTestCase):
 
     def test_api_post_emits_errors_for_all_wrong_parameters(self):
         with self.app.app_context():
-
             item0 = copy.deepcopy(DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[0])
 
             replace_item0 = copy.deepcopy(item0)
@@ -356,7 +527,8 @@ class TestPostItems(FlaskAppTestCase):
             ])
 
             res = self.client().post('/items', data=request_data, headers=self.headers)
-            expected_errors = [{'parameter': '0.update.dead', 'errors': ['Not a valid boolean.']}, {'parameter': '1.update.foo', 'errors': ['Unknown field.']}]
+            expected_errors = [{'parameter': '0.update.dead', 'errors': ['Not a valid boolean.']},
+                               {'parameter': '1.update.foo', 'errors': ['Unknown field.']}]
             response_data = json.loads(res.data)["messages"]
             self.assertCountEqual(expected_errors, response_data)
 

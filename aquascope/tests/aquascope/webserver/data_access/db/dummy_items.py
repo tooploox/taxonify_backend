@@ -138,7 +138,7 @@ _DUMMY_ITEMS = [
         "image_width": 48,
         "image_height": 32,
         **({f'{k}_modified_by': 'user1' for k in ANNOTABLE_FIELDS}),
-        **({f'{k}_modification_date': dateutil.parser.parse('2019-01-21 10:00:00') for k in ANNOTABLE_FIELDS})
+        **({f'{k}_modification_time': dateutil.parser.parse('2019-01-21 10:00:00') for k in ANNOTABLE_FIELDS})
     },
     {
         "_id": ObjectId('000000000000000000000001'),
@@ -262,7 +262,7 @@ _DUMMY_ITEMS = [
         "image_width": 100,
         "image_height": 100,
         **({f'{k}_modified_by': 'user2' for k in ANNOTABLE_FIELDS}),
-        **({f'{k}_modification_date': dateutil.parser.parse('2019-01-21 06:00:00') for k in ANNOTABLE_FIELDS})
+        **({f'{k}_modification_time': dateutil.parser.parse('2019-01-21 06:00:00') for k in ANNOTABLE_FIELDS})
     },
     {
         "_id": ObjectId('000000000000000000000002'),
@@ -386,7 +386,7 @@ _DUMMY_ITEMS = [
         "image_width": 100,
         "image_height": 100,
         **({f'{k}_modified_by': None for k in ANNOTABLE_FIELDS}),
-        **({f'{k}_modification_date': None for k in ANNOTABLE_FIELDS})
+        **({f'{k}_modification_time': None for k in ANNOTABLE_FIELDS})
     },
     {
         "_id": ObjectId('000000000000000000000003'),
@@ -490,7 +490,7 @@ _DUMMY_ITEMS = [
         "acdc": None,
         "hendrix": None,
         "alan_parsons": None,
-        "allman": None,
+        "allman": False,
         "dire_straits": None,
         "eagles": None,
         "guns": None,
@@ -510,9 +510,9 @@ _DUMMY_ITEMS = [
         "image_width": 100,
         "image_height": 100,
         **({f'{k}_modified_by': 'user1' for k in ANNOTABLE_FIELDS[0::2]}),
-        **({f'{k}_modification_date': dateutil.parser.parse('2019-01-05 10:00:00') for k in ANNOTABLE_FIELDS[0::2]}),
+        **({f'{k}_modification_time': dateutil.parser.parse('2019-01-05 10:00:00') for k in ANNOTABLE_FIELDS[0::2]}),
         **({f'{k}_modified_by': 'user2' for k in ANNOTABLE_FIELDS[1::2]}),
-        **({f'{k}_modification_date': dateutil.parser.parse('2019-01-06 10:00:00') for k in ANNOTABLE_FIELDS[1::2]})
+        **({f'{k}_modification_time': dateutil.parser.parse('2019-01-06 10:00:00') for k in ANNOTABLE_FIELDS[1::2]})
     },
     {
         "_id": ObjectId('000000000000000000000004'),
@@ -636,7 +636,7 @@ _DUMMY_ITEMS = [
         "image_width": 100,
         "image_height": 100,
         **({f'{k}_modified_by': None for k in ANNOTABLE_FIELDS}),
-        **({f'{k}_modification_date': None for k in ANNOTABLE_FIELDS})
+        **({f'{k}_modification_time': None for k in ANNOTABLE_FIELDS})
     }
 ]
 

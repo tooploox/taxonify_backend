@@ -66,7 +66,7 @@ def populate_system_with_items(data_dir, db, storage_client=None):
         if field not in df.columns:
             df[field] = None
             df[f'{field}_modified_by'] = None
-            df[f'{field}_modification_date'] = None
+            df[f'{field}_modification_time'] = None
 
     items = []
     for item in list(df.to_dict('index').values()):
