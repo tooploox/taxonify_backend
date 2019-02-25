@@ -182,6 +182,23 @@ paths:
           schema:
             type: integer
             example: 1
+        - name: modified_by
+          in: query
+          required: false
+          schema:
+            type: string
+            example: user1
+        - name: modification_time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            example: '2019-01-26 00:00:00.000Z'
+        - name: modification_time_end
+          in: query
+          schema:
+            type: string
+            example: '2019-01-26 00:00:00.000Z'
         - name: empire
           in: query
           required: false
@@ -598,6 +615,23 @@ paths:
           schema:
             type: integer
             example: 4
+        - name: modified_by
+          in: query
+          required: false
+          schema:
+            type: string
+            example: user1
+        - name: modification_time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            example: '2019-01-26 00:00:00.000Z'
+        - name: modification_time_end
+          in: query
+          schema:
+            type: string
+            example: '2019-01-26 00:00:00.000Z'
         - name: empire
           in: query
           required: false
@@ -1030,6 +1064,23 @@ paths:
       security:
         - bearerAuth: []
       parameters:
+        - name: modified_by
+          in: query
+          required: false
+          schema:
+            type: string
+            example: user1
+        - name: modification_time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            example: '2019-01-26 00:00:00.000Z'
+        - name: modification_time_end
+          in: query
+          schema:
+            type: string
+            example: '2019-01-26 00:00:00.000Z'
         - name: empire
           in: query
           required: false
@@ -1492,20 +1543,60 @@ components:
           type: string
         empire:
           type: string
+        empire_modified_by:
+          type: string
+        empire_modification_time:
+          type: string
+          format: date-time
         kingdom:
           type: string
+        kingdom_modified_by:
+          type: string
+        kingdom_modification_time:
+          type: string
+          format: date-time
         phylum:
           type: string
+        phylum_modified_by:
+          type: string
+        phylum_modification_time:
+          type: string
+          format: date-time
         class:
           type: string
+        class_modified_by:
+          type: string
+        class_modification_time:
+          type: string
+          format: date-time
         order:
           type: string
+        order_modified_by:
+          type: string
+        order_modification_time:
+          type: string
+          format: date-time
         family:
           type: string
+        family_modified_by:
+          type: string
+        family_modification_time:
+          type: string
+          format: date-time
         genus:
           type: string
+        genus_modified_by:
+          type: string
+        genus_modification_time:
+          type: string
+          format: date-time
         species:
           type: string
+        species_modified_by:
+          type: string
+        species_modification_time:
+          type: string
+          format: date-time
         acquisition_time:
           type: string
           format: date-time
@@ -1516,123 +1607,323 @@ components:
         with_eggs:
           type: boolean
           nullable: true
+        with_eggs_modified_by:
+          type: string
+        with_eggs_modification_time:
+          type: string
+          format: date-time
         dividing:
           type: boolean
           nullable: true
+        dividing_modified_by:
+          type: string
+        dividing_modification_time:
+          type: string
+          format: date-time
         dead:
           type: boolean
           nullable: true
+        dead_modified_by:
+          type: string
+        dead_modification_time:
+          type: string
+          format: date-time
         with_epibiont:
           type: boolean
           nullable: true
+        with_epibiont_modified_by:
+          type: string
+        with_epibiont_modification_time:
+          type: string
+          format: date-time
         with_parasite:
           type: boolean
           nullable: true
+        with_parasite_modified_by:
+          type: string
+        with_parasite_modification_time:
+          type: string
+          format: date-time
         broken:
           type: boolean
           nullable: true
+        broken_modified_by:
+          type: string
+        broke_modification_time:
+          type: string
+          format: date-time
         colony:
           type: boolean
           nullable: true
+        colony_modified_by:
+          type: string
+        colony_modification_time:
+          type: string
+          format: date-time
         cluster:
           type: boolean
           nullable: true
+        cluster_modified_by:
+          type: string
+        cluster_modification_time:
+          type: string
+          format: date-time
         eating:
           type: boolean
           nullable: true
+        eating_modified_by:
+          type: string
+        eating_modification_time:
+          type: string
+          format: date-time
         multiple_species:
           type: boolean
           nullable: true
+        multiple_species_modified_by:
+          type: string
+        multiple_species_modification_time:
+          type: string
+          format: date-time
         partially_cropped:
           type: boolean
           nullable: true
+        partially_cropped_modified_by:
+          type: string
+        partially_cropped_modification_time:
+          type: string
+          format: date-time
         male:
           type: boolean
           nullable: true
+        male_modified_by:
+          type: string
+        male_modification_time:
+          type: string
+          format: date-time
         female:
           type: boolean
           nullable: true
+        female_modified_by:
+          type: string
+        female_modification_time:
+          type: string
+          format: date-time
         juvenile:
           type: boolean
           nullable: true
+        juvenile_modified_by:
+          type: string
+        juvenile_modification_time:
+          type: string
+          format: date-time
         adult:
           type: boolean
           nullable: true
+        adult_modified_by:
+          type: string
+        adult_modification_time:
+          type: string
+          format: date-time
         ephippium:
           type: boolean
           nullable: true
+        ephippium_modified_by:
+          type: string
+        ephippium_modification_time:
+          type: string
+          format: date-time
         resting_egg:
           type: boolean
           nullable: true
+        resting_egg_modified_by:
+          type: string
+        resting_egg_modification_time:
+          type: string
+          format: date-time
         heterocyst:
           type: boolean
           nullable: true
+        heterocyst_modified_by:
+          type: string
+        heterocyst_modification_time:
+          type: string
+          format: date-time
         akinete:
           type: boolean
           nullable: true
+        akinete_modified_by:
+          type: string
+        akinete_modification_time:
+          type: string
+          format: date-time
         with_spines:
           type: boolean
           nullable: true
+        with_spines_modified_by:
+          type: string
+        with_spines_modification_time:
+          type: string
+          format: date-time
         beatles:
           type: boolean
           nullable: true
+        beatles_modified_by:
+          type: string
+        beatles_modification_time:
+          type: string
+          format: date-time
         stones:
           type: boolean
           nullable: true
+        stones_modified_by:
+          type: string
+        stones_modification_time:
+          type: string
+          format: date-time
         zeppelin:
           type: boolean
           nullable: true
+        zeppelin_modified_by:
+          type: string
+        zeppelin_modification_time:
+          type: string
+          format: date-time
         floyd:
           type: boolean
           nullable: true
+        floyd_modified_by:
+          type: string
+        floyd_modification_time:
+          type: string
+          format: date-time
         acdc:
           type: boolean
           nullable: true
+        acdc_modified_by:
+          type: string
+        acdc_modification_time:
+          type: string
+          format: date-time
         hendrix:
           type: boolean
           nullable: true
+        hendrix_modified_by:
+          type: string
+        hendrix_modification_time:
+          type: string
+          format: date-time
         alan_parsons:
           type: boolean
           nullable: true
+        alan_parsons_modified_by:
+          type: string
+        alan_parsons_modification_time:
+          type: string
+          format: date-time
         allman:
           type: boolean
           nullable: true
+        allman_modified_by:
+          type: string
+        allman_modification_time:
+          type: string
+          format: date-time
         dire_straits:
           type: boolean
           nullable: true
+        dire_straits_modified_by:
+          type: string
+        dire_straits_modification_time:
+          type: string
+          format: date-time
         eagles:
           type: boolean
           nullable: true
+        eagles_modified_by:
+          type: string
+        eagles_modification_time:
+          type: string
+          format: date-time
         guns:
           type: boolean
           nullable: true
+        guns_modified_by:
+          type: string
+        guns_modification_time:
+          type: string
+          format: date-time
         purple:
           type: boolean
           nullable: true
+        purple_modified_by:
+          type: string
+        purple_modification_time:
+          type: string
+          format: date-time
         van_halen:
           type: boolean
           nullable: true
+        van_halen_modified_by:
+          type: string
+        van_halen_modification_time:
+          type: string
+          format: date-time
         skynyrd:
           type: boolean
           nullable: true
+        skynyrd_modified_by:
+          type: string
+        skynyrd_modification_time:
+          type: string
+          format: date-time
         zz_top:
           type: boolean
           nullable: true
+        zz_top_modified_by:
+          type: string
+        zz_top_modification_time:
+          type: string
+          format: date-time
         iron:
           type: boolean
           nullable: true
+        iron_modified_by:
+          type: string
+        iron_modification_time:
+          type: string
+          format: date-time
         police:
           type: boolean
           nullable: true
+        police_modified_by:
+          type: string
+        police_modification_time:
+          type: string
+          format: date-time
         moore:
           type: boolean
           nullable: true
+        moore_modified_by:
+          type: string
+        moore_modification_time:
+          type: string
+          format: date-time
         inxs:
           type: boolean
           nullable: true
+        inxs_modified_by:
+          type: string
+        inxs_modification_time:
+          type: string
+          format: date-time
         chilli_peppers:
           type: boolean
           nullable: true
+        chilli_peppers_modified_by:
+          type: string
+        chilli_peppers_modification_time:
+          type: string
+          format: date-time
         file_size:
           type: number
           format: float
