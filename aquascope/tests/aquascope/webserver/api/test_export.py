@@ -9,7 +9,7 @@ import requests
 
 from aquascope.tests.aquascope.webserver.data_access.db.dummy_items import DUMMY_ITEMS
 from aquascope.tests.flask_app_test_case import FlaskAppTestCase
-from aquascope.webserver.data_access.db.items import MORPHOMETRIC_FIELDS, Item, ANNOTABLE_FIELDS
+from aquascope.webserver.data_access.db.items import ANNOTABLE_FIELDS, Item, MORPHOMETRIC_FIELDS
 
 
 class TestGetPagedItems(FlaskAppTestCase):
