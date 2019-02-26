@@ -48,7 +48,8 @@ docker-compose stop ; docker-compose rm -v -f
 ```
 
 ## Running unit tests
-Assuming you have already prepared python environment, in order to run unit tests type `python test_runner.py` from the repository main directory.
+Assuming you have already prepared python environment, in order to run unit tests ensure that you have set two variables `STORAGE_CONNECTION_STRING` and `MONGO_TEST_DB_CONNECTION_STRING`, then type in your command line `python -m unittest discover -s aquascope/tests -t .`
+Ensure that you included the STORAGE_CONENCTION_STRING in quotation marks.
 
 ## Seeding database with exemplary data
 If you want to seed the DB with exemplary data please make sure you have your local stack up and running and please execute the following command:
