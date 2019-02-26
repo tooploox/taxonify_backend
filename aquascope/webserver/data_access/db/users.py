@@ -1,7 +1,3 @@
-import copy
-
-from aquascope.webserver.data_access.db.db_document import DbDocument
-
 DEFAULT_USERS_PROJECTION = {'_id': 0}
 
 

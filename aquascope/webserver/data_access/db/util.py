@@ -1,7 +1,7 @@
 import os
 
 import pymongo
-from pymongo import MongoClient
+from pymongo import MongoClient, ASCENDING
 from pymongo.errors import CollectionInvalid
 
 from aquascope.webserver.data_access.db.items import ITEMS_DB_SCHEMA
@@ -22,7 +22,7 @@ def create_collections(db):
         except CollectionInvalid:
             pass
 
-    db.users.create_index([('username', pymongo.ASCENDING)], unique=True)
+    db.users.create_index([('username', ASCENDING)], unique=True)
 
 
 def get_db(connection_string):

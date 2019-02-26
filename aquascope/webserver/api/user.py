@@ -63,8 +63,7 @@ class UserList(Resource):
 class UserNew(Resource):
     @jwt_required
     def post(self):
-        pass
-        json_data = request.get_json(force=True)
+        json_data = request.get_json(force=True, silent=True)
         schema = NewUserSchema()
 
         try:

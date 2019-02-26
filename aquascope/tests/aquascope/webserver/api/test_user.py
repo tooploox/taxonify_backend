@@ -109,7 +109,7 @@ class TestUserNew(FlaskAppTestCase):
         expected_users = DUMMY_USERS_WITH_DEFAULT_PROJECTION
         self.assertCountEqual(response, expected_users)
 
-    def test_api_cat_post_new_user_with_already_existing_username_but_different_case(self):
+    def test_api_can_post_new_user_with_case_sensitive_username(self):
         new_user = dict(username=DUMMY_USERS[0]['username'].capitalize())
         request_data = json.dumps(new_user)
 
@@ -124,18 +124,20 @@ class TestUserNew(FlaskAppTestCase):
         self.assertCountEqual(response, expected_users)
 
     def test_api_cant_post_new_user_with_forbidden_characters(self):
-        new_user = dict(username='us#r$')
-        request_data = json.dumps(new_user)
+        forbidden_characters = '!@#$%^&*()_+-=`~[]{};:"\'|\\,<>/? '
+        for forbidden_char in forbidden_characters:
+            new_user = dict(username=f'use{forbidden_char}r')
+            request_data = json.dumps(new_user)
 
-        res = self.client().post('/user/new', data=request_data, headers=self.headers)
-        self.assertEqual(res.status_code, 400)
+            res = self.client().post('/user/new', data=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 400)
 
-        res = self.client().get('/user/list', headers=self.headers)
-        self.assertEqual(res.status_code, 200)
+            res = self.client().get('/user/list', headers=self.headers)
+            self.assertEqual(res.status_code, 200)
 
-        response = res.json
-        expected_users = DUMMY_USERS_WITH_DEFAULT_PROJECTION
-        self.assertCountEqual(response, expected_users)
+            response = res.json
+            expected_users = DUMMY_USERS_WITH_DEFAULT_PROJECTION
+            self.assertCountEqual(response, expected_users)
 
     def test_api_cant_post_new_user_with_username_too_short(self):
         new_user = dict(username='')
