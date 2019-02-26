@@ -48,6 +48,8 @@ def make_app(db, storage_connection_string, jwt_secret_key,
     server_api.add_resource(api.DummyTaskEndpoint, '/task')
     server_api.add_resource(api.UserLogin, '/user/login')
     server_api.add_resource(api.UserTokenRefresh, '/user/refresh')
+    server_api.add_resource(api.UserList, '/user/list')
+    server_api.add_resource(api.UserNew, '/user/new')
     server_api.add_resource(api.Items, '/items')
     server_api.add_resource(api.PagedItems, '/items/paged')
     server_api.add_resource(api.Sas, '/sas')

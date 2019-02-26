@@ -27,6 +27,11 @@ def populate_db_with_uploads(uploads, db):
     db.uploads.insert_many(uploads_dicts)
 
 
+def populate_db_with_users(users, db):
+    users_dicts = [copy.deepcopy(user) for user in users]
+    db.users.insert_many(users_dicts)
+
+
 def upload_package_from_stream(filename, stream, db, storage_client):
     container_name = blob.group_id_to_container_name('upload')
     if not blob.exists(storage_client, container_name):

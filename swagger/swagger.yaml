@@ -83,6 +83,53 @@ paths:
                   access_token:
                     type: string
 
+
+  /user/list:
+    get:
+      description: 'Obtains lists of users'
+      operationId: get_user_list
+      tags:
+        - User
+      security:
+        - refreshBearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserList'
+
+  /user/new:
+    post:
+      description: 'Adds new user to the system'
+      operationId: post_user
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostUser'
+
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Unknown arguments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownArgumentsResult'
+        '401':
+          description: Username taken
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsernameTaken'
+
   /sas:
     get:
       description: 'Obtains SAS, which is data access token. Obtained token should be appended to every `url` field from API response bodies'
@@ -1711,6 +1758,24 @@ components:
         url:
           type: string
           format: url
+    UserList:
+      type: array
+      items:
+        properties:
+          username:
+            type: string
+    PostUser:
+      type: object
+      properties:
+        username:
+          type: string
+          pattern: '^[a-zA-Z0-9.]{1,64}$'
+    UsernameTaken:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'User already exists in the system'
 
 tags:
   - name: User
