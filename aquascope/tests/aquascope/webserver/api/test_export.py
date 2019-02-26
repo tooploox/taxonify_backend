@@ -9,7 +9,7 @@ import requests
 
 from aquascope.tests.aquascope.webserver.data_access.db.dummy_items import DUMMY_ITEMS
 from aquascope.tests.flask_app_test_case import FlaskAppTestCase
-from aquascope.webserver.data_access.db.items import MORPHOMETRIC_FIELDS, Item
+from aquascope.webserver.data_access.db.items import ANNOTABLE_FIELDS, Item, MORPHOMETRIC_FIELDS
 
 
 class TestGetPagedItems(FlaskAppTestCase):
@@ -25,7 +25,8 @@ class TestGetPagedItems(FlaskAppTestCase):
             converters = {
                 'acquisition_time': lambda x: dateutil.parser.parse(x),
                 '_id': lambda x: ObjectId(str(x)),
-                **{k: lambda x: float(x) for k in MORPHOMETRIC_FIELDS}
+                **{k: lambda x: float(x) for k in MORPHOMETRIC_FIELDS},
+                **{f'{k}_modification_time': lambda x: dateutil.parser.parse(x) if x else None for k in ANNOTABLE_FIELDS}
             }
             df = pd.read_csv(tmp_filepath, converters=converters, sep='\t')
             df = df.replace({pd.np.nan: None})

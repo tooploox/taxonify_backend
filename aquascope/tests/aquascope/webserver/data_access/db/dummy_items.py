@@ -4,7 +4,7 @@ import dateutil
 from bson import ObjectId
 
 from aquascope.webserver.data_access.db import Item
-from aquascope.webserver.data_access.db.items import DEFAULT_ITEM_PROJECTION
+from aquascope.webserver.data_access.db.items import DEFAULT_ITEM_PROJECTION, ANNOTABLE_FIELDS
 
 
 def project_dict(item_dict, projection):
@@ -131,12 +131,14 @@ _DUMMY_ITEMS = [
         "moore": None,
         "inxs": None,
         "chilli_peppers": None,
-        "acquisition_time": dateutil.parser.parse('2019-01-20 10:00:00'),
         "filename": 'image_000.jpeg',
+        "extension": ".jpeg",
+        "group_id": "processed",
+        "acquisition_time": dateutil.parser.parse('2019-01-20 10:00:00'),
         "image_width": 48,
         "image_height": 32,
-        "extension": ".jpeg",
-        "group_id": "processed"
+        **({f'{k}_modified_by': 'user1' for k in ANNOTABLE_FIELDS}),
+        **({f'{k}_modification_time': dateutil.parser.parse('2019-01-21 10:00:00') for k in ANNOTABLE_FIELDS})
     },
     {
         "_id": ObjectId('000000000000000000000001'),
@@ -258,7 +260,9 @@ _DUMMY_ITEMS = [
         "group_id": "processed",
         "acquisition_time": dateutil.parser.parse('2019-01-20 06:00:00'),
         "image_width": 100,
-        "image_height": 100
+        "image_height": 100,
+        **({f'{k}_modified_by': 'user2' for k in ANNOTABLE_FIELDS}),
+        **({f'{k}_modification_time': dateutil.parser.parse('2019-01-21 06:00:00') for k in ANNOTABLE_FIELDS})
     },
     {
         "_id": ObjectId('000000000000000000000002'),
@@ -380,7 +384,9 @@ _DUMMY_ITEMS = [
         "group_id": "processed",
         "acquisition_time": dateutil.parser.parse('2019-01-10 10:00:00'),
         "image_width": 100,
-        "image_height": 100
+        "image_height": 100,
+        **({f'{k}_modified_by': None for k in ANNOTABLE_FIELDS}),
+        **({f'{k}_modification_time': None for k in ANNOTABLE_FIELDS})
     },
     {
         "_id": ObjectId('000000000000000000000003'),
@@ -484,7 +490,7 @@ _DUMMY_ITEMS = [
         "acdc": None,
         "hendrix": None,
         "alan_parsons": None,
-        "allman": None,
+        "allman": False,
         "dire_straits": None,
         "eagles": None,
         "guns": None,
@@ -502,7 +508,11 @@ _DUMMY_ITEMS = [
         "group_id": "processed",
         "acquisition_time": dateutil.parser.parse('2019-01-05 10:00:00'),
         "image_width": 100,
-        "image_height": 100
+        "image_height": 100,
+        **({f'{k}_modified_by': 'user1' for k in ANNOTABLE_FIELDS[0::2]}),
+        **({f'{k}_modification_time': dateutil.parser.parse('2019-01-05 10:00:00') for k in ANNOTABLE_FIELDS[0::2]}),
+        **({f'{k}_modified_by': 'user2' for k in ANNOTABLE_FIELDS[1::2]}),
+        **({f'{k}_modification_time': dateutil.parser.parse('2019-01-06 10:00:00') for k in ANNOTABLE_FIELDS[1::2]})
     },
     {
         "_id": ObjectId('000000000000000000000004'),
@@ -624,7 +634,9 @@ _DUMMY_ITEMS = [
         "group_id": "processed",
         "acquisition_time": dateutil.parser.parse('2019-01-01 10:00:00'),
         "image_width": 100,
-        "image_height": 100
+        "image_height": 100,
+        **({f'{k}_modified_by': None for k in ANNOTABLE_FIELDS}),
+        **({f'{k}_modification_time': None for k in ANNOTABLE_FIELDS})
     }
 ]
 

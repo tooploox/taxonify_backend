@@ -57,6 +57,8 @@ SECONDARY_MORPHOMETRIC_FIELDS = [
 
 MORPHOMETRIC_FIELDS = PRIMARY_MORPHOMETRIC_FIELDS + SECONDARY_MORPHOMETRIC_FIELDS
 
+ANNOTABLE_FIELDS = TAXONOMY_FIELDS + ADDITIONAL_ATTRIBUTES_FIELDS
+
 DEFAULT_ITEM_PROJECTION = {k: 0 for k in SECONDARY_MORPHOMETRIC_FIELDS}
 
 ITEMS_DB_SCHEMA = {
@@ -65,7 +67,9 @@ ITEMS_DB_SCHEMA = {
                  'acquisition_time', 'image_width', 'image_height']
                 + TAXONOMY_FIELDS
                 + ADDITIONAL_ATTRIBUTES_FIELDS
-                + MORPHOMETRIC_FIELDS,
+                + MORPHOMETRIC_FIELDS
+                + [f'{k}_modified_by' for k in ANNOTABLE_FIELDS]
+                + [f'{k}_modification_time' for k in ANNOTABLE_FIELDS],
     'additionalProperties': False,
     'properties': {
         '_id': {
@@ -92,11 +96,18 @@ ITEMS_DB_SCHEMA = {
         **({k: dict(bsonType=['string', 'null']) for k in TAXONOMY_FIELDS}),
         **({k: dict(bsonType=['bool', 'null']) for k in ADDITIONAL_ATTRIBUTES_FIELDS}),
         **({k: dict(bsonType='double') for k in MORPHOMETRIC_FIELDS}),
+        **({f'{k}_modified_by': dict(bsonType=['string', 'null']) for k in ANNOTABLE_FIELDS}),
+        **({f'{k}_modification_time': dict(bsonType=['date', 'null']) for k in ANNOTABLE_FIELDS})
     }
 }
 
 
 def make_item_dict_serializable(item_dict):
+    for field in ANNOTABLE_FIELDS:
+        date_field = f'{field}_modification_time'
+        if item_dict[date_field]:
+            item_dict[date_field] = item_dict[date_field].isoformat()
+
     item_dict['acquisition_time'] = item_dict['acquisition_time'].isoformat()
     item_dict['_id'] = str(item_dict['_id'])
     return item_dict
@@ -110,7 +121,6 @@ class Item(DbDocument):
     def from_request(request_dict):
         data = copy.deepcopy(request_dict)
         data['_id'] = ObjectId(data['_id'])
-        data['acquisition_time'] = dateutil.parser.parse(data['acquisition_time'])
         return Item(data)
 
     @staticmethod
@@ -137,7 +147,58 @@ class Item(DbDocument):
         return make_item_dict_serializable(data)
 
 
+def add_user_and_modification_times_to_query(query, user, modification_time_start,
+                                             modification_time_end):
+    # are there any annotable fields in the query?
+    any_annotable_fields = any(key in ANNOTABLE_FIELDS for key in query.keys())
+
+    if any_annotable_fields:
+        for key in list(query.keys()):
+            if key in ANNOTABLE_FIELDS:
+                if user or user == '':
+                    query[f'{key}_modified_by'] = None if user == '' else user
+
+                modification_time_key = f'{key}_modification_time'
+                if modification_time_start:
+                    if modification_time_key not in query:
+                        query[modification_time_key] = {}
+                    query[modification_time_key]['$gte'] = modification_time_start
+                if modification_time_end:
+                    if modification_time_key not in query:
+                        query[modification_time_key] = {}
+                    query[modification_time_key]['$lt'] = modification_time_end
+
+    else:
+        or_alternatives = []
+        for key in ANNOTABLE_FIELDS:
+            if user or user == '':
+                or_alternatives.append({
+                    f'{key}_modified_by': None if user == '' else user
+                })
+
+            modification_time_key = f'{key}_modification_time'
+            time_range_query = {}
+            if modification_time_start:
+                time_range_query['$gte'] = modification_time_start
+            if modification_time_end:
+                time_range_query['$lt'] = modification_time_end
+
+            if modification_time_start or modification_time_end:
+                or_alternatives.append({
+                    modification_time_key: time_range_query
+                })
+
+        if or_alternatives:
+            query['$or'] = or_alternatives
+
+    return query
+
+
 def build_find_query(*args, **kwargs):
+    modified_by = kwargs.pop('modified_by', None)
+    modification_time_start = kwargs.pop('modification_time_start', None)
+    modification_time_end = kwargs.pop('modification_time_end', None)
+
     query = dict()
     for key, value in kwargs.items():
         if type(value) == list:
@@ -161,6 +222,7 @@ def build_find_query(*args, **kwargs):
         else:
             query[key] = value
 
+    query = add_user_and_modification_times_to_query(query, modified_by, modification_time_start, modification_time_end)
     return query
 
 

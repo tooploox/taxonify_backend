@@ -8,7 +8,7 @@ from PIL import Image
 from aquascope.webserver.data_access.conversions import (item_id_and_extension_to_blob_name,
                                                          group_id_to_container_name)
 from aquascope.webserver.data_access.db import Item, upload
-from aquascope.webserver.data_access.db.items import TAXONOMY_FIELDS, ADDITIONAL_ATTRIBUTES_FIELDS, MORPHOMETRIC_FIELDS
+from aquascope.webserver.data_access.db.items import ANNOTABLE_FIELDS, MORPHOMETRIC_FIELDS
 from aquascope.webserver.data_access.storage import blob
 from aquascope.webserver.data_access.storage.blob import create_container, upload_blob, exists
 
@@ -62,9 +62,11 @@ def populate_system_with_items(data_dir, db, storage_client=None):
     }
     df = pd.read_csv(features_path, converters=converters, sep='\t')
 
-    for field in TAXONOMY_FIELDS + ADDITIONAL_ATTRIBUTES_FIELDS:
+    for field in ANNOTABLE_FIELDS:
         if field not in df.columns:
             df[field] = None
+            df[f'{field}_modified_by'] = None
+            df[f'{field}_modification_time'] = None
 
     items = []
     for item in list(df.to_dict('index').values()):
