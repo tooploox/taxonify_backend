@@ -427,6 +427,24 @@ class TestGetItems(FlaskAppTestCase):
 
             self.assertCountEqual(response['items'], expected_items)
 
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_can_get_items_with_given_user_and_modification_time_range(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            request_data = {
+                'modified_by': 'user1',
+                'modification_time_start': '2019-01-18T18:00:00.000Z',
+                'modification_time_end': '2019-01-25T18:00:00.000Z'
+            }
+            res = self.client().get('/items', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            expected_items = [DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[0]]
+            expected_items = [item.serializable() for item in expected_items]
+
+            self.assertCountEqual(response['items'], expected_items)
+
 
 class TestPostItems(FlaskAppTestCase):
 
