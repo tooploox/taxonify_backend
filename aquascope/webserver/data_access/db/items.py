@@ -169,10 +169,11 @@ def add_user_and_modification_times_to_query(query, user, modification_time_star
                     query[modification_time_key]['$lt'] = modification_time_end
 
     else:
-        or_alternatives = []
+        date_or_alternatives = []
+        user_or_alternatives = []
         for key in ANNOTABLE_FIELDS:
             if user or user == '':
-                or_alternatives.append({
+                user_or_alternatives.append({
                     f'{key}_modified_by': None if user == '' else user
                 })
 
@@ -184,12 +185,19 @@ def add_user_and_modification_times_to_query(query, user, modification_time_star
                 time_range_query['$lt'] = modification_time_end
 
             if modification_time_start or modification_time_end:
-                or_alternatives.append({
+                date_or_alternatives.append({
                     modification_time_key: time_range_query
                 })
 
-        if or_alternatives:
-            query['$or'] = or_alternatives
+        if date_or_alternatives and user_or_alternatives:
+            query['$and'] = [
+                {'$or': date_or_alternatives},
+                {'$or': user_or_alternatives}
+            ]
+        elif date_or_alternatives:
+            query['$or'] = date_or_alternatives
+        elif user_or_alternatives:
+            query['$or'] = user_or_alternatives
 
     return query
 
