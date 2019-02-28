@@ -7,7 +7,11 @@ git lfs pull
 ```
 
 ## Environment files
-Stack needs .env files to run. The files are filled in with some default values in the repo so you do not have to take any action here. The files are also git ignored so that you get the defaults when you clone but you can easily alter them locally.
+Stack needs `.env` files to run. The files are filled in with some default values in the repo so you do not have to take any action here. The files are tracked by git however so if you make some local modifications to them that you do not want to push upstream please run
+```bash
+git update-index --skip-worktree <filepath>
+```
+on each changed `.env` file.
 
 ## Run the stack locally with Docker
 In order to run the stack locally you need to define all required environment files and execute the following commands:
