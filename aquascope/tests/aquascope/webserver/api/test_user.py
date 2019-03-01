@@ -2,8 +2,8 @@ import unittest
 
 from flask import json
 
-from aquascope.tests.aquascope.webserver.data_access.db.dummy_users import DUMMY_USERS, \
-    DUMMY_USERS_WITH_DEFAULT_PROJECTION
+from aquascope.tests.aquascope.webserver.data_access.db.dummy_users import (
+    DUMMY_USERS, DUMMY_USERS_WITH_DEFAULT_PROJECTION)
 from aquascope.tests.flask_app_test_case import FlaskAppTestCase
 
 
@@ -13,6 +13,16 @@ class TestUserLogin(FlaskAppTestCase):
         request_data = json.dumps({
             'username': self.auth_user,
             'password': self.auth_pass_raw
+        })
+
+        res = self.client().post('/user/login', data=request_data,
+                                 content_type='application/json')
+        self.assertEqual(res.status_code, 200)
+
+    def test_api_can_post_login_with_secondary_password(self):
+        request_data = json.dumps({
+            'username': self.auth_user,
+            'password': self.auth_secondary_pass_raw
         })
 
         res = self.client().post('/user/login', data=request_data,
