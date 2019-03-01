@@ -24,8 +24,8 @@ class UserLogin(Resource):
         username, password = args['username'], args['password']
 
         try:
-            verified_password = sha256.verify(password,
-                                          app.config['AQUASCOPE_TEST_PASS'])
+            verified_password = sha256.verify(password, app.config['AQUASCOPE_TEST_PASS']) \
+                                or sha256.verify(password, app.config['AQUASCOPE_SECONDARY_PASS'])
         except ValueError as e:
             app.logger.error(e)
             return {'message': 'Server error'}, 500

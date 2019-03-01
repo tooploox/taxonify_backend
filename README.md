@@ -62,3 +62,4 @@ In order to run the stack you need to setup a few environment files and fill req
 * JWT_SECRET_KEY - key for signing JWT tokens
 * AQUASCOPE_TEST_USER - username of the only user in the system
 * AQUASCOPE_TEST_PASS - password of the only user in the system encoded with `pbkdf2_sha256` algorithm from `passlib` library.
+* AQUASCOPE_SECONDARY_PASS - secondary password to the system encoded with `pbkdf2_sha256` algorithm from `passlib` library.

@@ -40,10 +40,12 @@ class FlaskAppTestCase(unittest.TestCase):
         cls.auth_user = 'testuser'
         cls.auth_pass_raw = 'testpassword'
         auth_pass = sha256.hash(cls.auth_pass_raw)
+        cls.auth_secondary_pass_raw = 'secondpassword'
+        secondary_pass = sha256.hash(cls.auth_secondary_pass_raw)
 
         cls.app = make_app(cls.db, storage_connection_string, 'jwtdummysecret', cls.auth_user, auth_pass,
-                           environment='TESTING', celery_user='',
-                           celery_password='', celery_address='', page_size=500)
+                           secondary_pass, environment='TESTING', celery_user='', celery_password='',
+                           celery_address='', page_size=500)
 
     def purge_storage(self):
         storage_client = self.app.config['storage_client']

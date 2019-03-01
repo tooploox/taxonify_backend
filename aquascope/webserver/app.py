@@ -12,8 +12,8 @@ from aquascope.webserver.data_access.storage.blob import blob_storage_client
 
 
 def make_app(db, storage_connection_string, jwt_secret_key,
-             aquascope_test_user, aquascope_test_pass, environment,
-             celery_user, celery_password, celery_address, page_size):
+             aquascope_test_user, aquascope_test_pass, aquascope_secondary_pass,
+             environment, celery_user, celery_password, celery_address, page_size):
     logging.basicConfig(filename='webserver.log', level=logging.DEBUG,
                         format="[%(asctime)s] %(levelname)s in %(module)s: %(message)s")
     logging.getLogger("azure.storage").setLevel(logging.CRITICAL)
@@ -27,6 +27,7 @@ def make_app(db, storage_connection_string, jwt_secret_key,
     app.config['JWT_SECRET_KEY'] = jwt_secret_key
     app.config['AQUASCOPE_TEST_USER'] = aquascope_test_user
     app.config['AQUASCOPE_TEST_PASS'] = aquascope_test_pass
+    app.config['AQUASCOPE_SECONDARY_PASS'] = aquascope_secondary_pass
     app.config['ENVIRONMENT'] = environment
 
     if app.config['ENVIRONMENT'] != 'production':
@@ -65,6 +66,7 @@ def get_app():
     jwt_secret_key = os.environ['JWT_SECRET_KEY']
     aquascope_test_user = os.environ['AQUASCOPE_TEST_USER']
     aquascope_test_pass = os.environ['AQUASCOPE_TEST_PASS']
+    aquascope_secondary_pass = os.environ['AQUASCOPE_SECONDARY_PASS']
     environment = os.environ['ENVIRONMENT']
     celery_user = os.environ['CELERY_USER']
     celery_password = os.environ['CELERY_PASS']
@@ -73,8 +75,8 @@ def get_app():
 
     db = get_db_from_env()
     app = make_app(db, storage_connection_string, jwt_secret_key,
-                   aquascope_test_user, aquascope_test_pass, environment,
-                   celery_user, celery_password, celery_address, page_size)
+                   aquascope_test_user, aquascope_test_pass, aquascope_secondary_pass,
+                   environment, celery_user, celery_password, celery_address, page_size)
     return app
 
 
