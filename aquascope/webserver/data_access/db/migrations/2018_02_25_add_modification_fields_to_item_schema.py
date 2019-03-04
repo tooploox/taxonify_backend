@@ -9,7 +9,7 @@ def add_modification_fields_to_item_schema(db):
     # update documents
     db.items.update_many({}, {
         '$set': {
-            **({f'{k}_modified_by': None for k in ANNOTABLE_FIELDS}),
+            **({f'{k}_modified_by': 'marta.reyes' for k in ANNOTABLE_FIELDS}),
             **({f'{k}_modification_time': None for k in ANNOTABLE_FIELDS})
         }
     })
