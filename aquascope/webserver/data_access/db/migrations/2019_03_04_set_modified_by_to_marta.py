@@ -28,7 +28,8 @@ def set_marta_to_modified_by_in_not_null_annotable_fields(db):
         bulk = UpdateOne(item, {'$set': update})
         bulks.append(bulk)
 
-    db.items.bulk_write(bulks)
+    if bulks:
+        db.items.bulk_write(bulks)
 
 
 def main():
