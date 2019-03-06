@@ -3,7 +3,7 @@ from unittest import mock
 
 import celery
 
-from aquascope.tests.aquascope.webserver.data_access.db.dummy_uploads import DUMMY_UPLOADS
+from aquascope.tests.aquascope.webserver.data_access.db.dummy_uploads import DUMMY_UPLOADS_WITH_DEFAULT_PROJECTION
 from aquascope.tests.flask_app_test_case import FlaskAppTestCase
 
 TEST_FILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -29,5 +29,5 @@ class TestGetUploadList(FlaskAppTestCase):
             self.assertEqual(res.status_code, 200)
 
             response = res.json
-            expected_uploads = [upload.serializable() for upload in DUMMY_UPLOADS]
+            expected_uploads = [upload.serializable() for upload in DUMMY_UPLOADS_WITH_DEFAULT_PROJECTION]
             self.assertCountEqual(response, expected_uploads)

@@ -35,6 +35,8 @@ UPLOAD_DB_SCHEMA = {
     }
 }
 
+DEFAULT_UPLOAD_PROJECTION = {'duplicate_filenames': 0}
+
 
 class Upload(DbDocument):
     def __init__(self, obj):
@@ -59,16 +61,18 @@ def create(db, filename):
     return db.uploads.insert_one(dict(filename=filename, state='initialized'))
 
 
-def get(db, document_id):
-    doc = db.uploads.find_one({'_id': ObjectId(document_id)})
+def get(db, document_id, with_default_projection=True):
+    projection = DEFAULT_UPLOAD_PROJECTION if with_default_projection else None
+    doc = db.uploads.find_one({'_id': ObjectId(document_id)}, projection)
     return Upload.from_db_data(doc)
 
 
-def find(db, query_filter=None):
+def find(db, query_filter=None, with_default_projection=True):
+    projection = DEFAULT_UPLOAD_PROJECTION if with_default_projection else None
     if not query_filter:
         query_filter = {}
 
-    return (Upload.from_db_data(doc) for doc in db.uploads.find(query_filter))
+    return (Upload.from_db_data(doc) for doc in db.uploads.find(query_filter, projection))
 
 
 def update_state(db, document_id, state, *args, **kwargs):

@@ -39,7 +39,7 @@ class TestParseUploadPackage(FlaskAppTestCase):
             upload_id = self.upload_package(package_path)
             parse_upload_package(upload_id, self.db, storage_client)
 
-            upload_doc = upload.get(self.db, upload_id)
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
             self.assertEqual('finished', upload_doc.state)
             self.assertEqual(17, upload_doc.image_count)
             self.assertEqual(0, upload_doc.duplicate_image_count)
@@ -59,7 +59,7 @@ class TestParseUploadPackage(FlaskAppTestCase):
             upload_id = self.upload_package(package_path)
             parse_upload_package(upload_id, self.db, storage_client)
 
-            upload_doc = upload.get(self.db, upload_id)
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
             self.assertEqual('failed', upload_doc.state)
 
             with self.assertRaises(AttributeError):
@@ -83,7 +83,7 @@ class TestParseUploadPackage(FlaskAppTestCase):
             upload_id = self.upload_package(package_path)
             parse_upload_package(upload_id, self.db, storage_client)
 
-            upload_doc = upload.get(self.db, upload_id)
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
             self.assertEqual('failed', upload_doc.state)
 
             with self.assertRaises(AttributeError):
@@ -107,7 +107,7 @@ class TestParseUploadPackage(FlaskAppTestCase):
             upload_id = self.upload_package(package_path)
             parse_upload_package(upload_id, self.db, storage_client)
 
-            upload_doc = upload.get(self.db, upload_id)
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
             self.assertEqual('failed', upload_doc.state)
 
             with self.assertRaises(AttributeError):
@@ -131,7 +131,7 @@ class TestParseUploadPackage(FlaskAppTestCase):
             upload_id = self.upload_package(package_path)
             parse_upload_package(upload_id, self.db, storage_client)
 
-            upload_doc = upload.get(self.db, upload_id)
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
             self.assertEqual('failed', upload_doc.state)
 
             with self.assertRaises(AttributeError):
@@ -154,7 +154,7 @@ class TestParseUploadPackage(FlaskAppTestCase):
             upload_id = self.upload_package(package_path)
             parse_upload_package(upload_id, self.db, storage_client)
 
-            upload_doc = upload.get(self.db, upload_id)
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
             self.assertEqual('failed', upload_doc.state)
 
             with self.assertRaises(AttributeError):
@@ -175,7 +175,7 @@ class TestParseUploadPackage(FlaskAppTestCase):
         upload_id = self.upload_package(data_path)
         parse_upload_package(upload_id, self.db, storage_client)
 
-        upload_doc = upload.get(self.db, upload_id)
+        upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
         self.assertEqual('failed', upload_doc.state)
 
         with self.assertRaises(AttributeError):
@@ -199,7 +199,7 @@ class TestParseUploadPackage(FlaskAppTestCase):
             upload_id = self.upload_package(package_path)
             parse_upload_package(upload_id, self.db, storage_client)
 
-            upload_doc = upload.get(self.db, upload_id)
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
             self.assertEqual('failed', upload_doc.state)
 
             with self.assertRaises(AttributeError):
@@ -223,8 +223,11 @@ class TestParseUploadPackage(FlaskAppTestCase):
             upload_id = self.upload_package(package_path)
             parse_upload_package(upload_id, self.db, storage_client)
 
-            upload_doc = upload.get(self.db, upload_id)
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
             self.assertEqual('finished', upload_doc.state)
+            self.assertEqual(17, upload_doc.image_count)
+            self.assertEqual(0, upload_doc.duplicate_image_count)
+            self.assertCountEqual([], upload_doc.duplicate_filenames)
 
             items_after = self.db.items.count_documents({})
             self.assertNotEqual(items_before, items_after)
@@ -238,7 +241,7 @@ class TestParseUploadPackage(FlaskAppTestCase):
             upload_id = self.upload_package(package_path)
             parse_upload_package(upload_id, self.db, storage_client)
 
-            upload_doc = upload.get(self.db, upload_id)
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
             self.assertEqual('finished', upload_doc.state)
             self.assertEqual(3, upload_doc.image_count)
             self.assertEqual(3, upload_doc.duplicate_image_count)
@@ -263,8 +266,11 @@ class TestParseUploadPackage(FlaskAppTestCase):
             upload_id = self.upload_package(package_path)
             parse_upload_package(upload_id, self.db, storage_client)
 
-            upload_doc = upload.get(self.db, upload_id)
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
             self.assertEqual('finished', upload_doc.state)
+            self.assertEqual(17, upload_doc.image_count)
+            self.assertEqual(0, upload_doc.duplicate_image_count)
+            self.assertCountEqual([], upload_doc.duplicate_filenames)
 
             items_after = self.db.items.count_documents({})
             self.assertNotEqual(items_before, items_after)
@@ -278,7 +284,7 @@ class TestParseUploadPackage(FlaskAppTestCase):
             upload_id = self.upload_package(package_path)
             parse_upload_package(upload_id, self.db, storage_client)
 
-            upload_doc = upload.get(self.db, upload_id)
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
             self.assertEqual('finished', upload_doc.state)
             self.assertEqual(7, upload_doc.image_count)
             self.assertEqual(2, upload_doc.duplicate_image_count)
