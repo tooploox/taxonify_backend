@@ -29,10 +29,10 @@ def parse_upload_package(upload_id, db, storage_client):
             with tarfile.open(local_filepath, "r:bz2") as tar:
                 tar.extractall(extraction_path)
             data_path = extraction_path_to_data_path(extraction_path)
-            populate_system_with_items(data_path, db, storage_client)
+            result = populate_system_with_items(data_path, db, storage_client)
         except (tarfile.ReadError, WriteError, MissingTsvFileError,
                 FileNotFoundError, OSError, IndexError, EmptyDataError):
             upload.update_state(db, upload_id, 'failed')
             return
 
-    upload.update_state(db, upload_id, 'finished')
+    upload.update_state(db, upload_id, 'finished', **result)

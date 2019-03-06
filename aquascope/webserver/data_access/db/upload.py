@@ -18,6 +18,19 @@ UPLOAD_DB_SCHEMA = {
         'state': {
             'bsonType': 'string',
             'enum': ['initialized', 'uploaded', 'processing', 'finished', 'failed']
+        },
+        'image_count': {
+            'bsonType': 'int'
+        },
+        'duplicate_image_count': {
+            'bsonType': 'int'
+        },
+        'duplicate_filenames': {
+            'bsonType': 'array',
+            'items': {
+                'bsonType': 'string',
+                'uniqueItems': True
+            }
         }
     }
 }
@@ -58,5 +71,5 @@ def find(db, query_filter=None):
     return (Upload.from_db_data(doc) for doc in db.uploads.find(query_filter))
 
 
-def update_state(db, document_id, state):
-    return db.uploads.update_one({'_id': ObjectId(document_id)}, {'$set': {'state': state}})
+def update_state(db, document_id, state, *args, **kwargs):
+    return db.uploads.update_one({'_id': ObjectId(document_id)}, {'$set': {'state': state, **kwargs}})

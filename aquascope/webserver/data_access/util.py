@@ -4,6 +4,7 @@ import os
 import dateutil
 import pandas as pd
 from PIL import Image
+from pymongo.errors import DuplicateKeyError
 
 from aquascope.webserver.data_access.conversions import (item_id_and_extension_to_blob_name,
                                                          group_id_to_container_name)
@@ -79,8 +80,15 @@ def populate_system_with_items(data_dir, db, storage_client=None):
     if storage_client and not exists(storage_client, container_name):
         create_container(storage_client, container_name)
 
+    duplicates = []
     for item in items:
-        result = db.items.insert_one(item.get_dict())
+
+        try:
+            result = db.items.insert_one(item.get_dict())
+        except DuplicateKeyError:
+            duplicates.append(item.filename)
+            continue
+
         item._id = result.inserted_id
         blob_name = item_id_and_extension_to_blob_name(item._id, item.extension)
 
@@ -88,3 +96,6 @@ def populate_system_with_items(data_dir, db, storage_client=None):
         blob_meta = dict(filename=item.filename)
         if storage_client:
             upload_blob(storage_client, container_name, blob_name, image_path, blob_meta)
+
+    return dict(image_count=len(items), duplicate_image_count=len(duplicates),
+                duplicate_filenames=duplicates)
