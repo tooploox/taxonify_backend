@@ -64,7 +64,7 @@ def create(db, filename):
 def get(db, document_id, with_default_projection=True):
     projection = DEFAULT_UPLOAD_PROJECTION if with_default_projection else None
     doc = db.uploads.find_one({'_id': ObjectId(document_id)}, projection)
-    return Upload.from_db_data(doc)
+    return Upload.from_db_data(doc) if doc else None
 
 
 def find(db, query_filter=None, with_default_projection=True):

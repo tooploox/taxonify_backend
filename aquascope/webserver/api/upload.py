@@ -1,3 +1,4 @@
+from bson.errors import InvalidId
 from flask import current_app as app, request
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
@@ -6,7 +7,7 @@ from aquascope.webserver.data_access.db import upload
 from aquascope.webserver.data_access.util import upload_package_from_stream
 
 
-class Upload(Resource):
+class UploadPut(Resource):
     @jwt_required
     def put(self, filename):
         storage_client = app.config['storage_client']
@@ -23,6 +24,24 @@ class Upload(Resource):
             return 'Server connectivity issue', 500
 
         return None, 204
+
+
+class UploadGet(Resource):
+    @jwt_required
+    def get(self, upload_id):
+        def invalid_request():
+            return dict(message='No such upload.'), 400
+
+        db = app.config['db']
+        try:
+            doc = upload.get(db, upload_id, with_default_projection=False)
+        except InvalidId:
+            return invalid_request()
+
+        if doc:
+            return doc.serializable(shallow=True)
+        else:
+            return invalid_request()
 
 
 class UploadList(Resource):
