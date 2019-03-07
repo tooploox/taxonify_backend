@@ -296,3 +296,94 @@ class TestParseUploadPackage(FlaskAppTestCase):
             items_after = self.db.items.count_documents({})
             self.assertNotEqual(items_before, items_after)
             self.assertNotEqual(items_inbeetween, items_after)
+
+    def test_can_parse_upload_package_with_duplicated_tsv_entries(self):
+        storage_client = self.app.config['storage_client']
+        items_before = self.db.items.count_documents({})
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            data_path = os.path.join(DATA_PATH, '5p0xMAG_small_with_tsv_duplicates')
+            package_path = os.path.join(tmpdirname, 'package.tar.bz2')
+            self.create_package_from_directory(data_path, package_path)
+            upload_id = self.upload_package(package_path)
+            parse_upload_package(upload_id, self.db, storage_client)
+
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
+            self.assertEqual('finished', upload_doc.state)
+            self.assertEqual(19, upload_doc.image_count)
+            self.assertEqual(2, upload_doc.duplicate_image_count)
+            self.assertCountEqual([
+                'SPC-EAWAG-5P0X-1543968141051783-9650586342759-000609-002-0-2088-32-84.jpeg',
+                'SPC-EAWAG-5P0X-1543968092032969-9650537338686-000119-003-2132-1914-48-48.jpeg'
+            ], upload_doc.duplicate_filenames)
+
+            items_after = self.db.items.count_documents({})
+            self.assertNotEqual(items_before, items_after)
+
+    def test_can_parse_upload_package_with_duplicated_fields_filenames_in_tsv(self):
+        storage_client = self.app.config['storage_client']
+        items_before = self.db.items.count_documents({})
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            data_path = os.path.join(DATA_PATH, '5p0xMAG_small_with_tsv_duplicated_filenames')
+            package_path = os.path.join(tmpdirname, 'package.tar.bz2')
+            self.create_package_from_directory(data_path, package_path)
+            upload_id = self.upload_package(package_path)
+            parse_upload_package(upload_id, self.db, storage_client)
+
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
+            self.assertEqual('finished', upload_doc.state)
+            self.assertEqual(19, upload_doc.image_count)
+            self.assertEqual(2, upload_doc.duplicate_image_count)
+            self.assertCountEqual([
+                'SPC-EAWAG-5P0X-1543968141051783-9650586342759-000609-002-0-2088-32-84.jpeg',
+                'SPC-EAWAG-5P0X-1543968092032969-9650537338686-000119-003-2132-1914-48-48.jpeg'
+            ], upload_doc.duplicate_filenames)
+
+            items_after = self.db.items.count_documents({})
+            self.assertNotEqual(items_before, items_after)
+            self.assertEqual(items_after - items_before, upload_doc.image_count - upload_doc.duplicate_image_count)
+
+    def test_can_parse_upload_package_with_some_duplicates_and_duplicated_tsv_entries(self):
+        storage_client = self.app.config['storage_client']
+        items_before = self.db.items.count_documents({})
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            data_path = os.path.join(DATA_PATH, '5p0xMAG_small')
+            package_path = os.path.join(tmpdirname, 'package.tar.bz2')
+            self.create_package_from_directory(data_path, package_path)
+            upload_id = self.upload_package(package_path)
+            parse_upload_package(upload_id, self.db, storage_client)
+
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
+            self.assertEqual('finished', upload_doc.state)
+            self.assertEqual(17, upload_doc.image_count)
+            self.assertEqual(0, upload_doc.duplicate_image_count)
+            self.assertCountEqual([], upload_doc.duplicate_filenames)
+
+            items_after = self.db.items.count_documents({})
+            self.assertNotEqual(items_before, items_after)
+
+        items_inbeetween = self.db.items.count_documents({})
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            data_path = os.path.join(DATA_PATH, '5p0xMAG_small_2_duplicates_and_tsv_duplicates')
+            package_path = os.path.join(tmpdirname, 'package.tar.bz2')
+            self.create_package_from_directory(data_path, package_path)
+            upload_id = self.upload_package(package_path)
+            parse_upload_package(upload_id, self.db, storage_client)
+
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
+            self.assertEqual('finished', upload_doc.state)
+            self.assertEqual(9, upload_doc.image_count)
+            self.assertEqual(4, upload_doc.duplicate_image_count)
+            self.assertCountEqual([
+                'SPC-EAWAG-5P0X-1543968111037290-9650556340265-000309-002-3712-0-52-40.jpeg',
+                'SPC-EAWAG-5P0X-1543968111037290-9650556340265-000309-002-3712-0-52-40.jpeg',
+                'SPC-EAWAG-5P0X-1543968114038057-9650559340515-000339-001-3536-32-68-92.jpeg',
+                'SPC-EAWAG-5P0X-1543968114038057-9650559340515-000339-001-3536-32-68-92.jpeg'
+            ], upload_doc.duplicate_filenames)
+
+            items_after = self.db.items.count_documents({})
+            self.assertNotEqual(items_before, items_after)
+            self.assertNotEqual(items_inbeetween, items_after)

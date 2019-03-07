@@ -28,8 +28,7 @@ UPLOAD_DB_SCHEMA = {
         'duplicate_filenames': {
             'bsonType': 'array',
             'items': {
-                'bsonType': 'string',
-                'uniqueItems': True
+                'bsonType': 'string'
             }
         }
     }
