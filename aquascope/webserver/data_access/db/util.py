@@ -32,6 +32,7 @@ def create_collections(db):
             pass
 
     db.users.create_index([('username', ASCENDING)], unique=True)
+    db.items.create_index([('filename', ASCENDING)], unique=True)
 
 
 def get_db(connection_string, with_create_collections=True):
@@ -45,3 +46,11 @@ def get_db(connection_string, with_create_collections=True):
 def get_db_from_env(with_create_collections=True):
     mongo_connection_string = os.environ['MONGO_CONNECTION_STRING']
     return get_db(mongo_connection_string, with_create_collections=with_create_collections)
+
+
+def project_dict(item_dict, projection):
+    for k, v in projection.items():
+        if k in item_dict and v == 0:
+            item_dict.pop(k, None)
+
+    return item_dict

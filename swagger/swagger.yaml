@@ -1502,6 +1502,36 @@ paths:
         '204':
           description: OK
 
+  /upload/{upload_id}:
+    get:
+      description: 'Get upload details'
+      operationId: get_upload
+      tags:
+        - Upload
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: upload_id
+          in: path
+          required: true
+          schema:
+            type: integer
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUploadResult'
+
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadUploadRequest'
+
   /upload/list:
     get:
       description: 'Obtains list of uploads'
@@ -2028,6 +2058,7 @@ components:
     UploadListResult:
       type: array
       items:
+        required: [_id, filename, state, generation_date]
         properties:
           _id:
             type: string
@@ -2039,6 +2070,39 @@ components:
           generation_date:
             type: string
             format: date-time
+          image_count:
+            type: integer
+          duplicate_image_count:
+            type: integer
+
+    GetUploadResult:
+      type: object
+      required: [_id, filename, state, generation_date]
+      properties:
+        _id:
+          type: string
+        filename:
+          type: string
+        state:
+          type: string
+          enum: [initialized, uploaded, processing, finished, failed]
+        generation_date:
+          type: string
+          format: date-time
+        image_count:
+          type: integer
+        duplicate_image_count:
+          type: integer
+        duplicate_filenames:
+            type: array
+            items:
+              type: string
+    BadUploadRequest:
+      type: object
+      properties:
+        message:
+          type: string
+
     ExportResult:
       type: object
       required: [status]

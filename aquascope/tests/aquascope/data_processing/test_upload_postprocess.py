@@ -39,8 +39,11 @@ class TestParseUploadPackage(FlaskAppTestCase):
             upload_id = self.upload_package(package_path)
             parse_upload_package(upload_id, self.db, storage_client)
 
-            upload_doc = upload.get(self.db, upload_id)
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
             self.assertEqual('finished', upload_doc.state)
+            self.assertEqual(17, upload_doc.image_count)
+            self.assertEqual(0, upload_doc.duplicate_image_count)
+            self.assertCountEqual([], upload_doc.duplicate_filenames)
 
             items_after = self.db.items.count_documents({})
             self.assertNotEqual(items_before, items_after)
@@ -56,8 +59,15 @@ class TestParseUploadPackage(FlaskAppTestCase):
             upload_id = self.upload_package(package_path)
             parse_upload_package(upload_id, self.db, storage_client)
 
-            upload_doc = upload.get(self.db, upload_id)
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
             self.assertEqual('failed', upload_doc.state)
+
+            with self.assertRaises(AttributeError):
+                upload_doc.image_count
+            with self.assertRaises(AttributeError):
+                upload_doc.duplicate_image_count
+            with self.assertRaises(AttributeError):
+                upload_doc.duplicate_filenames
 
             items_after = self.db.items.count_documents({})
             self.assertEqual(items_before, items_after)
@@ -73,8 +83,15 @@ class TestParseUploadPackage(FlaskAppTestCase):
             upload_id = self.upload_package(package_path)
             parse_upload_package(upload_id, self.db, storage_client)
 
-            upload_doc = upload.get(self.db, upload_id)
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
             self.assertEqual('failed', upload_doc.state)
+
+            with self.assertRaises(AttributeError):
+                upload_doc.image_count
+            with self.assertRaises(AttributeError):
+                upload_doc.duplicate_image_count
+            with self.assertRaises(AttributeError):
+                upload_doc.duplicate_filenames
 
             items_after = self.db.items.count_documents({})
             self.assertEqual(items_before, items_after)
@@ -90,8 +107,15 @@ class TestParseUploadPackage(FlaskAppTestCase):
             upload_id = self.upload_package(package_path)
             parse_upload_package(upload_id, self.db, storage_client)
 
-            upload_doc = upload.get(self.db, upload_id)
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
             self.assertEqual('failed', upload_doc.state)
+
+            with self.assertRaises(AttributeError):
+                upload_doc.image_count
+            with self.assertRaises(AttributeError):
+                upload_doc.duplicate_image_count
+            with self.assertRaises(AttributeError):
+                upload_doc.duplicate_filenames
 
             items_after = self.db.items.count_documents({})
             self.assertEqual(items_before, items_after)
@@ -107,8 +131,15 @@ class TestParseUploadPackage(FlaskAppTestCase):
             upload_id = self.upload_package(package_path)
             parse_upload_package(upload_id, self.db, storage_client)
 
-            upload_doc = upload.get(self.db, upload_id)
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
             self.assertEqual('failed', upload_doc.state)
+
+            with self.assertRaises(AttributeError):
+                upload_doc.image_count
+            with self.assertRaises(AttributeError):
+                upload_doc.duplicate_image_count
+            with self.assertRaises(AttributeError):
+                upload_doc.duplicate_filenames
 
             items_after = self.db.items.count_documents({})
             self.assertEqual(items_before, items_after)
@@ -123,8 +154,15 @@ class TestParseUploadPackage(FlaskAppTestCase):
             upload_id = self.upload_package(package_path)
             parse_upload_package(upload_id, self.db, storage_client)
 
-            upload_doc = upload.get(self.db, upload_id)
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
             self.assertEqual('failed', upload_doc.state)
+
+            with self.assertRaises(AttributeError):
+                upload_doc.image_count
+            with self.assertRaises(AttributeError):
+                upload_doc.duplicate_image_count
+            with self.assertRaises(AttributeError):
+                upload_doc.duplicate_filenames
 
             items_after = self.db.items.count_documents({})
             self.assertEqual(items_before, items_after)
@@ -137,8 +175,15 @@ class TestParseUploadPackage(FlaskAppTestCase):
         upload_id = self.upload_package(data_path)
         parse_upload_package(upload_id, self.db, storage_client)
 
-        upload_doc = upload.get(self.db, upload_id)
+        upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
         self.assertEqual('failed', upload_doc.state)
+
+        with self.assertRaises(AttributeError):
+            upload_doc.image_count
+        with self.assertRaises(AttributeError):
+            upload_doc.duplicate_image_count
+        with self.assertRaises(AttributeError):
+            upload_doc.duplicate_filenames
 
         items_after = self.db.items.count_documents({})
         self.assertEqual(items_before, items_after)
@@ -154,8 +199,191 @@ class TestParseUploadPackage(FlaskAppTestCase):
             upload_id = self.upload_package(package_path)
             parse_upload_package(upload_id, self.db, storage_client)
 
-            upload_doc = upload.get(self.db, upload_id)
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
             self.assertEqual('failed', upload_doc.state)
+
+            with self.assertRaises(AttributeError):
+                upload_doc.image_count
+            with self.assertRaises(AttributeError):
+                upload_doc.duplicate_image_count
+            with self.assertRaises(AttributeError):
+                upload_doc.duplicate_filenames
 
             items_after = self.db.items.count_documents({})
             self.assertEqual(items_before, items_after)
+
+    def test_can_parse_upload_package_with_duplicates_only(self):
+        storage_client = self.app.config['storage_client']
+        items_before = self.db.items.count_documents({})
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            data_path = os.path.join(DATA_PATH, '5p0xMAG_small')
+            package_path = os.path.join(tmpdirname, 'package.tar.bz2')
+            self.create_package_from_directory(data_path, package_path)
+            upload_id = self.upload_package(package_path)
+            parse_upload_package(upload_id, self.db, storage_client)
+
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
+            self.assertEqual('finished', upload_doc.state)
+            self.assertEqual(17, upload_doc.image_count)
+            self.assertEqual(0, upload_doc.duplicate_image_count)
+            self.assertCountEqual([], upload_doc.duplicate_filenames)
+
+            items_after = self.db.items.count_documents({})
+            self.assertNotEqual(items_before, items_after)
+
+        items_inbeetween = self.db.items.count_documents({})
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            data_path = os.path.join(DATA_PATH, '5p0xMAG_3_entries')
+            package_path = os.path.join(tmpdirname, 'package.tar.bz2')
+            self.create_package_from_directory(data_path, package_path)
+            upload_id = self.upload_package(package_path)
+            parse_upload_package(upload_id, self.db, storage_client)
+
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
+            self.assertEqual('finished', upload_doc.state)
+            self.assertEqual(3, upload_doc.image_count)
+            self.assertEqual(3, upload_doc.duplicate_image_count)
+            self.assertCountEqual([
+                'SPC-EAWAG-5P0X-1543968085030435-9650530338104-000049-002-2838-1090-48-32.jpeg',
+                'SPC-EAWAG-5P0X-1543968169050193-9650614345087-000889-004-2636-0-100-128.jpeg',
+                'SPC-EAWAG-5P0X-1543968172024020-9650617345336-000919-002-1364-290-64-72.jpeg'
+            ], upload_doc.duplicate_filenames)
+
+            items_after = self.db.items.count_documents({})
+            self.assertNotEqual(items_before, items_after)
+            self.assertEqual(items_inbeetween, items_after)
+
+    def test_can_parse_upload_package_with_some_duplicates(self):
+        storage_client = self.app.config['storage_client']
+        items_before = self.db.items.count_documents({})
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            data_path = os.path.join(DATA_PATH, '5p0xMAG_small')
+            package_path = os.path.join(tmpdirname, 'package.tar.bz2')
+            self.create_package_from_directory(data_path, package_path)
+            upload_id = self.upload_package(package_path)
+            parse_upload_package(upload_id, self.db, storage_client)
+
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
+            self.assertEqual('finished', upload_doc.state)
+            self.assertEqual(17, upload_doc.image_count)
+            self.assertEqual(0, upload_doc.duplicate_image_count)
+            self.assertCountEqual([], upload_doc.duplicate_filenames)
+
+            items_after = self.db.items.count_documents({})
+            self.assertNotEqual(items_before, items_after)
+
+        items_inbeetween = self.db.items.count_documents({})
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            data_path = os.path.join(DATA_PATH, '5p0xMAG_small_2_duplicates')
+            package_path = os.path.join(tmpdirname, 'package.tar.bz2')
+            self.create_package_from_directory(data_path, package_path)
+            upload_id = self.upload_package(package_path)
+            parse_upload_package(upload_id, self.db, storage_client)
+
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
+            self.assertEqual('finished', upload_doc.state)
+            self.assertEqual(7, upload_doc.image_count)
+            self.assertEqual(2, upload_doc.duplicate_image_count)
+            self.assertCountEqual([
+                'SPC-EAWAG-5P0X-1543968111037290-9650556340265-000309-002-3712-0-52-40.jpeg',
+                'SPC-EAWAG-5P0X-1543968114038057-9650559340515-000339-001-3536-32-68-92.jpeg'
+            ], upload_doc.duplicate_filenames)
+
+            items_after = self.db.items.count_documents({})
+            self.assertNotEqual(items_before, items_after)
+            self.assertNotEqual(items_inbeetween, items_after)
+
+    def test_can_parse_upload_package_with_duplicated_tsv_entries(self):
+        storage_client = self.app.config['storage_client']
+        items_before = self.db.items.count_documents({})
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            data_path = os.path.join(DATA_PATH, '5p0xMAG_small_with_tsv_duplicates')
+            package_path = os.path.join(tmpdirname, 'package.tar.bz2')
+            self.create_package_from_directory(data_path, package_path)
+            upload_id = self.upload_package(package_path)
+            parse_upload_package(upload_id, self.db, storage_client)
+
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
+            self.assertEqual('finished', upload_doc.state)
+            self.assertEqual(19, upload_doc.image_count)
+            self.assertEqual(2, upload_doc.duplicate_image_count)
+            self.assertCountEqual([
+                'SPC-EAWAG-5P0X-1543968141051783-9650586342759-000609-002-0-2088-32-84.jpeg',
+                'SPC-EAWAG-5P0X-1543968092032969-9650537338686-000119-003-2132-1914-48-48.jpeg'
+            ], upload_doc.duplicate_filenames)
+
+            items_after = self.db.items.count_documents({})
+            self.assertNotEqual(items_before, items_after)
+
+    def test_can_parse_upload_package_with_duplicated_fields_filenames_in_tsv(self):
+        storage_client = self.app.config['storage_client']
+        items_before = self.db.items.count_documents({})
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            data_path = os.path.join(DATA_PATH, '5p0xMAG_small_with_tsv_duplicated_filenames')
+            package_path = os.path.join(tmpdirname, 'package.tar.bz2')
+            self.create_package_from_directory(data_path, package_path)
+            upload_id = self.upload_package(package_path)
+            parse_upload_package(upload_id, self.db, storage_client)
+
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
+            self.assertEqual('finished', upload_doc.state)
+            self.assertEqual(19, upload_doc.image_count)
+            self.assertEqual(2, upload_doc.duplicate_image_count)
+            self.assertCountEqual([
+                'SPC-EAWAG-5P0X-1543968141051783-9650586342759-000609-002-0-2088-32-84.jpeg',
+                'SPC-EAWAG-5P0X-1543968092032969-9650537338686-000119-003-2132-1914-48-48.jpeg'
+            ], upload_doc.duplicate_filenames)
+
+            items_after = self.db.items.count_documents({})
+            self.assertNotEqual(items_before, items_after)
+            self.assertEqual(items_after - items_before, upload_doc.image_count - upload_doc.duplicate_image_count)
+
+    def test_can_parse_upload_package_with_some_duplicates_and_duplicated_tsv_entries(self):
+        storage_client = self.app.config['storage_client']
+        items_before = self.db.items.count_documents({})
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            data_path = os.path.join(DATA_PATH, '5p0xMAG_small')
+            package_path = os.path.join(tmpdirname, 'package.tar.bz2')
+            self.create_package_from_directory(data_path, package_path)
+            upload_id = self.upload_package(package_path)
+            parse_upload_package(upload_id, self.db, storage_client)
+
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
+            self.assertEqual('finished', upload_doc.state)
+            self.assertEqual(17, upload_doc.image_count)
+            self.assertEqual(0, upload_doc.duplicate_image_count)
+            self.assertCountEqual([], upload_doc.duplicate_filenames)
+
+            items_after = self.db.items.count_documents({})
+            self.assertNotEqual(items_before, items_after)
+
+        items_inbeetween = self.db.items.count_documents({})
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            data_path = os.path.join(DATA_PATH, '5p0xMAG_small_2_duplicates_and_tsv_duplicates')
+            package_path = os.path.join(tmpdirname, 'package.tar.bz2')
+            self.create_package_from_directory(data_path, package_path)
+            upload_id = self.upload_package(package_path)
+            parse_upload_package(upload_id, self.db, storage_client)
+
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
+            self.assertEqual('finished', upload_doc.state)
+            self.assertEqual(9, upload_doc.image_count)
+            self.assertEqual(4, upload_doc.duplicate_image_count)
+            self.assertCountEqual([
+                'SPC-EAWAG-5P0X-1543968111037290-9650556340265-000309-002-3712-0-52-40.jpeg',
+                'SPC-EAWAG-5P0X-1543968111037290-9650556340265-000309-002-3712-0-52-40.jpeg',
+                'SPC-EAWAG-5P0X-1543968114038057-9650559340515-000339-001-3536-32-68-92.jpeg',
+                'SPC-EAWAG-5P0X-1543968114038057-9650559340515-000339-001-3536-32-68-92.jpeg'
+            ], upload_doc.duplicate_filenames)
+
+            items_after = self.db.items.count_documents({})
+            self.assertNotEqual(items_before, items_after)
+            self.assertNotEqual(items_inbeetween, items_after)
