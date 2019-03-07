@@ -5,15 +5,7 @@ from bson import ObjectId
 
 from aquascope.webserver.data_access.db import Item
 from aquascope.webserver.data_access.db.items import DEFAULT_ITEM_PROJECTION, ANNOTABLE_FIELDS
-
-
-def project_dict(item_dict, projection):
-    for k, v in projection.items():
-        if k in item_dict and v == 0:
-            item_dict.pop(k, None)
-
-    return item_dict
-
+from aquascope.webserver.data_access.db.util import project_dict
 
 _DUMMY_ITEMS = [
     {

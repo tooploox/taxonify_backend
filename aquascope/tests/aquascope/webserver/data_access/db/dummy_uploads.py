@@ -2,8 +2,8 @@ import copy
 
 from bson import ObjectId
 
-from aquascope.tests.aquascope.webserver.data_access.db.dummy_items import project_dict
 from aquascope.webserver.data_access.db.upload import Upload, DEFAULT_UPLOAD_PROJECTION
+from aquascope.webserver.data_access.db.util import project_dict
 
 _DUMMY_UPLOADS = [
     {

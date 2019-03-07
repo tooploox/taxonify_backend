@@ -75,5 +75,5 @@ def find(db, query_filter=None, with_default_projection=True):
     return (Upload.from_db_data(doc) for doc in db.uploads.find(query_filter, projection))
 
 
-def update_state(db, document_id, state, *args, **kwargs):
+def update_state(db, document_id, state, **kwargs):
     return db.uploads.update_one({'_id': ObjectId(document_id)}, {'$set': {'state': state, **kwargs}})
