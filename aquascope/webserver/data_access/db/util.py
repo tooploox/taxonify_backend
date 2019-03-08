@@ -27,8 +27,12 @@ def create_collections(db):
     for (collection, schema) in collections_with_schemas:
         try:
             db.create_collection(collection)
+        except CollectionInvalid:
+            pass
+
+        try:
             override_collection_validator(db, collection, schema)
-        except (CollectionInvalid, OperationFailure):
+        except OperationFailure:
             pass
 
     db.users.create_index([('username', ASCENDING)], unique=True)
