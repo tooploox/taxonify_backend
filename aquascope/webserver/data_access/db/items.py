@@ -6,6 +6,7 @@ import dateutil.parser
 from pymongo import UpdateOne
 
 from aquascope.webserver.data_access.db.db_document import DbDocument
+from aquascope.webserver.data_access.db.upload import UPLOAD_DB_SCHEMA
 
 TAXONOMY_FIELDS = [
     'empire', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'
@@ -59,11 +60,17 @@ MORPHOMETRIC_FIELDS = PRIMARY_MORPHOMETRIC_FIELDS + SECONDARY_MORPHOMETRIC_FIELD
 
 ANNOTABLE_FIELDS = TAXONOMY_FIELDS + ADDITIONAL_ATTRIBUTES_FIELDS
 
-DEFAULT_ITEM_PROJECTION = {k: 0 for k in SECONDARY_MORPHOMETRIC_FIELDS}
+UNNECESSARY_UPLOAD_PROPERTIES = ['state', 'image_count', 'duplicate_image_count', 'duplicate_filenames']
+NO_UNNECESSARY_UPLOAD_PROPERTIES_PROJECTION = {f'{k}': 0 for k in UNNECESSARY_UPLOAD_PROPERTIES}
+
+DEFAULT_ITEM_PROJECTION = {
+    **NO_UNNECESSARY_UPLOAD_PROPERTIES_PROJECTION,
+    **{k: 0 for k in SECONDARY_MORPHOMETRIC_FIELDS}
+}
 
 ITEMS_DB_SCHEMA = {
     'bsonType': 'object',
-    'required': ['_id', 'filename', 'extension', 'group_id',
+    'required': ['_id', 'upload_id', 'filename', 'extension', 'group_id',
                  'acquisition_time', 'image_width', 'image_height']
                 + TAXONOMY_FIELDS
                 + ADDITIONAL_ATTRIBUTES_FIELDS
@@ -73,6 +80,9 @@ ITEMS_DB_SCHEMA = {
     'additionalProperties': False,
     'properties': {
         '_id': {
+            'bsonType': 'objectId'
+        },
+        'upload_id': {
             'bsonType': 'objectId'
         },
         'filename': {
@@ -110,6 +120,7 @@ def make_item_dict_serializable(item_dict):
 
     item_dict['acquisition_time'] = item_dict['acquisition_time'].isoformat()
     item_dict['_id'] = str(item_dict['_id'])
+    item_dict['upload_id'] = str(item_dict['upload_id'])
     return item_dict
 
 
@@ -121,6 +132,8 @@ class Item(DbDocument):
     def from_request(request_dict):
         data = copy.deepcopy(request_dict)
         data['_id'] = ObjectId(data['_id'])
+        data['upload_id'] = ObjectId(data['upload_id'])
+        data.pop('tags', None)
         return Item(data)
 
     @staticmethod
@@ -128,7 +141,7 @@ class Item(DbDocument):
         return Item(DbDocument.from_db_data(db_data))
 
     @staticmethod
-    def from_tsv_row(row, image_width, image_height):
+    def from_tsv_row(row, image_width, image_height, upload_id):
         item = copy.deepcopy(row)
         item['acquisition_time'] = item.pop('timestamp').to_pydatetime()
         item['filename'] = os.path.basename(item.pop('url'))
@@ -136,6 +149,7 @@ class Item(DbDocument):
         item['image_height'] = image_height
         item['extension'] = os.path.splitext(item['filename'])[1]
         item['group_id'] = 'processed'
+        item['upload_id'] = ObjectId(upload_id)
         return Item(item)
 
     def serializable(self, shallow=False):
@@ -241,18 +255,62 @@ def format_query_result(result, serializable):
     return (Item.from_db_data(item) for item in result)
 
 
+def aggregate_find_query(query, projection, skip=None, limit=None):
+    aggregate_query = [
+        {
+            '$lookup': {
+                'from': 'uploads',
+                'localField': 'upload_id',
+                'foreignField': '_id',
+                'as': 'from_upload'
+            }
+        },
+        {
+            '$replaceRoot': {
+                'newRoot': {
+                    '$mergeObjects': [{
+                        '$arrayElemAt': ["$from_upload", 0]}, "$$ROOT"]
+                }
+            }
+        },
+        {
+            '$project': {
+                'from_upload': 0
+            }
+        },
+        {
+            '$match': query
+        },
+        {
+            '$project': projection
+        }
+    ]
+    if skip:
+        aggregate_query.append({
+            '$skip': skip
+        })
+    if limit:
+        aggregate_query.append({
+            '$limit': limit
+        })
+
+    return aggregate_query
+
+
 def paged_find_items(db, page_number, page_size, with_default_projection=True,
                      serializable=False, *args, **kwargs):
     query = build_find_query(*args, **kwargs)
-    projection = DEFAULT_ITEM_PROJECTION if with_default_projection else None
-    result = db.items.find(query, projection).skip(page_size * (page_number - 1)).limit(page_size)
+    projection = DEFAULT_ITEM_PROJECTION if with_default_projection else NO_UNNECESSARY_UPLOAD_PROPERTIES_PROJECTION
+    skip = page_size * (page_number - 1)
+    limit = page_size
+    result = db.items.aggregate(aggregate_find_query(query, projection, skip, limit))
     return format_query_result(result, serializable)
 
 
 def find_items(db, with_default_projection=True, serializable=False, *args, **kwargs):
     query = build_find_query(*args, **kwargs)
-    projection = DEFAULT_ITEM_PROJECTION if with_default_projection else None
-    result = db.items.find(query, projection)
+    projection = DEFAULT_ITEM_PROJECTION if with_default_projection else NO_UNNECESSARY_UPLOAD_PROPERTIES_PROJECTION
+    result = db.items.aggregate(aggregate_find_query(query, projection))
     return format_query_result(result, serializable)
 
 

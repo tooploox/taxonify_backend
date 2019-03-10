@@ -10,12 +10,14 @@ from aquascope.webserver.schema.custom_schema import (CustomSchema, FormattedVal
 
 PostItemSchema = type('PostItemSchema', (CustomSchema,), {
     '_id': fields.String(required=True),
+    'upload_id': fields.String(required=True),
     'filename': fields.String(required=True, allow_none=True),
     'extension': LowercaseNullableString(required=True, allow_none=True),
     'group_id': LowercaseNullableString(required=True, allow_none=True),
     'acquisition_time': fields.DateTime(required=True),
     'image_width': fields.Integer(required=True),
     'image_height': fields.Integer(required=True),
+    'tags': List(fields.String(required=True, allow_none=False), required=True, allow_none=False),
     **({k: LowercaseNullableString(required=True, allow_none=True) for k in TAXONOMY_FIELDS}),
     **({k: fields.Boolean(allow_none=True, required=True) for k in ADDITIONAL_ATTRIBUTES_FIELDS}),
     **({k: fields.Float(allow_none=False, required=True) for k in PRIMARY_MORPHOMETRIC_FIELDS}),
