@@ -27,7 +27,7 @@ def create_collections(db):
     for (collection, schema) in collections_with_schemas:
         try:
             db.create_collection(collection)
-        except CollectionInvalid:
+        except (CollectionInvalid, OperationFailure):
             pass
 
         try:
