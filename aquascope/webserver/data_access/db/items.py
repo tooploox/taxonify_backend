@@ -223,7 +223,14 @@ def build_find_query(*args, **kwargs):
 
     query = dict()
     for key, value in kwargs.items():
-        if type(value) == list:
+        if key == 'tags':
+            if value:
+                query['tags'] = {
+                    '$all': value
+                }
+            else:
+                query['tags'] = value
+        elif type(value) == list:
             query[key] = {
                 '$in': value
             }
@@ -274,12 +281,12 @@ def aggregate_find_query(query, projection, skip=None, limit=None):
             }
         },
         {
+            '$match': query
+        },
+        {
             '$project': {
                 'from_upload': 0
             }
-        },
-        {
-            '$match': query
         },
         {
             '$project': projection

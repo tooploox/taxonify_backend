@@ -25,7 +25,7 @@ _DUMMY_UPLOADS = [
         'image_count': 20,
         'duplicate_image_count': 0,
         'duplicate_filenames': [],
-        'tags': []
+        'tags': ['dummy_tag_1']
     },
     {
         '_id': ObjectId('000000000000000000001003'),

@@ -524,7 +524,7 @@ _DUMMY_ITEMS = [
     },
     {
         "_id": ObjectId('000000000000000000000004'),
-        "upload_id": ObjectId('000000000000000000001002'),
+        "upload_id": ObjectId('000000000000000000001000'),
         "file_size": 1.0,
         "aspect_ratio": 1.0,
         "maj_axis_len": 1.0,
