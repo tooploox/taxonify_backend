@@ -8,7 +8,7 @@ from bson import ObjectId
 from flask import json
 import requests
 
-from aquascope.tests.aquascope.webserver.data_access.db.dummy_items import DUMMY_ITEMS, DUMMY_ITEMS_WITH_TAGS
+from aquascope.tests.aquascope.webserver.data_access.db.dummy_items import DUMMY_ITEMS_WITH_TAGS
 from aquascope.tests.flask_app_test_case import FlaskAppTestCase
 from aquascope.webserver.data_access.db.items import ANNOTABLE_FIELDS, Item, MORPHOMETRIC_FIELDS
 
