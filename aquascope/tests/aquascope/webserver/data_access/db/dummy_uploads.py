@@ -9,12 +9,14 @@ _DUMMY_UPLOADS = [
     {
         '_id': ObjectId('000000000000000000001000'),
         'filename': 'dummy0',
-        'state': 'initialized'
+        'state': 'initialized',
+        'tags': []
     },
     {
         '_id': ObjectId('000000000000000000001001'),
         'filename': 'dummy1',
-        'state': 'uploaded'
+        'state': 'uploaded',
+        'tags': ['dummy_tag_1', 'dummy_tag_2']
     },
     {
         '_id': ObjectId('000000000000000000001002'),
@@ -22,7 +24,8 @@ _DUMMY_UPLOADS = [
         'state': 'processing',
         'image_count': 20,
         'duplicate_image_count': 0,
-        'duplicate_filenames': []
+        'duplicate_filenames': [],
+        'tags': ['dummy_tag_1']
     },
     {
         '_id': ObjectId('000000000000000000001003'),
@@ -33,12 +36,14 @@ _DUMMY_UPLOADS = [
         'duplicate_filenames': [
             'img1.jpg',
             'img2.jpg'
-        ]
+        ],
+        'tags': []
     },
     {
         '_id': ObjectId('000000000000000000001004'),
         'filename': 'dummy4',
-        'state': 'failed'
+        'state': 'failed',
+        'tags': []
     }
 ]
 

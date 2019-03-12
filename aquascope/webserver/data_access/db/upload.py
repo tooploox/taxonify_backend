@@ -6,7 +6,7 @@ from aquascope.webserver.data_access.db.db_document import DbDocument
 
 UPLOAD_DB_SCHEMA = {
     'bsonType': 'object',
-    'required': ['_id', 'filename', 'state'],
+    'required': ['_id', 'filename', 'state', 'tags'],
     'additionalProperties': False,
     'properties': {
         '_id': {
@@ -18,6 +18,13 @@ UPLOAD_DB_SCHEMA = {
         'state': {
             'bsonType': 'string',
             'enum': ['initialized', 'uploaded', 'processing', 'finished', 'failed']
+        },
+        'tags': {
+            'bsonType': 'array',
+            'items': {
+                'bsonType': 'string',
+                'uniqueItems': True
+            }
         },
         'image_count': {
             'bsonType': 'int'
@@ -57,7 +64,7 @@ class Upload(DbDocument):
 
 
 def create(db, filename):
-    return db.uploads.insert_one(dict(filename=filename, state='initialized'))
+    return db.uploads.insert_one(dict(filename=filename, state='initialized', tags=[]))
 
 
 def get(db, document_id, with_default_projection=True):
@@ -76,3 +83,7 @@ def find(db, query_filter=None, with_default_projection=True):
 
 def update_state(db, document_id, state, **kwargs):
     return db.uploads.update_one({'_id': ObjectId(document_id)}, {'$set': {'state': state, **kwargs}})
+
+
+def update_tags(db, docuent_id, tags):
+    return db.uploads.update_one({'_id': ObjectId(docuent_id)}, {'$set': {'tags': tags }})

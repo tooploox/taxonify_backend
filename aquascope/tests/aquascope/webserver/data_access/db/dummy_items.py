@@ -3,13 +3,26 @@ import copy
 import dateutil
 from bson import ObjectId
 
+from aquascope.tests.aquascope.webserver.data_access.db.dummy_uploads import DUMMY_UPLOADS
 from aquascope.webserver.data_access.db import Item
 from aquascope.webserver.data_access.db.items import DEFAULT_ITEM_PROJECTION, ANNOTABLE_FIELDS
 from aquascope.webserver.data_access.db.util import project_dict
 
+
+def add_tags_to_items(item_list):
+    list_with_tags = copy.deepcopy(item_list)
+    for item in list_with_tags:
+        upload_id = item['upload_id']
+        for upload in DUMMY_UPLOADS:
+            if upload._id == upload_id:
+                item['tags'] = upload.tags
+    return list_with_tags
+
+
 _DUMMY_ITEMS = [
     {
         "_id": ObjectId('000000000000000000000000'),
+        "upload_id": ObjectId('000000000000000000001001'),
         "file_size": 1.0,
         "aspect_ratio": 1.0,
         "maj_axis_len": 1.0,
@@ -134,6 +147,7 @@ _DUMMY_ITEMS = [
     },
     {
         "_id": ObjectId('000000000000000000000001'),
+        "upload_id": ObjectId('000000000000000000001001'),
         "file_size": 1.0,
         "aspect_ratio": 1.0,
         "maj_axis_len": 1.0,
@@ -258,6 +272,7 @@ _DUMMY_ITEMS = [
     },
     {
         "_id": ObjectId('000000000000000000000002'),
+        "upload_id": ObjectId('000000000000000000001001'),
         "file_size": 1.0,
         "aspect_ratio": 1.0,
         "maj_axis_len": 1.0,
@@ -382,6 +397,7 @@ _DUMMY_ITEMS = [
     },
     {
         "_id": ObjectId('000000000000000000000003'),
+        "upload_id": ObjectId('000000000000000000001002'),
         "file_size": 1.0,
         "aspect_ratio": 1.0,
         "maj_axis_len": 1.0,
@@ -508,6 +524,7 @@ _DUMMY_ITEMS = [
     },
     {
         "_id": ObjectId('000000000000000000000004'),
+        "upload_id": ObjectId('000000000000000000001000'),
         "file_size": 1.0,
         "aspect_ratio": 1.0,
         "maj_axis_len": 1.0,
@@ -632,8 +649,10 @@ _DUMMY_ITEMS = [
     }
 ]
 
+_DUMMY_ITEMS_WITH_TAGS = add_tags_to_items(_DUMMY_ITEMS)
 DUMMY_ITEMS_WITH_DEFAULT_PROJECTION = [
-    Item(project_dict(copy.deepcopy(item), DEFAULT_ITEM_PROJECTION)) for item in _DUMMY_ITEMS
+    Item(project_dict(copy.deepcopy(item), DEFAULT_ITEM_PROJECTION)) for item in _DUMMY_ITEMS_WITH_TAGS
 ]
 
 DUMMY_ITEMS = [Item(item) for item in _DUMMY_ITEMS]
+DUMMY_ITEMS_WITH_TAGS = [Item(item) for item in _DUMMY_ITEMS_WITH_TAGS]

@@ -1,11 +1,15 @@
+import copy
 import os
 from unittest import mock
 
 import celery
+from bson import ObjectId
+from flask import json
 
 from aquascope.tests.aquascope.webserver.data_access.db.dummy_uploads import (DUMMY_UPLOADS_WITH_DEFAULT_PROJECTION,
                                                                               DUMMY_UPLOADS)
 from aquascope.tests.flask_app_test_case import FlaskAppTestCase
+from aquascope.webserver.data_access.db import upload
 
 TEST_FILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                               '../../../../../data/5p0xMAG_small/features.tsv')
@@ -20,8 +24,78 @@ class TestPutUpload(FlaskAppTestCase):
                 res = self.client().put('/upload/dummy_file',
                                         data=data,
                                         headers=self.headers)
-                self.assertEqual(res.status_code, 204)
+                self.assertEqual(res.status_code, 200)
+                response = res.json
+                self.assertTrue(ObjectId.is_valid(response['_id']))
 
+
+class TestPostUploadTags(FlaskAppTestCase):
+
+    def test_api_can_post_valid_tags_list(self):
+        with self.app.app_context():
+            upload_doc = copy.deepcopy(DUMMY_UPLOADS[0])
+            tags = ['tag1', 'tag2']
+            request_data = json.dumps({
+                'tags': tags
+            })
+            res = self.client().post(f'/upload/{str(upload_doc._id)}/tags',
+                                     data=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 204)
+
+            db = self.app.config['db']
+            upload_after = upload.get(db, upload_doc._id, with_default_projection=False)
+            self.assertCountEqual(upload_after.tags, tags)
+
+    def test_api_can_post_empty_tags_list(self):
+        with self.app.app_context():
+            upload_doc = copy.deepcopy(DUMMY_UPLOADS[0])
+            tags = []
+            request_data = json.dumps({
+                'tags': tags
+            })
+            res = self.client().post(f'/upload/{str(upload_doc._id)}/tags',
+                                     data=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 204)
+
+            db = self.app.config['db']
+            upload_after = upload.get(db, upload_doc._id, with_default_projection=False)
+            self.assertCountEqual(upload_after.tags, tags)
+
+    def test_api_cant_post_invalid_tags_list(self):
+        with self.app.app_context():
+            upload_doc = copy.deepcopy(DUMMY_UPLOADS[0])
+            invalid_tags = [
+                [4],
+                ['valid', 4],
+                'invalid',
+                [False]
+            ]
+
+            for tags_list in invalid_tags:
+                request_data = json.dumps({
+                    'tags': tags_list
+                })
+                res = self.client().post(f'/upload/{str(upload_doc._id)}/tags',
+                                         data=request_data, headers=self.headers)
+                self.assertEqual(res.status_code, 400)
+
+                db = self.app.config['db']
+                upload_after = upload.get(db, upload_doc._id, with_default_projection=False)
+                self.assertCountEqual(upload_after.tags, upload_doc.tags)
+
+    def test_api_cant_post_tags_for_invalid_upload(self):
+        with self.app.app_context():
+            tags = ['tag1', 'tag2']
+            request_data = json.dumps({
+                'tags': tags
+            })
+            res = self.client().post(f'/upload/dummy_upload_id/tags',
+                                     data=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 400)
+
+            res = self.client().post(f'/upload/999000000000000000001003/tags',
+                                     data=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 400)
 
 class TestGetUpload(FlaskAppTestCase):
 

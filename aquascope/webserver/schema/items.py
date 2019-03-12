@@ -4,18 +4,20 @@ from marshmallow.validate import Range
 from aquascope.webserver.data_access.db.items import (ADDITIONAL_ATTRIBUTES_FIELDS, PRIMARY_MORPHOMETRIC_FIELDS,
                                                       TAXONOMY_FIELDS, ANNOTABLE_FIELDS)
 from aquascope.webserver.schema.custom_fields import (List, NullableBoolean,
-                                                      LowercaseNullableString, NullableString)
+                                                      LowercaseNullableString, NullableString, NullableList)
 from aquascope.webserver.schema.custom_schema import (CustomSchema, FormattedValidationError)
 
 
 PostItemSchema = type('PostItemSchema', (CustomSchema,), {
     '_id': fields.String(required=True),
+    'upload_id': fields.String(required=True),
     'filename': fields.String(required=True, allow_none=True),
     'extension': LowercaseNullableString(required=True, allow_none=True),
     'group_id': LowercaseNullableString(required=True, allow_none=True),
     'acquisition_time': fields.DateTime(required=True),
     'image_width': fields.Integer(required=True),
     'image_height': fields.Integer(required=True),
+    'tags': List(fields.String(required=True, allow_none=False), required=True, allow_none=False),
     **({k: LowercaseNullableString(required=True, allow_none=True) for k in TAXONOMY_FIELDS}),
     **({k: fields.Boolean(allow_none=True, required=True) for k in ADDITIONAL_ATTRIBUTES_FIELDS}),
     **({k: fields.Float(allow_none=False, required=True) for k in PRIMARY_MORPHOMETRIC_FIELDS}),
@@ -42,6 +44,7 @@ GetItemsSchema = type('GetItemsSchema', (CustomSchema,), {
     'modification_time_start': fields.DateTime(required=False, allow_none=False),
     'modification_time_end': fields.DateTime(required=False, allow_none=False),
     'modified_by': fields.String(required=False, allow_none=False),
+    'tags': NullableList(fields.String(required=True, allow_none=False), required=False, allow_none=False),
     **({k: LowercaseNullableString(required=False, allow_none=True) for k in TAXONOMY_FIELDS}),
     **({k: List(NullableBoolean(allow_none=True), allow_none=True, required=False) for k in ADDITIONAL_ATTRIBUTES_FIELDS}),
 })

@@ -585,6 +585,14 @@ paths:
             items:
               type: boolean
               nullable: true
+        - name: tags
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              nullable: false
 
       responses:
         '200':
@@ -1018,6 +1026,14 @@ paths:
             items:
               type: boolean
               nullable: true
+        - name: tags
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              nullable: false
 
       responses:
         '200':
@@ -1467,6 +1483,14 @@ paths:
             items:
               type: boolean
               nullable: true
+        - name: tags
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              nullable: false
 
       responses:
         '200':
@@ -1499,8 +1523,12 @@ paths:
             type: string
 
       responses:
-        '204':
+        '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutUploadResult'
 
   /upload/{upload_id}:
     get:
@@ -1531,6 +1559,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadUploadRequest'
+
+  /upload/{upload_id}/tags:
+    post:
+      description: 'Post upload tags'
+      operationId: post_tags
+      tags:
+        - Upload
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: upload_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagsPost'
+
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Unknown arguments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnknownArgumentsResult'
+
 
   /upload/list:
     get:
@@ -1565,6 +1624,12 @@ components:
       properties:
         _id:
           type: string
+        upload_id:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
         filename:
           type: string
         extension:
@@ -2074,6 +2139,10 @@ components:
             type: integer
           duplicate_image_count:
             type: integer
+          tags:
+            type: array
+            items:
+              type: string
 
     GetUploadResult:
       type: object
@@ -2097,6 +2166,10 @@ components:
             type: array
             items:
               type: string
+        tags:
+          type: array
+          items:
+            type: string
     BadUploadRequest:
       type: object
       properties:
@@ -2131,6 +2204,19 @@ components:
         message:
           type: string
           example: 'User already exists in the system'
+    PutUploadResult:
+      type: object
+      properties:
+        _id:
+          type: string
+    TagsPost:
+      type: object
+      required: [tags]
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
 
 tags:
   - name: User

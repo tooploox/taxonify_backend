@@ -8,6 +8,13 @@ class List(fields.List):
         return super()._deserialize(value, attr, data)
 
 
+class NullableList(List):
+    def _deserialize(self, value, attr, data, **kwargs):
+        if value == '':
+            return []
+        return super(NullableList, self)._deserialize(value, attr, data)
+
+
 class NullableString(fields.String):
     def _deserialize(self, value, attr, data, **kwargs):
         if value == '':
