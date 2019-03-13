@@ -1,3 +1,5 @@
+from itertools import product
+
 from pymongo import UpdateOne
 
 from aquascope.data_processing.upload_postprocess import upload_id_to_item_filenames
@@ -10,32 +12,27 @@ from aquascope.webserver.data_access.db.util import get_db_from_env, override_co
 def add_upload_id_field_to_items(db, storage_client):
     # prepare data for migration
     uploads = upload.find(db, with_default_projection=False)
-    duplicates = {}
+    upload_id_filename_pairs = []
     for upload_doc in uploads:
         upload_id = upload_doc['_id']
         upload_duplicates = upload_doc.get_dict().get('duplicate_filenames', [])
-        duplicates[upload_id] = upload_duplicates
-
-    uploads_filenames = {upload_id: upload_id_to_item_filenames(storage_client, upload_id)
-                         for upload_id in duplicates.keys()}
-
-    deduped_ids_and_filenames = []
-    for (upload_id, filenames), (_, duplicate_filenames) in zip(uploads_filenames.items(), duplicates.items()):
-        deduped_filenames = list(set(filenames) - set(duplicate_filenames))
-        deduped_ids_and_filenames += [(upload_id, filename) for filename in deduped_filenames]
+        filenames = upload_id_to_item_filenames(storage_client, upload_id)
+        deduped_filenames = list(set(filenames) - set(upload_duplicates))
+        upload_id_filename_pairs += list(product([upload_id], deduped_filenames))
 
     # build queries
     bulks = []
-    for upload_id, filename in deduped_ids_and_filenames:
+    for upload_id, filename in upload_id_filename_pairs:
         bulk = UpdateOne({'filename': filename}, {'$set': {'upload_id': upload_id}})
         bulks.append(bulk)
 
     # set new collection validators
     override_collection_validator(db, 'items', ITEMS_DB_SCHEMA)
 
-    # update DB
-    result = db.items.bulk_write(bulks)
-    print(result.bulk_api_result)
+    if bulks:
+        # update DB
+        result = db.items.bulk_write(bulks)
+        print(result.bulk_api_result)
 
 
 def main():
