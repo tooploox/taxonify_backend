@@ -47,7 +47,7 @@ def upload_package_from_stream(filename, stream, db, storage_client):
     return blob_filename
 
 
-def populate_system_with_items(upload_id, data_dir, db, storage_client=None):
+def upload_data_dir_to_items(data_dir, upload_id):
     features_path = os.path.join(data_dir, 'features.tsv')
     images = os.listdir(data_dir)
 
@@ -75,6 +75,11 @@ def populate_system_with_items(upload_id, data_dir, db, storage_client=None):
         image = Image.open(image_path)
         width, height = image.size
         items.append(Item.from_tsv_row(item, width, height, upload_id))
+    return items
+
+
+def populate_system_with_items(upload_id, data_dir, db, storage_client=None):
+    items = upload_data_dir_to_items(data_dir, upload_id)
 
     container_name = group_id_to_container_name(items[0].group_id)
     if storage_client and not exists(storage_client, container_name):
