@@ -7,6 +7,7 @@ from pymongo.errors import CollectionInvalid, OperationFailure
 from aquascope.webserver.data_access.db.items import ITEMS_DB_SCHEMA
 from aquascope.webserver.data_access.db.upload import UPLOAD_DB_SCHEMA
 from aquascope.webserver.data_access.db.users import USERS_DB_SCHEMA
+from aquascope.webserver.data_access.storage.blob import blob_storage_client
 
 
 def override_collection_validator(db, collection_name, validator_json_schema):
@@ -50,6 +51,11 @@ def get_db(connection_string, with_create_collections=True):
 def get_db_from_env(with_create_collections=True):
     mongo_connection_string = os.environ['MONGO_CONNECTION_STRING']
     return get_db(mongo_connection_string, with_create_collections=with_create_collections)
+
+
+def get_storage_client_from_env():
+    storage_connection_string = os.environ['STORAGE_CONNECTION_STRING']
+    return blob_storage_client(connection_string=storage_connection_string)
 
 
 def project_dict(item_dict, projection):
