@@ -462,6 +462,23 @@ class TestGetItems(FlaskAppTestCase):
             self.assertCountEqual(response['items'], expected_items)
 
     @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_can_get_items_by_tag_and_regular_field(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            request_data = {
+                'tags': ['dummy_tag_1'],
+                'eating': True
+            }
+            res = self.client().get('/items', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            expected_items = DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[:2]
+            expected_items = [item.serializable() for item in expected_items]
+
+            self.assertCountEqual(response['items'], expected_items)
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
     def test_api_can_get_items_by_tags(self, mock_make_blob_url):
         mock_make_blob_url.return_value = 'mockedurl'
         with self.app.app_context():
