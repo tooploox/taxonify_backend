@@ -263,7 +263,15 @@ def format_query_result(result, serializable):
 
 
 def aggregate_find_query(query, projection, skip=None, limit=None):
-    aggregate_query = [
+    tags_query = query.pop('tags', None)
+
+    aggregate_query = []
+    if query:
+        aggregate_query.append({
+            '$match': query
+        })
+
+    aggregate_query += [
         {
             '$lookup': {
                 'from': 'uploads',
@@ -279,10 +287,17 @@ def aggregate_find_query(query, projection, skip=None, limit=None):
                         '$arrayElemAt': ["$from_upload", 0]}, "$$ROOT"]
                 }
             }
-        },
-        {
-            '$match': query
-        },
+        }
+    ]
+
+    if tags_query or tags_query == []:
+        aggregate_query.append({
+            '$match': {
+                'tags': tags_query
+            }
+        })
+
+    aggregate_query += [
         {
             '$project': {
                 'from_upload': 0
@@ -292,6 +307,7 @@ def aggregate_find_query(query, projection, skip=None, limit=None):
             '$project': projection
         }
     ]
+
     if skip:
         aggregate_query.append({
             '$skip': skip
