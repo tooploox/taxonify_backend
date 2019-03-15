@@ -405,6 +405,53 @@ class TestParseUploadPackage(FlaskAppTestCase):
             self.assertNotEqual(items_before, items_after)
             self.assertNotEqual(items_inbeetween, items_after)
 
+    def test_can_parse_upload_package_with_some_fields_as_infs_or_nans(self):
+        storage_client = self.app.config['storage_client']
+        items_before = self.db.items.count_documents({})
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            data_path = os.path.join(DATA_PATH, '5p0xMAG_small_with_infs_and_nans')
+            package_path = os.path.join(tmpdirname, 'package.tar.bz2')
+            self.create_package_from_directory(data_path, package_path)
+            upload_id = self.upload_package(package_path)
+            parse_upload_package(upload_id, self.db, storage_client)
+
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
+            self.assertEqual('finished', upload_doc.state)
+            self.assertEqual(17, upload_doc.image_count)
+            self.assertEqual(0, upload_doc.duplicate_image_count)
+            self.assertEqual(2, upload_doc.broken_record_count)
+            self.assertCountEqual([], upload_doc.duplicate_filenames)
+            self.assertCountEqual(['SPC-EAWAG-5P0X-1543968157067352-9650602344089-000769-002-3546-2354-48-48.jpeg',
+                                   'SPC-EAWAG-5P0X-1543968114038057-9650559340515-000339-001-3536-32-68-92.jpeg'],
+                                  upload_doc.broken_records)
+
+            items_after = self.db.items.count_documents({})
+            self.assertNotEqual(items_before, items_after)
+
+    def test_can_parse_upload_package_with_some_fields_missing(self):
+        storage_client = self.app.config['storage_client']
+        items_before = self.db.items.count_documents({})
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            data_path = os.path.join(DATA_PATH, '5p0xMAG_small_with_missing_fields')
+            package_path = os.path.join(tmpdirname, 'package.tar.bz2')
+            self.create_package_from_directory(data_path, package_path)
+            upload_id = self.upload_package(package_path)
+            parse_upload_package(upload_id, self.db, storage_client)
+
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
+            self.assertEqual('finished', upload_doc.state)
+            self.assertEqual(17, upload_doc.image_count)
+            self.assertEqual(0, upload_doc.duplicate_image_count)
+            self.assertEqual(1, upload_doc.broken_record_count)
+            self.assertCountEqual([], upload_doc.duplicate_filenames)
+            self.assertCountEqual(['SPC-EAWAG-5P0X-1543968111037290-9650556340265-000309-002-3712-0-52-40.jpeg'],
+                                  upload_doc.broken_records)
+
+            items_after = self.db.items.count_documents({})
+            self.assertNotEqual(items_before, items_after)
+
 
 if __name__ == '__main__':
     unittest.main()

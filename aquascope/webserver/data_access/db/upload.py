@@ -37,6 +37,15 @@ UPLOAD_DB_SCHEMA = {
             'items': {
                 'bsonType': 'string'
             }
+        },
+        'broken_record_count': {
+            'bsonType': 'int'
+        },
+        'broken_records': {
+            'bsonType': 'array',
+            'items': {
+                'bsonType': 'string'
+            }
         }
     }
 }
