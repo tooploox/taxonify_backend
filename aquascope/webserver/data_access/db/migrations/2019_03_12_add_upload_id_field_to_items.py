@@ -2,7 +2,7 @@ from itertools import product
 
 from pymongo import UpdateOne
 
-from aquascope.data_processing.upload_postprocess import upload_id_to_item_filenames
+from aquascope.data_processing.upload_postprocess import upload_package_to_item_filenames
 from aquascope.webserver.data_access.db import upload
 from aquascope.webserver.data_access.db.items import ITEMS_DB_SCHEMA
 from aquascope.webserver.data_access.db.util import get_db_from_env, override_collection_validator, \
@@ -16,7 +16,7 @@ def add_upload_id_field_to_items(db, storage_client):
     for upload_doc in uploads:
         upload_id = upload_doc['_id']
         upload_duplicates = upload_doc.get_dict().get('duplicate_filenames', [])
-        filenames = upload_id_to_item_filenames(storage_client, upload_id)
+        filenames = upload_package_to_item_filenames(storage_client, upload_id)
         deduped_filenames = list(set(filenames) - set(upload_duplicates))
         upload_id_filename_pairs += list(product([upload_id], deduped_filenames))
 

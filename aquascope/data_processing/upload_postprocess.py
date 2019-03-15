@@ -8,13 +8,13 @@ from pymongo.errors import WriteError
 from aquascope.webserver.data_access.db import upload
 from aquascope.webserver.data_access.storage import blob
 from aquascope.webserver.data_access.util import (populate_system_with_items, MissingTsvFileError,
-                                                  upload_data_dir_to_items)
+                                                  upload_data_dir_to_dataframe, upload_data_to_items_and_filepaths)
 
 
 def download_and_extract_upload(upload_id, container_name, download_path, extraction_path, storage_client):
     blob.download_blob(storage_client, container_name, upload_id, download_path)
 
-    with tarfile.open(download_path, "r:bz2") as tar:
+    with tarfile.open(download_path, "r") as tar:
         tar.extractall(extraction_path)
 
 
@@ -44,7 +44,7 @@ def parse_upload_package(upload_id, db, storage_client):
     upload.update_state(db, upload_id, 'finished', **result)
 
 
-def upload_id_to_item_filenames(storage_client, upload_id):
+def upload_package_to_item_filenames(storage_client, upload_id):
     with tempfile.TemporaryDirectory() as tmpdirname:
         local_filepath = os.path.join(tmpdirname, 'localfile')
         extraction_path = os.path.join(tmpdirname, 'extracted')
@@ -54,7 +54,8 @@ def upload_id_to_item_filenames(storage_client, upload_id):
             download_and_extract_upload(upload_id, container_name, local_filepath, extraction_path,
                                         storage_client)
             data_path = extraction_path_to_data_path(extraction_path)
-            items = upload_data_dir_to_items(data_path, upload_id)
+            df = upload_data_dir_to_dataframe(data_path)
+            items, _ = upload_data_to_items_and_filepaths(data_path, df, upload_id)
             return [item.filename for item in items]
         except (tarfile.ReadError, MissingTsvFileError, FileNotFoundError, EmptyDataError):
             return []

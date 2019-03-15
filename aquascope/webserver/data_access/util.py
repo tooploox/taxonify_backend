@@ -47,7 +47,7 @@ def upload_package_from_stream(filename, stream, db, storage_client):
     return blob_filename
 
 
-def upload_data_dir_to_items(data_dir, upload_id):
+def upload_data_dir_to_dataframe(data_dir):
     features_path = os.path.join(data_dir, 'features.tsv')
     images = os.listdir(data_dir)
 
@@ -58,7 +58,6 @@ def upload_data_dir_to_items(data_dir, upload_id):
 
     converters = {
         'timestamp': lambda x: dateutil.parser.parse(x),
-        'url': lambda x: os.path.basename(x),
         **{k: lambda x: float(x) for k in MORPHOMETRIC_FIELDS}
     }
     df = pd.read_csv(features_path, converters=converters, sep='\t')
@@ -69,24 +68,35 @@ def upload_data_dir_to_items(data_dir, upload_id):
             df[f'{field}_modified_by'] = None
             df[f'{field}_modification_time'] = None
 
+    return df
+
+
+def upload_data_to_items_and_filepaths(data_dir, df, upload_id):
     items = []
+    filepaths = []
     for item in list(df.to_dict('index').values()):
-        image_path = os.path.join(data_dir, os.path.basename(item['url']))
+
+        image_path = os.path.join(data_dir, item['url'])
+        if not os.path.exists(image_path):
+            image_path = os.path.join(data_dir, os.path.basename(item['url']))
+
         image = Image.open(image_path)
         width, height = image.size
         items.append(Item.from_tsv_row(item, width, height, upload_id))
-    return items
+        filepaths.append(image_path)
+    return items, filepaths
 
 
 def populate_system_with_items(upload_id, data_dir, db, storage_client=None):
-    items = upload_data_dir_to_items(data_dir, upload_id)
+    df = upload_data_dir_to_dataframe(data_dir)
+    items, filepaths = upload_data_to_items_and_filepaths(data_dir, df, upload_id)
 
     container_name = group_id_to_container_name(items[0].group_id)
     if storage_client and not exists(storage_client, container_name):
         create_container(storage_client, container_name)
 
     duplicates = []
-    for item in items:
+    for item, filepath in zip(items, filepaths):
 
         try:
             result = db.items.insert_one(item.get_dict())
@@ -97,10 +107,9 @@ def populate_system_with_items(upload_id, data_dir, db, storage_client=None):
         item._id = result.inserted_id
         blob_name = item_id_and_extension_to_blob_name(item._id, item.extension)
 
-        image_path = os.path.join(data_dir, item.filename)
         blob_meta = dict(filename=item.filename)
         if storage_client:
-            upload_blob(storage_client, container_name, blob_name, image_path, blob_meta)
+            upload_blob(storage_client, container_name, blob_name, filepath, blob_meta)
 
     return dict(image_count=len(items), duplicate_image_count=len(duplicates),
                 duplicate_filenames=duplicates)
