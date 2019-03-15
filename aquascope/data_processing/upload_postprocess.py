@@ -40,6 +40,9 @@ def parse_upload_package(upload_id, db, storage_client):
                 FileNotFoundError, OSError, IndexError, EmptyDataError):
             upload.update_state(db, upload_id, 'failed')
             return
+        except Exception as error:
+            upload.update_state(db, upload_id, 'failed')
+            raise error
 
     upload.update_state(db, upload_id, 'finished', **result)
 
