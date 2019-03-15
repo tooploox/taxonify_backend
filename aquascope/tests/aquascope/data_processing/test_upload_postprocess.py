@@ -44,7 +44,9 @@ class TestParseUploadPackage(FlaskAppTestCase):
             self.assertEqual('finished', upload_doc.state)
             self.assertEqual(17, upload_doc.image_count)
             self.assertEqual(0, upload_doc.duplicate_image_count)
+            self.assertEqual(0, upload_doc.broken_record_count)
             self.assertCountEqual([], upload_doc.duplicate_filenames)
+            self.assertCountEqual([], upload_doc.broken_records)
 
             items_after = self.db.items.count_documents({})
             self.assertNotEqual(items_before, items_after)
@@ -64,7 +66,9 @@ class TestParseUploadPackage(FlaskAppTestCase):
             self.assertEqual('finished', upload_doc.state)
             self.assertEqual(17, upload_doc.image_count)
             self.assertEqual(0, upload_doc.duplicate_image_count)
+            self.assertEqual(0, upload_doc.broken_record_count)
             self.assertCountEqual([], upload_doc.duplicate_filenames)
+            self.assertCountEqual([], upload_doc.broken_records)
 
             items_after = self.db.items.count_documents({})
             self.assertNotEqual(items_before, items_after)
@@ -84,7 +88,9 @@ class TestParseUploadPackage(FlaskAppTestCase):
             self.assertEqual('finished', upload_doc.state)
             self.assertEqual(8, upload_doc.image_count)
             self.assertEqual(0, upload_doc.duplicate_image_count)
+            self.assertEqual(0, upload_doc.broken_record_count)
             self.assertCountEqual([], upload_doc.duplicate_filenames)
+            self.assertCountEqual([], upload_doc.broken_records)
 
             items_after = self.db.items.count_documents({})
             self.assertNotEqual(items_before, items_after)
@@ -108,7 +114,11 @@ class TestParseUploadPackage(FlaskAppTestCase):
             with self.assertRaises(AttributeError):
                 upload_doc.duplicate_image_count
             with self.assertRaises(AttributeError):
+                upload_doc.broken_record_count
+            with self.assertRaises(AttributeError):
                 upload_doc.duplicate_filenames
+            with self.assertRaises(AttributeError):
+                upload_doc.broken_records
 
             items_after = self.db.items.count_documents({})
             self.assertEqual(items_before, items_after)
@@ -132,7 +142,11 @@ class TestParseUploadPackage(FlaskAppTestCase):
             with self.assertRaises(AttributeError):
                 upload_doc.duplicate_image_count
             with self.assertRaises(AttributeError):
+                upload_doc.broken_record_count
+            with self.assertRaises(AttributeError):
                 upload_doc.duplicate_filenames
+            with self.assertRaises(AttributeError):
+                upload_doc.broken_records
 
             items_after = self.db.items.count_documents({})
             self.assertEqual(items_before, items_after)
@@ -156,7 +170,11 @@ class TestParseUploadPackage(FlaskAppTestCase):
             with self.assertRaises(AttributeError):
                 upload_doc.duplicate_image_count
             with self.assertRaises(AttributeError):
+                upload_doc.broken_record_count
+            with self.assertRaises(AttributeError):
                 upload_doc.duplicate_filenames
+            with self.assertRaises(AttributeError):
+                upload_doc.broken_records
 
             items_after = self.db.items.count_documents({})
             self.assertEqual(items_before, items_after)
@@ -179,7 +197,11 @@ class TestParseUploadPackage(FlaskAppTestCase):
             with self.assertRaises(AttributeError):
                 upload_doc.duplicate_image_count
             with self.assertRaises(AttributeError):
+                upload_doc.broken_record_count
+            with self.assertRaises(AttributeError):
                 upload_doc.duplicate_filenames
+            with self.assertRaises(AttributeError):
+                upload_doc.broken_records
 
             items_after = self.db.items.count_documents({})
             self.assertEqual(items_before, items_after)
@@ -200,7 +222,11 @@ class TestParseUploadPackage(FlaskAppTestCase):
         with self.assertRaises(AttributeError):
             upload_doc.duplicate_image_count
         with self.assertRaises(AttributeError):
+            upload_doc.broken_record_count
+        with self.assertRaises(AttributeError):
             upload_doc.duplicate_filenames
+        with self.assertRaises(AttributeError):
+            upload_doc.broken_records
 
         items_after = self.db.items.count_documents({})
         self.assertEqual(items_before, items_after)
@@ -224,7 +250,11 @@ class TestParseUploadPackage(FlaskAppTestCase):
             with self.assertRaises(AttributeError):
                 upload_doc.duplicate_image_count
             with self.assertRaises(AttributeError):
+                upload_doc.broken_record_count
+            with self.assertRaises(AttributeError):
                 upload_doc.duplicate_filenames
+            with self.assertRaises(AttributeError):
+                upload_doc.broken_records
 
             items_after = self.db.items.count_documents({})
             self.assertEqual(items_before, items_after)
@@ -244,7 +274,9 @@ class TestParseUploadPackage(FlaskAppTestCase):
             self.assertEqual('finished', upload_doc.state)
             self.assertEqual(17, upload_doc.image_count)
             self.assertEqual(0, upload_doc.duplicate_image_count)
+            self.assertEqual(0, upload_doc.broken_record_count)
             self.assertCountEqual([], upload_doc.duplicate_filenames)
+            self.assertCountEqual([], upload_doc.broken_records)
 
             items_after = self.db.items.count_documents({})
             self.assertNotEqual(items_before, items_after)
@@ -262,11 +294,13 @@ class TestParseUploadPackage(FlaskAppTestCase):
             self.assertEqual('finished', upload_doc.state)
             self.assertEqual(3, upload_doc.image_count)
             self.assertEqual(3, upload_doc.duplicate_image_count)
+            self.assertEqual(0, upload_doc.broken_record_count)
             self.assertCountEqual([
                 'SPC-EAWAG-5P0X-1543968085030435-9650530338104-000049-002-2838-1090-48-32.jpeg',
                 'SPC-EAWAG-5P0X-1543968169050193-9650614345087-000889-004-2636-0-100-128.jpeg',
                 'SPC-EAWAG-5P0X-1543968172024020-9650617345336-000919-002-1364-290-64-72.jpeg'
             ], upload_doc.duplicate_filenames)
+            self.assertCountEqual([], upload_doc.broken_records)
 
             items_after = self.db.items.count_documents({})
             self.assertNotEqual(items_before, items_after)
@@ -287,7 +321,9 @@ class TestParseUploadPackage(FlaskAppTestCase):
             self.assertEqual('finished', upload_doc.state)
             self.assertEqual(17, upload_doc.image_count)
             self.assertEqual(0, upload_doc.duplicate_image_count)
+            self.assertEqual(0, upload_doc.broken_record_count)
             self.assertCountEqual([], upload_doc.duplicate_filenames)
+            self.assertCountEqual([], upload_doc.broken_records)
 
             items_after = self.db.items.count_documents({})
             self.assertNotEqual(items_before, items_after)
@@ -305,10 +341,12 @@ class TestParseUploadPackage(FlaskAppTestCase):
             self.assertEqual('finished', upload_doc.state)
             self.assertEqual(7, upload_doc.image_count)
             self.assertEqual(2, upload_doc.duplicate_image_count)
+            self.assertEqual(0, upload_doc.broken_record_count)
             self.assertCountEqual([
                 'SPC-EAWAG-5P0X-1543968111037290-9650556340265-000309-002-3712-0-52-40.jpeg',
                 'SPC-EAWAG-5P0X-1543968114038057-9650559340515-000339-001-3536-32-68-92.jpeg'
             ], upload_doc.duplicate_filenames)
+            self.assertCountEqual([], upload_doc.broken_records)
 
             items_after = self.db.items.count_documents({})
             self.assertNotEqual(items_before, items_after)
@@ -329,10 +367,12 @@ class TestParseUploadPackage(FlaskAppTestCase):
             self.assertEqual('finished', upload_doc.state)
             self.assertEqual(19, upload_doc.image_count)
             self.assertEqual(2, upload_doc.duplicate_image_count)
+            self.assertEqual(0, upload_doc.broken_record_count)
             self.assertCountEqual([
                 'SPC-EAWAG-5P0X-1543968141051783-9650586342759-000609-002-0-2088-32-84.jpeg',
                 'SPC-EAWAG-5P0X-1543968092032969-9650537338686-000119-003-2132-1914-48-48.jpeg'
             ], upload_doc.duplicate_filenames)
+            self.assertCountEqual([], upload_doc.broken_records)
 
             items_after = self.db.items.count_documents({})
             self.assertNotEqual(items_before, items_after)
@@ -352,10 +392,12 @@ class TestParseUploadPackage(FlaskAppTestCase):
             self.assertEqual('finished', upload_doc.state)
             self.assertEqual(19, upload_doc.image_count)
             self.assertEqual(2, upload_doc.duplicate_image_count)
+            self.assertEqual(0, upload_doc.broken_record_count)
             self.assertCountEqual([
                 'SPC-EAWAG-5P0X-1543968141051783-9650586342759-000609-002-0-2088-32-84.jpeg',
                 'SPC-EAWAG-5P0X-1543968092032969-9650537338686-000119-003-2132-1914-48-48.jpeg'
             ], upload_doc.duplicate_filenames)
+            self.assertCountEqual([], upload_doc.broken_records)
 
             items_after = self.db.items.count_documents({})
             self.assertNotEqual(items_before, items_after)
@@ -376,7 +418,9 @@ class TestParseUploadPackage(FlaskAppTestCase):
             self.assertEqual('finished', upload_doc.state)
             self.assertEqual(17, upload_doc.image_count)
             self.assertEqual(0, upload_doc.duplicate_image_count)
+            self.assertEqual(0, upload_doc.broken_record_count)
             self.assertCountEqual([], upload_doc.duplicate_filenames)
+            self.assertCountEqual([], upload_doc.broken_records)
 
             items_after = self.db.items.count_documents({})
             self.assertNotEqual(items_before, items_after)
@@ -394,12 +438,14 @@ class TestParseUploadPackage(FlaskAppTestCase):
             self.assertEqual('finished', upload_doc.state)
             self.assertEqual(9, upload_doc.image_count)
             self.assertEqual(4, upload_doc.duplicate_image_count)
+            self.assertEqual(0, upload_doc.broken_record_count)
             self.assertCountEqual([
                 'SPC-EAWAG-5P0X-1543968111037290-9650556340265-000309-002-3712-0-52-40.jpeg',
                 'SPC-EAWAG-5P0X-1543968111037290-9650556340265-000309-002-3712-0-52-40.jpeg',
                 'SPC-EAWAG-5P0X-1543968114038057-9650559340515-000339-001-3536-32-68-92.jpeg',
                 'SPC-EAWAG-5P0X-1543968114038057-9650559340515-000339-001-3536-32-68-92.jpeg'
             ], upload_doc.duplicate_filenames)
+            self.assertCountEqual([], upload_doc.broken_records)
 
             items_after = self.db.items.count_documents({})
             self.assertNotEqual(items_before, items_after)
