@@ -2146,7 +2146,7 @@ components:
 
     GetUploadResult:
       type: object
-      required: [_id, filename, state, generation_date]
+      required: [_id, filename, state, generation_date, tags]
       properties:
         _id:
           type: string
@@ -2163,13 +2163,20 @@ components:
         duplicate_image_count:
           type: integer
         duplicate_filenames:
-            type: array
-            items:
-              type: string
+          type: array
+          items:
+            type: string
+        broken_record_count:
+          type: integer
+        broken_records:
+          type: array
+          items:
+            type: string
         tags:
           type: array
           items:
             type: string
+
     BadUploadRequest:
       type: object
       properties:
