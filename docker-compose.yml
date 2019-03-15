@@ -38,6 +38,8 @@ services:
       dockerfile: docker/celery_worker/Dockerfile
     depends_on:
       - rabbitmq
+    volumes:
+      - ./logs:/app/logs
     env_file:
       - celery.env
       - celery_consts.env
