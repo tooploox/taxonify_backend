@@ -1,6 +1,7 @@
 import os
 import tarfile
 import tempfile
+import unittest
 
 from aquascope.data_processing.upload_postprocess import parse_upload_package
 from aquascope.tests.flask_app_test_case import FlaskAppTestCase
@@ -28,7 +29,7 @@ class TestParseUploadPackage(FlaskAppTestCase):
                                                    filestream, self.db, storage_client)
             return upload_id
 
-    def test_can_parse_upload_package_with_valid_package(self):
+    def test_can_parse_upload_package_with_valid_tarbz2_package(self):
         storage_client = self.app.config['storage_client']
         items_before = self.db.items.count_documents({})
 
@@ -42,6 +43,46 @@ class TestParseUploadPackage(FlaskAppTestCase):
             upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
             self.assertEqual('finished', upload_doc.state)
             self.assertEqual(17, upload_doc.image_count)
+            self.assertEqual(0, upload_doc.duplicate_image_count)
+            self.assertCountEqual([], upload_doc.duplicate_filenames)
+
+            items_after = self.db.items.count_documents({})
+            self.assertNotEqual(items_before, items_after)
+
+    def test_can_parse_upload_package_with_valid_targz_package(self):
+        storage_client = self.app.config['storage_client']
+        items_before = self.db.items.count_documents({})
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            data_path = os.path.join(DATA_PATH, '5p0xMAG_small')
+            package_path = os.path.join(tmpdirname, 'package.tar.bz2')
+            self.create_package_from_directory(data_path, package_path, compression='gz')
+            upload_id = self.upload_package(package_path)
+            parse_upload_package(upload_id, self.db, storage_client)
+
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
+            self.assertEqual('finished', upload_doc.state)
+            self.assertEqual(17, upload_doc.image_count)
+            self.assertEqual(0, upload_doc.duplicate_image_count)
+            self.assertCountEqual([], upload_doc.duplicate_filenames)
+
+            items_after = self.db.items.count_documents({})
+            self.assertNotEqual(items_before, items_after)
+
+    def test_can_parse_upload_package_with_valid_spc_native_tar_format(self):
+        storage_client = self.app.config['storage_client']
+        items_before = self.db.items.count_documents({})
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            data_path = os.path.join(DATA_PATH, '25_feb_upload_example_small')
+            package_path = os.path.join(tmpdirname, 'package.tar')
+            self.create_package_from_directory(data_path, package_path, compression='')
+            upload_id = self.upload_package(package_path)
+            parse_upload_package(upload_id, self.db, storage_client)
+
+            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
+            self.assertEqual('finished', upload_doc.state)
+            self.assertEqual(8, upload_doc.image_count)
             self.assertEqual(0, upload_doc.duplicate_image_count)
             self.assertCountEqual([], upload_doc.duplicate_filenames)
 
@@ -104,30 +145,6 @@ class TestParseUploadPackage(FlaskAppTestCase):
             data_path = os.path.join(DATA_PATH, '5p0xMAG_small_missing_images')
             package_path = os.path.join(tmpdirname, 'package.tar.bz2')
             self.create_package_from_directory(data_path, package_path)
-            upload_id = self.upload_package(package_path)
-            parse_upload_package(upload_id, self.db, storage_client)
-
-            upload_doc = upload.get(self.db, upload_id, with_default_projection=False)
-            self.assertEqual('failed', upload_doc.state)
-
-            with self.assertRaises(AttributeError):
-                upload_doc.image_count
-            with self.assertRaises(AttributeError):
-                upload_doc.duplicate_image_count
-            with self.assertRaises(AttributeError):
-                upload_doc.duplicate_filenames
-
-            items_after = self.db.items.count_documents({})
-            self.assertEqual(items_before, items_after)
-
-    def test_cant_parse_upload_package_with_package_that_isnt_tarbz2(self):
-        storage_client = self.app.config['storage_client']
-        items_before = self.db.items.count_documents({})
-
-        with tempfile.TemporaryDirectory() as tmpdirname:
-            data_path = os.path.join(DATA_PATH, '5p0xMAG_small_missing_images')
-            package_path = os.path.join(tmpdirname, 'package.tar.bz2')
-            self.create_package_from_directory(data_path, package_path, compression='gz')
             upload_id = self.upload_package(package_path)
             parse_upload_package(upload_id, self.db, storage_client)
 
@@ -387,3 +404,7 @@ class TestParseUploadPackage(FlaskAppTestCase):
             items_after = self.db.items.count_documents({})
             self.assertNotEqual(items_before, items_after)
             self.assertNotEqual(items_inbeetween, items_after)
+
+
+if __name__ == '__main__':
+    unittest.main()
