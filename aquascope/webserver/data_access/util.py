@@ -1,4 +1,5 @@
 import copy
+import math
 import os
 
 import dateutil
@@ -58,7 +59,7 @@ def upload_data_dir_to_dataframe(data_dir):
 
     converters = {
         'timestamp': lambda x: dateutil.parser.parse(x),
-        **{k: lambda x: float(x) for k in MORPHOMETRIC_FIELDS}
+        **{k: lambda x: float(x) if x else float('nan') for k in MORPHOMETRIC_FIELDS}
     }
     df = pd.read_csv(features_path, converters=converters, sep='\t')
 
@@ -69,6 +70,18 @@ def upload_data_dir_to_dataframe(data_dir):
             df[f'{field}_modification_time'] = None
 
     return df
+
+
+def split_items_to_valids_and_brokens(items):
+    valids = []
+    brokens = []
+    for item in items:
+        valid_fields = [math.isfinite(item[field]) for field in MORPHOMETRIC_FIELDS]
+        valid = all(valid_fields)
+        filename = item.filename
+        valids.append(filename) if valid else brokens.append(filename)
+
+    return valids, brokens
 
 
 def upload_data_to_items_and_filepaths(data_dir, df, upload_id):
@@ -96,7 +109,10 @@ def populate_system_with_items(upload_id, data_dir, db, storage_client=None):
         create_container(storage_client, container_name)
 
     duplicates = []
+    valids, brokens = split_items_to_valids_and_brokens(items)
     for item, filepath in zip(items, filepaths):
+        if item.filename in brokens:
+            continue
 
         try:
             result = db.items.insert_one(item.get_dict())
@@ -112,4 +128,5 @@ def populate_system_with_items(upload_id, data_dir, db, storage_client=None):
             upload_blob(storage_client, container_name, blob_name, filepath, blob_meta)
 
     return dict(image_count=len(items), duplicate_image_count=len(duplicates),
-                duplicate_filenames=duplicates)
+                duplicate_filenames=duplicates, broken_record_count=len(brokens),
+                broken_records=brokens)
