@@ -1,5 +1,7 @@
 # aquascope_backend
 
+GUI repository: https://github.com/MicroscopeIT/taxonify_gui
+
 ## Getting started
 After you clone the repo please make sure you have also pulled LFS data. If not then run the following command:
 ```bash
