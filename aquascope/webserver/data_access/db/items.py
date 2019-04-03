@@ -60,7 +60,8 @@ MORPHOMETRIC_FIELDS = PRIMARY_MORPHOMETRIC_FIELDS + SECONDARY_MORPHOMETRIC_FIELD
 
 ANNOTABLE_FIELDS = TAXONOMY_FIELDS + ADDITIONAL_ATTRIBUTES_FIELDS
 
-UNNECESSARY_UPLOAD_PROPERTIES = ['state', 'image_count', 'duplicate_image_count', 'duplicate_filenames']
+UNNECESSARY_UPLOAD_PROPERTIES = ['state', 'image_count', 'duplicate_image_count', 'duplicate_filenames',
+                                 'broken_records', 'broken_record_count']
 NO_UNNECESSARY_UPLOAD_PROPERTIES_PROJECTION = {k: 0 for k in UNNECESSARY_UPLOAD_PROPERTIES}
 
 DEFAULT_ITEM_PROJECTION = {
