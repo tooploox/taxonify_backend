@@ -630,5 +630,40 @@ class TestPostItems(FlaskAppTestCase):
             self.assertCountEqual(expected_errors, response_data)
 
 
+class TestItemsAnnotationFlow(FlaskAppTestCase):
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_can_annotate_single_item(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+        with self.app.app_context():
+            self.app.config['page_size'] = 5
+
+            request_data = {
+                'eating': False,
+                'tags': ['with_broken_records_field']
+            }
+            res = self.client().get('/items/paged', query_string=request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            item = response['items'][0]
+            changed_item = copy.deepcopy(item)
+            changed_item['eating'] = True
+
+            post_request_data = json.dumps([
+                {
+                    'current': item,
+                    'update': changed_item
+                },
+            ])
+
+            res = self.client().post('/items', data=post_request_data, headers=self.headers)
+            self.assertEqual(res.status_code, 200)
+
+            response = res.json
+            self.assertEqual(response['matched'], 1)
+            self.assertEqual(response['modified'], 1)
+
+
 if __name__ == '__main__':
     unittest.main()

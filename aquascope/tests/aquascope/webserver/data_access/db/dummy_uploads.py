@@ -16,7 +16,9 @@ _DUMMY_UPLOADS = [
         '_id': ObjectId('000000000000000000001001'),
         'filename': 'dummy1',
         'state': 'uploaded',
-        'tags': ['dummy_tag_1', 'dummy_tag_2']
+        'tags': ['dummy_tag_1', 'dummy_tag_2', 'with_broken_records_field'],
+        'broken_records': [],
+        'broken_record_count': 0
     },
     {
         '_id': ObjectId('000000000000000000001002'),
