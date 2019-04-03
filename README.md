@@ -1,4 +1,4 @@
-# aquascope_backend
+# taxonify_backend
 
 GUI repository: https://github.com/MicroscopeIT/taxonify_gui
 
