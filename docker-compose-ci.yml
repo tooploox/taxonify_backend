@@ -1,0 +1,62 @@
+version: "3"
+services:
+
+  server:
+    container_name: taxonify-webserver-test
+    command: /bin/bash -c 'sleep 10 && python -m teamcity.unittestpy discover -s ./aquascope/tests -t. -v'
+    image: "${WEBSERVER_IMAGE}"
+    env_file:
+      - ./mongodb_test_user_credentials.env
+      - ./mongodb_root_credentials.env
+      - ./user_authentication.env
+      - ./storage_credentials.env
+      - ./celery.env
+      - ./celery_consts.env
+    volumes:
+      - ./logs:/app/logs
+      - ./webserver.log:/app/webserver.log
+    network_mode: host
+    depends_on:
+      - mongo
+      - storage-emulator
+
+  mongo:
+    image: mongo:4
+    env_file:
+      - mongodb_root_credentials.env
+      - mongodb_user_credentials.env
+    ports:
+      - 27017:27017
+    volumes:
+      - ./docker/local_db/:/docker-entrypoint-initdb.d/:ro
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    environment:
+      - RABBITMQ_NODENAME=rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    env_file:
+      - ./celery.env
+      - ./celery_consts.env
+
+  celery-worker:
+    image: "${CELERY_WORKER_IMAGE}"
+    depends_on:
+      - rabbitmq
+    volumes:
+      - ./logs:/app/logs
+    env_file:
+      - ./celery.env
+      - ./celery_consts.env
+      - ./mongodb_user_credentials.env
+      - ./storage_credentials.env
+    network_mode: host
+
+  storage-emulator:
+    image: arafato/azurite
+    environment:
+      - executable=blob
+    ports:
+      - 10000:10000

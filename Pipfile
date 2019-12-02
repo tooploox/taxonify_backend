@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 flask-cors = "*"
+teamcity-messages = "*"
 
 [packages]
 azure = "==4.0.0"
