@@ -43,10 +43,11 @@ class UploadTags(Resource):
         except FormattedValidationError as e:
             return e.formatted_messages, 400
 
+        db_client = app.config['db_client']
         db = app.config['db']
 
         try:
-            res = upload.update_tags(db, upload_id, json_data['tags'])
+            res = upload.update_tags(db_client, db, upload_id, json_data['tags'])
         except InvalidId:
             return invalid_request()
 

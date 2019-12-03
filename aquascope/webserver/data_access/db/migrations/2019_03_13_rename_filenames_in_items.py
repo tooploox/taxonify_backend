@@ -22,7 +22,7 @@ def rename_filenames_in_items(db):
 
 
 def main():
-    db = get_db_from_env(with_create_collections=False)
+    db_client, db = get_db_from_env(with_create_collections=False)
     rename_filenames_in_items(db)
 
 

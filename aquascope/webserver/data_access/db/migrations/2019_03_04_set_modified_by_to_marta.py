@@ -33,7 +33,7 @@ def set_marta_to_modified_by_in_not_null_annotable_fields(db):
 
 
 def main():
-    db = get_db_from_env(with_create_collections=False)
+    db_client, db = get_db_from_env(with_create_collections=False)
     set_marta_to_modified_by_in_not_null_annotable_fields(db)
 
 

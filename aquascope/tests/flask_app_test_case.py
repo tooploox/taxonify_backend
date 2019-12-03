@@ -43,7 +43,7 @@ class FlaskAppTestCase(unittest.TestCase):
         cls.auth_secondary_pass_raw = 'secondpassword'
         secondary_pass = sha256.hash(cls.auth_secondary_pass_raw)
 
-        cls.app = make_app(cls.db, storage_connection_string, 'jwtdummysecret', cls.auth_user, auth_pass,
+        cls.app = make_app(client, cls.db, storage_connection_string, 'jwtdummysecret', cls.auth_user, auth_pass,
                            secondary_pass, environment='TESTING', celery_user='', celery_password='',
                            celery_address='', page_size=500)
 

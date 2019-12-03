@@ -16,7 +16,7 @@ logger.addHandler(handler)
 
 @celery_app.task
 def parse_upload(upload_id):
-    db = get_db_from_env()
+    db_client, db = get_db_from_env()
     storage_client = get_storage_client_from_env()
     try:
         parse_upload_package(upload_id, db, storage_client)

@@ -11,7 +11,7 @@ from aquascope.webserver.data_access.db.util import get_db_from_env
 from aquascope.webserver.data_access.storage.blob import blob_storage_client
 
 
-def make_app(db, storage_connection_string, jwt_secret_key,
+def make_app(db_client, db, storage_connection_string, jwt_secret_key,
              aquascope_test_user, aquascope_test_pass, aquascope_secondary_pass,
              environment, celery_user, celery_password, celery_address, page_size):
     logging.basicConfig(filename='webserver.log', level=logging.DEBUG,
@@ -19,6 +19,7 @@ def make_app(db, storage_connection_string, jwt_secret_key,
     logging.getLogger("azure.storage").setLevel(logging.CRITICAL)
 
     app = Flask(__name__)
+    app.config['db_client'] = db_client
     app.config['db'] = db
     app.config['storage_client'] = blob_storage_client(connection_string=storage_connection_string)
     app.config['celery'] = make_celery_app(celery_user, celery_password, celery_address)
@@ -75,8 +76,8 @@ def get_app():
     celery_address = os.environ['CELERY_ADDRESS']
     page_size = os.environ['PAGE_SIZE'] if 'PAGE_SIZE' in os.environ else 500
 
-    db = get_db_from_env()
-    app = make_app(db, storage_connection_string, jwt_secret_key,
+    db_client, db = get_db_from_env()
+    app = make_app(db_client, db, storage_connection_string, jwt_secret_key,
                    aquascope_test_user, aquascope_test_pass, aquascope_secondary_pass,
                    environment, celery_user, celery_password, celery_address, page_size)
     return app

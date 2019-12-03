@@ -8,7 +8,7 @@ from bson import ObjectId
 from flask import json
 import requests
 
-from aquascope.tests.aquascope.webserver.data_access.db.dummy_items import DUMMY_ITEMS_WITH_TAGS
+from aquascope.tests.aquascope.webserver.data_access.db.dummy_items import DUMMY_ITEMS
 from aquascope.tests.flask_app_test_case import FlaskAppTestCase
 from aquascope.webserver.data_access.db.items import ANNOTABLE_FIELDS, Item, MORPHOMETRIC_FIELDS
 
@@ -29,7 +29,8 @@ class TestGetPagedItems(FlaskAppTestCase):
                 'upload_id': lambda x: ObjectId(str(x)),
                 'tags': ast.literal_eval,
                 **{k: lambda x: float(x) for k in MORPHOMETRIC_FIELDS},
-                **{f'{k}_modification_time': lambda x: dateutil.parser.parse(x) if x else None for k in ANNOTABLE_FIELDS}
+                **{f'{k}_modification_time': lambda x: dateutil.parser.parse(x) if x else None for k in
+                   ANNOTABLE_FIELDS}
             }
             df = pd.read_csv(tmp_filepath, converters=converters, sep='\t')
             df = df.replace({pd.np.nan: None})
@@ -61,7 +62,7 @@ class TestGetPagedItems(FlaskAppTestCase):
 
             items = self.url_to_items(response['url'])
             items = [item.serializable() for item in items]
-            expected_items = [item.serializable() for item in DUMMY_ITEMS_WITH_TAGS]
+            expected_items = [item.serializable() for item in DUMMY_ITEMS]
             self.assertCountEqual(items, expected_items)
 
     def test_api_can_get_export_with_limit_to_single_item(self):
@@ -78,7 +79,7 @@ class TestGetPagedItems(FlaskAppTestCase):
 
             items = self.url_to_items(response['url'])
             items = [item.serializable() for item in items]
-            expected_items = [DUMMY_ITEMS_WITH_TAGS[0].serializable()]
+            expected_items = [DUMMY_ITEMS[0].serializable()]
             self.assertCountEqual(items, expected_items)
 
     def test_api_can_get_export_with_attribute_filter(self):
@@ -95,7 +96,7 @@ class TestGetPagedItems(FlaskAppTestCase):
 
             items = self.url_to_items(response['url'])
             items = [item.serializable() for item in items]
-            expected_items = [item.serializable() for item in DUMMY_ITEMS_WITH_TAGS if item.eating]
+            expected_items = [item.serializable() for item in DUMMY_ITEMS if item.eating]
             self.assertCountEqual(items, expected_items)
 
     def test_api_can_get_export_with_taxonomy_filter(self):
@@ -112,7 +113,7 @@ class TestGetPagedItems(FlaskAppTestCase):
 
             items = self.url_to_items(response['url'])
             items = [item.serializable() for item in items]
-            expected_items = [item.serializable() for item in DUMMY_ITEMS_WITH_TAGS if item.empire is 'prokaryota']
+            expected_items = [item.serializable() for item in DUMMY_ITEMS if item.empire is 'prokaryota']
             self.assertCountEqual(items, expected_items)
 
     def test_api_can_get_export_with_filters_and_limit(self):
@@ -131,7 +132,7 @@ class TestGetPagedItems(FlaskAppTestCase):
 
             items = self.url_to_items(response['url'])
             items = [item.serializable() for item in items]
-            expected_items = [item.serializable() for item in DUMMY_ITEMS_WITH_TAGS[:1]]
+            expected_items = [item.serializable() for item in DUMMY_ITEMS[:1]]
             self.assertCountEqual(items, expected_items)
 
     def test_api_can_get_export_with_filter_that_doesnt_match_any_items(self):
