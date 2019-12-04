@@ -99,8 +99,9 @@ def update_tags(db_client, db, document_id, tags):
         res = db.uploads.update_one({'_id': ObjectId(document_id), 'state': 'finished'},
                                     {'$set': {'tags': tags}}, session=session)
 
-        db.items.update_many({'upload_id': ObjectId(document_id)},
-                             {'$set': {'tags': tags}}, session=session)
+        if res.matched_count:
+            db.items.update_many({'upload_id': ObjectId(document_id)},
+                                 {'$set': {'tags': tags}}, session=session)
 
         return res
 

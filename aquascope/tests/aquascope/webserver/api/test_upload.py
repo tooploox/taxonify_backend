@@ -115,6 +115,40 @@ class TestPostUploadTags(FlaskAppTestCase):
                 self.assertEqual(res.status_code, 400)
 
     @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
+    def test_api_tags_update_to_non_finished_upload_does_not_propagate_to_items(self, mock_make_blob_url):
+        mock_make_blob_url.return_value = 'mockedurl'
+
+        old_tag = DUMMY_UPLOADS[1].tags[1]
+
+        request_data = {
+            'tags': [old_tag]
+        }
+        res = self.client().get('/items', query_string=request_data, headers=self.headers)
+        self.assertEqual(res.status_code, 200)
+        original_items = res.json['items']
+        self.assertTrue(len(original_items) != 0)
+
+        new_tags = ['new_tag1', 'new_tag2']
+        request_data = json.dumps({
+            'tags': new_tags
+        })
+        res = self.client().post(f'/upload/{str(DUMMY_UPLOADS[1]._id)}/tags',
+                                 data=request_data, headers=self.headers)
+        self.assertEqual(res.status_code, 400)
+
+        request_data = {
+            'tags': new_tags
+        }
+        res = self.client().get('/items', query_string=request_data, headers=self.headers)
+        self.assertEqual(res.status_code, 200)
+        new_items = res.json['items']
+
+        for item in original_items + new_items:
+            item.pop('tags')
+
+        self.assertTrue(len(new_items) == 0)
+
+    @mock.patch('aquascope.webserver.data_access.storage.blob.make_blob_url')
     def test_api_tags_update_is_propagated_to_items(self, mock_make_blob_url):
         mock_make_blob_url.return_value = 'mockedurl'
 
@@ -127,7 +161,7 @@ class TestPostUploadTags(FlaskAppTestCase):
         self.assertEqual(res.status_code, 200)
         original_items = res.json['items']
 
-        new_tags = ['tag1', 'tag2']
+        new_tags = ['new_tag1', 'new_tag2']
         request_data = json.dumps({
             'tags': new_tags
         })
