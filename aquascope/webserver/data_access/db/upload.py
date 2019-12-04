@@ -94,5 +94,17 @@ def update_state(db, document_id, state, **kwargs):
     return db.uploads.update_one({'_id': ObjectId(document_id)}, {'$set': {'state': state, **kwargs}})
 
 
-def update_tags(db, docuent_id, tags):
-    return db.uploads.update_one({'_id': ObjectId(docuent_id)}, {'$set': {'tags': tags }})
+def update_tags(db_client, db, document_id, tags):
+    with db_client.start_session() as session:
+        res = db.uploads.update_one({'_id': ObjectId(document_id), 'state': 'finished'},
+                                    {'$set': {'tags': tags}}, session=session)
+
+        if res.matched_count:
+            db.items.update_many({'upload_id': ObjectId(document_id)},
+                                 {'$set': {'tags': tags}}, session=session)
+
+        return res
+
+
+def get_tags(db, document_id):
+    return db.uploads.find_one({'_id': document_id}, {'tags': 1})['tags']

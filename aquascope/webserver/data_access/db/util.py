@@ -40,17 +40,17 @@ def create_collections(db):
     db.items.create_index([('filename', ASCENDING)], unique=True)
 
 
-def get_db(connection_string, with_create_collections=True):
+def get_db_handles(connection_string, with_create_collections=True):
     mongo_client = MongoClient(connection_string)
     db = mongo_client.get_database()
     if with_create_collections:
         create_collections(db)
-    return db
+    return mongo_client, db
 
 
 def get_db_from_env(with_create_collections=True):
     mongo_connection_string = os.environ['MONGO_CONNECTION_STRING']
-    return get_db(mongo_connection_string, with_create_collections=with_create_collections)
+    return get_db_handles(mongo_connection_string, with_create_collections=with_create_collections)
 
 
 def get_storage_client_from_env():

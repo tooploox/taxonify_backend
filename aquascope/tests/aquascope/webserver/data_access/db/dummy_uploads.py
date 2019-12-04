@@ -39,7 +39,7 @@ _DUMMY_UPLOADS = [
             'img1.jpg',
             'img2.jpg'
         ],
-        'tags': []
+        'tags': ['sth']
     },
     {
         '_id': ObjectId('000000000000000000001004'),

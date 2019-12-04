@@ -5,6 +5,7 @@ import os
 import dateutil
 import pandas as pd
 from PIL import Image
+from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
 from aquascope.webserver.data_access.conversions import (item_id_and_extension_to_blob_name,
@@ -84,7 +85,7 @@ def split_items_to_valids_and_brokens(items):
     return valids, brokens
 
 
-def upload_data_to_items_and_filepaths(data_dir, df, upload_id):
+def upload_data_to_items_and_filepaths(data_dir, df, upload_id, upload_tags):
     items = []
     filepaths = []
     for item in list(df.to_dict('index').values()):
@@ -95,14 +96,16 @@ def upload_data_to_items_and_filepaths(data_dir, df, upload_id):
 
         image = Image.open(image_path)
         width, height = image.size
-        items.append(Item.from_tsv_row(item, width, height, upload_id))
+        items.append(Item.from_tsv_row(item, width, height, upload_id, upload_tags))
         filepaths.append(image_path)
     return items, filepaths
 
 
 def populate_system_with_items(upload_id, data_dir, db, storage_client=None):
+    upload_tags = upload.get_tags(db, ObjectId(upload_id))
+
     df = upload_data_dir_to_dataframe(data_dir)
-    items, filepaths = upload_data_to_items_and_filepaths(data_dir, df, upload_id)
+    items, filepaths = upload_data_to_items_and_filepaths(data_dir, df, upload_id, upload_tags)
 
     container_name = group_id_to_container_name(items[0].group_id)
     if storage_client and not exists(storage_client, container_name):

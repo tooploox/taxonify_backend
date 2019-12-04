@@ -4,6 +4,7 @@ import tempfile
 from bson import ObjectId
 from pandas.errors import EmptyDataError
 
+from aquascope.tests.aquascope.webserver.data_access.db.dummy_uploads import DUMMY_UPLOADS
 from aquascope.tests.flask_app_test_case import FlaskAppTestCase
 from aquascope.webserver.data_access.util import populate_system_with_items, MissingTsvFileError
 
@@ -13,7 +14,7 @@ DATA_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 
 class TestPopulateSystemWithItems(FlaskAppTestCase):
 
-    upload_id = ObjectId('999000000000000000001000')
+    upload_id = DUMMY_UPLOADS[3]._id
 
     def test_can_populate_system_with_valid_data_package(self):
         data_package_path = os.path.join(DATA_PATH, '5p0xMAG_small')

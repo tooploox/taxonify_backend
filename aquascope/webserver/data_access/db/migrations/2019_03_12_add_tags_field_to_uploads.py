@@ -13,7 +13,7 @@ def add_tags_field_to_uploads(db):
 
 
 def main():
-    db = get_db_from_env(with_create_collections=False)
+    db_client, db = get_db_from_env(with_create_collections=False)
     add_tags_field_to_uploads(db)
 
 

@@ -22,7 +22,7 @@ def add_tags_to_items(item_list):
 _DUMMY_ITEMS = [
     {
         "_id": ObjectId('000000000000000000000000'),
-        "upload_id": ObjectId('000000000000000000001001'),
+        "upload_id": ObjectId('000000000000000000001003'),
         "file_size": 1.0,
         "aspect_ratio": 1.0,
         "maj_axis_len": 1.0,
@@ -272,7 +272,7 @@ _DUMMY_ITEMS = [
     },
     {
         "_id": ObjectId('000000000000000000000002'),
-        "upload_id": ObjectId('000000000000000000001001'),
+        "upload_id": ObjectId('000000000000000000001003'),
         "file_size": 1.0,
         "aspect_ratio": 1.0,
         "maj_axis_len": 1.0,
@@ -654,5 +654,4 @@ DUMMY_ITEMS_WITH_DEFAULT_PROJECTION = [
     Item(project_dict(copy.deepcopy(item), DEFAULT_ITEM_PROJECTION)) for item in _DUMMY_ITEMS_WITH_TAGS
 ]
 
-DUMMY_ITEMS = [Item(item) for item in _DUMMY_ITEMS]
-DUMMY_ITEMS_WITH_TAGS = [Item(item) for item in _DUMMY_ITEMS_WITH_TAGS]
+DUMMY_ITEMS = [Item(item) for item in _DUMMY_ITEMS_WITH_TAGS]

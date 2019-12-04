@@ -16,7 +16,7 @@ def add_modification_fields_to_item_schema(db):
 
 
 def main():
-    db = get_db_from_env(with_create_collections=False)
+    db_client, db = get_db_from_env(with_create_collections=False)
     add_modification_fields_to_item_schema(db)
 
 

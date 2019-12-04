@@ -36,7 +36,7 @@ def add_upload_id_field_to_items(db, storage_client):
 
 
 def main():
-    db = get_db_from_env(with_create_collections=False)
+    db_client, db = get_db_from_env(with_create_collections=False)
     storage_client = get_storage_client_from_env()
     add_upload_id_field_to_items(db, storage_client)
 

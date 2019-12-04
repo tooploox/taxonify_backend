@@ -456,7 +456,7 @@ class TestGetItems(FlaskAppTestCase):
             self.assertEqual(res.status_code, 200)
 
             response = res.json
-            expected_items = DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[:4]
+            expected_items = [DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[1], DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[3]]
             expected_items = [item.serializable() for item in expected_items]
 
             self.assertCountEqual(response['items'], expected_items)
@@ -466,14 +466,14 @@ class TestGetItems(FlaskAppTestCase):
         mock_make_blob_url.return_value = 'mockedurl'
         with self.app.app_context():
             request_data = {
-                'tags': ['dummy_tag_1'],
+                'tags': ['sth'],
                 'eating': True
             }
             res = self.client().get('/items', query_string=request_data, headers=self.headers)
             self.assertEqual(res.status_code, 200)
 
             response = res.json
-            expected_items = DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[:2]
+            expected_items = [DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[0]]
             expected_items = [item.serializable() for item in expected_items]
 
             self.assertCountEqual(response['items'], expected_items)
@@ -489,7 +489,7 @@ class TestGetItems(FlaskAppTestCase):
             self.assertEqual(res.status_code, 200)
 
             response = res.json
-            expected_items = DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[:3]
+            expected_items = [DUMMY_ITEMS_WITH_DEFAULT_PROJECTION[1]]
             expected_items = [item.serializable() for item in expected_items]
 
             self.assertCountEqual(response['items'], expected_items)
@@ -639,7 +639,7 @@ class TestItemsAnnotationFlow(FlaskAppTestCase):
             self.app.config['page_size'] = 5
 
             request_data = {
-                'eating': False,
+                'eating': True,
                 'tags': ['with_broken_records_field']
             }
             res = self.client().get('/items/paged', query_string=request_data, headers=self.headers)
@@ -648,7 +648,7 @@ class TestItemsAnnotationFlow(FlaskAppTestCase):
             response = res.json
             item = response['items'][0]
             changed_item = copy.deepcopy(item)
-            changed_item['eating'] = True
+            changed_item['eating'] = False
 
             post_request_data = json.dumps([
                 {

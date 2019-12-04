@@ -72,7 +72,7 @@ DEFAULT_ITEM_PROJECTION = {
 ITEMS_DB_SCHEMA = {
     'bsonType': 'object',
     'required': ['_id', 'upload_id', 'filename', 'extension', 'group_id',
-                 'acquisition_time', 'image_width', 'image_height']
+                 'acquisition_time', 'image_width', 'image_height', 'tags']
                 + TAXONOMY_FIELDS
                 + ADDITIONAL_ATTRIBUTES_FIELDS
                 + MORPHOMETRIC_FIELDS
@@ -103,6 +103,13 @@ ITEMS_DB_SCHEMA = {
         },
         'image_height': {
             'bsonType': 'int'
+        },
+        'tags': {
+            'bsonType': 'array',
+            'items': {
+                'bsonType': 'string',
+                'uniqueItems': True
+            }
         },
         **({k: dict(bsonType=['string', 'null']) for k in TAXONOMY_FIELDS}),
         **({k: dict(bsonType=['bool', 'null']) for k in ADDITIONAL_ATTRIBUTES_FIELDS}),
@@ -142,7 +149,7 @@ class Item(DbDocument):
         return Item(DbDocument.from_db_data(db_data))
 
     @staticmethod
-    def from_tsv_row(row, image_width, image_height, upload_id):
+    def from_tsv_row(row, image_width, image_height, upload_id, upload_tags):
         item = copy.deepcopy(row)
         item['acquisition_time'] = item.pop('timestamp').to_pydatetime()
         item['filename'] = os.path.basename(item.pop('url'))
@@ -151,6 +158,7 @@ class Item(DbDocument):
         item['extension'] = os.path.splitext(item['filename'])[1]
         item['group_id'] = 'processed'
         item['upload_id'] = ObjectId(upload_id)
+        item['tags'] = upload_tags
         return Item(item)
 
     def serializable(self, shallow=False):
@@ -263,78 +271,21 @@ def format_query_result(result, serializable):
     return (Item.from_db_data(item) for item in result)
 
 
-def aggregate_find_query(query, projection, skip=None, limit=None):
-    tags_query = query.pop('tags', None)
-
-    aggregate_query = []
-    if query:
-        aggregate_query.append({
-            '$match': query
-        })
-
-    aggregate_query += [
-        {
-            '$lookup': {
-                'from': 'uploads',
-                'localField': 'upload_id',
-                'foreignField': '_id',
-                'as': 'from_upload'
-            }
-        },
-        {
-            '$replaceRoot': {
-                'newRoot': {
-                    '$mergeObjects': [{
-                        '$arrayElemAt': ["$from_upload", 0]}, "$$ROOT"]
-                }
-            }
-        }
-    ]
-
-    if tags_query or tags_query == []:
-        aggregate_query.append({
-            '$match': {
-                'tags': tags_query
-            }
-        })
-
-    aggregate_query += [
-        {
-            '$project': {
-                'from_upload': 0
-            }
-        },
-        {
-            '$project': projection
-        }
-    ]
-
-    if skip:
-        aggregate_query.append({
-            '$skip': skip
-        })
-    if limit:
-        aggregate_query.append({
-            '$limit': limit
-        })
-
-    return aggregate_query
-
-
 def paged_find_items(db, page_number, page_size, with_default_projection=True,
                      serializable=False, *args, **kwargs):
     query = build_find_query(*args, **kwargs)
     projection = DEFAULT_ITEM_PROJECTION if with_default_projection else NO_UNNECESSARY_UPLOAD_PROPERTIES_PROJECTION
     skip = page_size * (page_number - 1)
     limit = page_size
-    result = db.items.aggregate(aggregate_find_query(query, projection, skip, limit))
+    result = db.items.find(query, projection).skip(skip).limit(limit)
+
     return format_query_result(result, serializable)
 
 
 def find_items(db, with_default_projection=True, serializable=False, *args, **kwargs):
     query = build_find_query(*args, **kwargs)
     projection = DEFAULT_ITEM_PROJECTION if with_default_projection else NO_UNNECESSARY_UPLOAD_PROPERTIES_PROJECTION
-    result = db.items.aggregate(aggregate_find_query(query, projection))
+    result = db.items.find(query, projection)
     return format_query_result(result, serializable)
 
 

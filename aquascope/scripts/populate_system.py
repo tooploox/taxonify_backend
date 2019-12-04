@@ -8,7 +8,7 @@ from aquascope.webserver.data_access.util import populate_system_with_items
 
 
 def run_populate_system(data_directory):
-    db = get_db_from_env()
+    db_client, db = get_db_from_env()
 
     storage_client = blob_storage_client(connection_string=os.environ['STORAGE_CONNECTION_STRING'])
     populate_system_with_items(data_directory, db, storage_client)
