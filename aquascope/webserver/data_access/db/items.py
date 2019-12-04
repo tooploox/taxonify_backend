@@ -271,43 +271,21 @@ def format_query_result(result, serializable):
     return (Item.from_db_data(item) for item in result)
 
 
-def aggregate_find_query(query, projection, skip=None, limit=None):
-    aggregate_query = []
-    if query:
-        aggregate_query.append({
-            '$match': query
-        })
-
-    aggregate_query.append({
-        '$project': projection
-    })
-
-    if skip:
-        aggregate_query.append({
-            '$skip': skip
-        })
-    if limit:
-        aggregate_query.append({
-            '$limit': limit
-        })
-
-    return aggregate_query
-
-
 def paged_find_items(db, page_number, page_size, with_default_projection=True,
                      serializable=False, *args, **kwargs):
     query = build_find_query(*args, **kwargs)
     projection = DEFAULT_ITEM_PROJECTION if with_default_projection else NO_UNNECESSARY_UPLOAD_PROPERTIES_PROJECTION
     skip = page_size * (page_number - 1)
     limit = page_size
-    result = db.items.aggregate(aggregate_find_query(query, projection, skip, limit))
+    result = db.items.find(query, projection).skip(skip).limit(limit)
+
     return format_query_result(result, serializable)
 
 
 def find_items(db, with_default_projection=True, serializable=False, *args, **kwargs):
     query = build_find_query(*args, **kwargs)
     projection = DEFAULT_ITEM_PROJECTION if with_default_projection else NO_UNNECESSARY_UPLOAD_PROPERTIES_PROJECTION
-    result = db.items.aggregate(aggregate_find_query(query, projection))
+    result = db.items.find(query, projection)
     return format_query_result(result, serializable)
 
 
