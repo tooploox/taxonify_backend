@@ -37,7 +37,10 @@ def create_collections(db):
             pass
 
     db.users.create_index([('username', ASCENDING)], unique=True)
+
     db.items.create_index([('filename', ASCENDING)], unique=True)
+    db.items.create_index([('tags', ASCENDING)], unique=False)
+    db.items.create_index([('empire', ASCENDING)], unique=False)
 
 
 def get_db_handles(connection_string, with_create_collections=True):
